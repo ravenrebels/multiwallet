@@ -1,3 +1,6 @@
+.parcel-cache
+config.json
+*.js
 # Logs
 logs
 *.log
