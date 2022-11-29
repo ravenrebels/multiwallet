@@ -50,6 +50,7 @@ export function Transfer({ balance }) {
     <div className="plate">
       <form className="row g-3" onSubmit={onSubmit}>
         <h3>Send / Transfer</h3>
+        <i>Not implemented yet</i>
         <div className="mb-3">
           <label htmlFor="assetSelect" className="form-label">
             Email address

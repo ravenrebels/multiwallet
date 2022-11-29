@@ -9,7 +9,7 @@ export function Navigator({ balance, route }) {
   return (
     <div className="navigator plate">
       <RavenBalance balance={balance} />
-
+      <hr></hr>
       <div className="navigator__items">
         <Item
           label="Balance"

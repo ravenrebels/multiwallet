@@ -95,7 +95,7 @@ async function sendFromUser1ToUser2() {
 
   const inputs = enoughUnspent.map(function (bla) {
     //OK we have to convert from "unspent" format to "vout"
-    console.log("BLA", bla);
+
     const obj = {
       txid: bla.txid,
       vout: bla.outputIndex,

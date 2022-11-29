@@ -50,21 +50,22 @@ function Received({ history }) {
             return (
               <tr key={transaction.txid}>
                 <td>{dateString.toLocaleString()}</td>
-                <td>
-                  {transaction.vout.map((vout) => {
-                    const isExternalAddress = vout.index % 2 === 0;
-                    if (vout.scriptPubKey.asset && isExternalAddress) {
-                      return (
-                        vout.scriptPubKey.asset.amount +
-                        " " +
-                        vout.scriptPubKey.asset.name
-                      );
-                    } else if (isExternalAddress === true) {
-                      return vout.value.toLocaleString() + " RVN";
-                    }
-                    return null;
-                  })}
-                </td>
+
+                {transaction.vout.map((vout) => {
+                  const isExternalAddress = vout.index % 2 === 0;
+                  if (vout.scriptPubKey.asset && isExternalAddress) {
+                    return [
+                      <td>{vout.scriptPubKey.asset.amount}</td>,
+                      <td>{vout.scriptPubKey.asset.name}</td>,
+                    ];
+                  } else if (isExternalAddress === true) {
+                    return [
+                      <td>{vout.value.toLocaleString()}</td>,
+                      <td>RVN</td>,
+                    ];
+                  }
+                  return null;
+                })}
               </tr>
             );
           })}
