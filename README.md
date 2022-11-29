@@ -24,6 +24,21 @@ cd ./multiwallet
 npm run build
 ```
 
+### Configuration
+
+Create a file called ./config.json with your username/password/url etc
+Use this template and replace the values
+
+```
+{
+  "raven_username": "jfk38fn202jc53",
+  "raven_password": "jfk38fn202jc53",
+  "raven_url": "http://localhost:8766",
+  "network": "rvn"
+}
+
+```
+
 ### Start the server
 
 ```
