@@ -4,7 +4,16 @@ import * as fs from "fs";
 
 export function getAddresses(userName: string, network: string) {
   const objects = getAddressObjects(userName, network);
-  return objects.map((obj) => obj.address);
+  const result = objects.map((obj) => obj.address);
+  if (fs.existsSync("./temp") === false) {
+    fs.mkdirSync("./temp");
+  }
+  fs.writeFileSync(
+    "./temp/addresses_" + userName + ".json",
+    JSON.stringify(result, null, 4)
+  );
+
+  return result;
 }
 export function getAddressObjects(userName: string, network: string) {
   const fileName = "./" + userName + ".json";

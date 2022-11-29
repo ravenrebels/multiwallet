@@ -7,12 +7,14 @@ import { Balance } from "./Balance";
 import { getRoute } from "./getRoute";
 import { History } from "./History";
 import { Navigator } from "./Navigator";
+import { Receive } from "./Receive";
 import { Transfer } from "./Transfer";
 
 enum Routes {
-  TRANSFER = "TRANSFER",
   BALANCE = "BALANCE",
   HISTORY = "HISTORY",
+  RECEIVE = "RECEIVE",
+  TRANSFER = "TRANSFER",
 }
 function App() {
   const [triggerDate, setTriggerDate] = React.useState(
@@ -34,11 +36,10 @@ function App() {
   return (
     <div>
       <Navigator balance={balance} route={route} />
-
       {route === Routes.BALANCE && <Balance balance={balance} />}
       {route === Routes.TRANSFER && <Transfer balance={balance}></Transfer>}
       {route === Routes.HISTORY && <History></History>}
-      <Receive />
+      {route === Routes.RECEIVE && <Receive></Receive>}
     </div>
   );
 }
@@ -61,20 +62,11 @@ export function useBalance(triggerDate?: string): null | Array<{
   return balance;
 }
 
-export function getAmount(balance, name): number {
+export function getAmount(balance, name: string): number {
   const asset = balance.find((a) => a.assetName === name);
+  if (!asset) {
+    return NaN;
+  }
   const value = asset.balance / 1e8;
   return value;
-}
-
-function Receive() {
-  const [address, setAddress] = React.useState("");
-  React.useEffect(() => {
-    const axiosResponse = axios.get("/receiveaddress");
-    axiosResponse.then((response) => setAddress(response.data.address));
-  }, []);
-
-  if (!address) return null;
-
-  return <div>{address}</div>;
 }

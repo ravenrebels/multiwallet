@@ -1,5 +1,6 @@
 import * as express from "express";
-import * as Blockchain from "./blockchain";
+import * as Blockchain from "./blockchain/blockchain";
+import { getReceiveAddress } from "./blockchain/getReceiveAddress";
 import { getHistory } from "./blockchain/getHistory";
 
 import * as Key from "./Key";
@@ -18,7 +19,7 @@ app.listen(port, () => {
 app.get("/receiveaddress", async function (_, response) {
   const addresses = Key.getAddresses("user1", config.network);
 
-  const address = await Blockchain.getReceieveAddress(addresses);
+  const address = await getReceiveAddress(addresses);
   response.send({ address });
 });
 //Even number are external addresses

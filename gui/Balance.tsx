@@ -10,6 +10,7 @@ export function Balance({ balance }) {
   assetNames.sort();
 
   const RVN = balance.find((a) => a.assetName === "RVN");
+
   const rvnAmount = RVN ? (RVN.balance / 1e8).toLocaleString() : 0;
   return (
     <div className="balance">
@@ -26,12 +27,7 @@ export function Balance({ balance }) {
             <tr>
               <td>RVN</td>
               <td>{rvnAmount}</td>
-              <td>
-                <img
-                  className="navigation__item-thumbnail"
-                  src="https://rebel-balance-front.herokuapp.com/thumbnail?assetName=FREN%23REBELLIOUS-RED"
-                ></img>
-              </td>
+              <td></td>
             </tr>
             {assetNames.map((name) => {
               if (name === "RVN") {
@@ -39,15 +35,15 @@ export function Balance({ balance }) {
               }
               const asset = balance.find((a) => a.assetName === name);
               const amount = asset ? asset.balance / 1e8 : 0;
-
+              const encodedAssetName = encodeURIComponent(name);
               return (
                 <tr key={name}>
                   <td>{name}</td>
                   <td>{amount.toLocaleString()}</td>
                   <td>
                     <img
-                      className="navigation__item-thumbnail"
-                      src="https://rebel-balance-front.herokuapp.com/thumbnail?assetName=FREN%23REBELLIOUS-RED"
+                      className="balance__item-thumbnail"
+                      src={`https://rebel-balance-front.herokuapp.com/thumbnail?assetName=${encodedAssetName}`}
                     ></img>
                   </td>
                 </tr>

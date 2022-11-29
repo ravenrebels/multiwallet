@@ -1,10 +1,11 @@
 import * as React from "react";
-import { Loading } from "./Loading";
 
 export function Navigator({ balance, route }) {
   const iconBalance = <i className="fa-solid fa-scale-balanced" />;
   const iconTransfer = <i className="fa-solid fa-paper-plane"></i>;
   const iconHistory = <i className="fa-solid fa-clock-rotate-left"></i>;
+  const iconReceive = <i className="fa-solid fa-arrow-down"></i>;
+
   return (
     <div className="navigator plate">
       <RavenBalance balance={balance} />
@@ -17,10 +18,16 @@ export function Navigator({ balance, route }) {
           icon={iconBalance}
         />
         <Item
-          label="Transfer"
+          label="Send"
           currentRoute={route}
           targetRoute="TRANSFER"
           icon={iconTransfer}
+        />
+        <Item
+          label="Receive"
+          currentRoute={route}
+          targetRoute="RECEIVE"
+          icon={iconReceive}
         />
         <Item
           label="History"
@@ -44,15 +51,12 @@ function RavenBalance({ balance }) {
     );
   }
 
-  if (balance.length === 0) {
-    return null;
-  }
   const assetNames = balance.map((obj: any) => obj.assetName);
   assetNames.sort();
 
   const RVN = balance.find((a) => a.assetName === "RVN");
 
-  const present = (RVN.balance / 1e8).toLocaleString();
+  const present = RVN ? (RVN.balance / 1e8).toLocaleString() : 0;
   return (
     <div>
       <label className="navigator__title">Total balance</label>
@@ -69,7 +73,7 @@ function Item({ currentRoute, icon, label, targetRoute }) {
   return (
     <div className={className}>
       <a href={href} className="btn btn-primary">
-        <span style={{ fontSize: "300%", display: "block" }}>{icon} </span>
+        <span className="navigation__item-icon">{icon} </span>
       </a>
       <div>{label}</div>
     </div>

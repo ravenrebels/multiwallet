@@ -24,6 +24,9 @@ export function History() {
 function Received({ history }) {
   const inputs = history.inputs;
 
+  if (inputs.length === 0) {
+    return <div className="plate">You have not received anything yet</div>;
+  }
   //Resort the inputs so that newer inputs come first
   inputs.sort(function (a, b) {
     if (a.time < b.time) {
@@ -49,8 +52,15 @@ function Received({ history }) {
                 <td>{dateString.toLocaleString()}</td>
                 <td>
                   {transaction.vout.map((vout) => {
-                    if (vout.index % 2 === 0) {
-                      return vout.value.toLocaleString();
+                    const isExternalAddress = vout.index % 2 === 0;
+                    if (vout.scriptPubKey.asset && isExternalAddress) {
+                      return (
+                        vout.scriptPubKey.asset.amount +
+                        " " +
+                        vout.scriptPubKey.asset.name
+                      );
+                    } else if (isExternalAddress === true) {
+                      return vout.value.toLocaleString() + " RVN";
                     }
                     return null;
                   })}
