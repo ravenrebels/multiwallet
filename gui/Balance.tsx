@@ -1,4 +1,5 @@
 import * as React from "react";
+import { SyntheticEvent } from "react";
 
 import { Loading } from "./Loading";
 
@@ -35,16 +36,13 @@ export function Balance({ balance }) {
               }
               const asset = balance.find((a) => a.assetName === name);
               const amount = asset ? asset.balance / 1e8 : 0;
-              const encodedAssetName = encodeURIComponent(name);
+
               return (
                 <tr key={name}>
                   <td>{name}</td>
                   <td>{amount.toLocaleString()}</td>
                   <td>
-                    <img
-                      className="balance__item-thumbnail"
-                      src={`https://rebel-balance-front.herokuapp.com/thumbnail?assetName=${encodedAssetName}`}
-                    ></img>
+                    <Image assetName={name} />
                   </td>
                 </tr>
               );
@@ -53,5 +51,20 @@ export function Balance({ balance }) {
         </table>
       </div>
     </div>
+  );
+}
+
+/* Image that hides itself on error */
+function Image({ assetName }) {
+  const encodedAssetName = encodeURIComponent(assetName);
+
+  return (
+    <img
+      onError={(event: SyntheticEvent<HTMLImageElement, Event>) => {
+        event.currentTarget.style.display = "none";
+      }}
+      className="balance__item-thumbnail"
+      src={`https://rebel-balance-front.herokuapp.com/thumbnail?assetName=${encodedAssetName}`}
+    ></img>
   );
 }

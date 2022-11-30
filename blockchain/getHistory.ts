@@ -35,7 +35,6 @@ export async function getHistory(addresses: Array<string>): Promise<any> {
   //Get all the transactions, remove un essential attributes such as hex
   const asdf = await rpc(methods.getaddresstxids, [obj, includeAssets]);
 
-  console.log(asdf);
   const result: any = [];
   for (const transactionId of asdf) {
     const method = "getrawtransaction";

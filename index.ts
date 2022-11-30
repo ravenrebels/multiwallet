@@ -14,7 +14,7 @@ async function test() {
   const _addresses = addresses.map(function (a) {
     return a.address;
   });
-  console.log("ADDRESS 0", _addresses[4]);
+
   const balance = await getBalance(_addresses);
 
   console.log("balance", balance);

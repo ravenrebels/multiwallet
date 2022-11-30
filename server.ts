@@ -2,7 +2,7 @@ import * as express from "express";
 import * as Blockchain from "./blockchain/blockchain";
 import { getReceiveAddress } from "./blockchain/getReceiveAddress";
 import { getHistory } from "./blockchain/getHistory";
-
+import * as fs from "fs";
 import * as Key from "./Key";
 
 import { getConfig } from "./Utils";
@@ -25,9 +25,11 @@ app.get("/receiveaddress", async function (_, response) {
 //Even number are external addresses
 app.get("/api/balance", function (request, response) {
   const addresses = Key.getAddresses("user1", config.network);
+
   Blockchain.getBalance(addresses)
     .then((data) => response.send(data))
     .catch((e) => {
+      console.dir(e);
       response.status(500).send({ error: "Technical error" });
     });
 });
@@ -51,9 +53,19 @@ app.get("/api/getaddressutxos", function (request, response) {
       response.send(data);
     })
     .catch((e) => {
+      console.log("" + e);
       response.status(500).send({
         error: "Technical error",
         description: e,
       });
     });
+});
+
+app.get("/publicprofile", function (request, response) {
+  const user1 = fs.readFileSync("./user1.json", "utf8");
+  const obj = JSON.parse(user1);
+  const result = {
+    displayName: obj.displayName,
+  };
+  response.send(result);
 });

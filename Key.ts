@@ -1,7 +1,7 @@
 import RavencoinKey from "@ravenrebels/ravencoin-key";
 import { IAddressMetaData } from "./Types";
 import * as fs from "fs";
-
+import * as userManager from "./userManager";
 export function getAddresses(userName: string, network: string) {
   const objects = getAddressObjects(userName, network);
   const result = objects.map((obj) => obj.address);
@@ -16,8 +16,9 @@ export function getAddresses(userName: string, network: string) {
   return result;
 }
 export function getAddressObjects(userName: string, network: string) {
-  const fileName = "./" + userName + ".json";
-  if (fs.existsSync(fileName) === false) {
+  const user = userManager.getUserById(userName);
+
+  if (!user) {
     throw new Error("User not found " + userName);
   }
 
@@ -25,11 +26,11 @@ export function getAddressObjects(userName: string, network: string) {
   if (!isNetworkValid) {
     throw new Error("Network *" + network + "* not valid");
   }
-  const user = JSON.parse(fs.readFileSync(fileName, "utf-8"));
 
   //TODO sloppy, generate 1000 addresses, should be enough, in real world must be endless
   const addresses: Array<IAddressMetaData> = [];
 
+  //TODO start by getting 1000 addresses, in the long run, dynamically check how many is needed
   for (let position = 0; position < 500; position++) {
     const ACCOUNT = 0;
 
