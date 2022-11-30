@@ -1,27 +1,21 @@
 import RavencoinKey from "@ravenrebels/ravencoin-key";
-import { IAddressMetaData } from "./Types";
+import { IAddressMetaData, IUser } from "./Types";
 import * as fs from "fs";
 import * as userManager from "./userManager";
-export function getAddresses(userName: string, network: string) {
-  const objects = getAddressObjects(userName, network);
+export function getAddresses(user: IUser, network: string) {
+  const objects = getAddressObjects(user.mnemonic, network);
   const result = objects.map((obj) => obj.address);
   if (fs.existsSync("./temp") === false) {
     fs.mkdirSync("./temp");
   }
   fs.writeFileSync(
-    "./temp/addresses_" + userName + ".json",
+    "./temp/addresses_" + user + ".json",
     JSON.stringify(result, null, 4)
   );
 
   return result;
 }
-export function getAddressObjects(userName: string, network: string) {
-  const user = userManager.getUserById(userName);
-
-  if (!user) {
-    throw new Error("User not found " + userName);
-  }
-
+export function getAddressObjects(mnemonic: string, network: string) {
   const isNetworkValid = network === "rvn" || network === "rvn-test";
   if (!isNetworkValid) {
     throw new Error("Network *" + network + "* not valid");
@@ -36,7 +30,7 @@ export function getAddressObjects(userName: string, network: string) {
 
     const obj = RavencoinKey.getAddressPair(
       network,
-      user.mnemonic,
+      mnemonic,
       ACCOUNT,
       position
     );

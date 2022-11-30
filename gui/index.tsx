@@ -7,6 +7,7 @@ import { Balance } from "./Balance";
 import { getRoute } from "./getRoute";
 import { History } from "./History";
 import { Navigator } from "./Navigator";
+import { PageTop } from "./pageTop";
 import { Receive } from "./Receive";
 import { Transfer } from "./Transfer";
 
@@ -43,9 +44,6 @@ function App() {
     </div>
   );
 }
-const rootElement = document.getElementById("app");
-const root = createRoot(rootElement);
-root.render(<App />);
 
 export function useBalance(triggerDate?: string): null | Array<{
   assetName: string;
@@ -70,3 +68,7 @@ export function getAmount(balance, name: string): number {
   const value = asset.balance / 1e8;
   return value;
 }
+
+createRoot(document.getElementById("pageTop")).render(<PageTop />);
+
+createRoot(document.getElementById("app")).render(<App />);

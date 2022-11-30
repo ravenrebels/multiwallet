@@ -6,25 +6,36 @@ import * as fs from "fs";
 import * as Key from "./Key";
 
 import { getConfig } from "./Utils";
-
+import * as userManager from "./userManager";
 const app = express();
 const port = process.env.PORT || 80;
 app.use(express.static("dist"));
 
 const config = getConfig();
 
+//OUR MIDDLEWARE FOR USER MANAGEMENT
+app.use((req, res, next) => {
+  const currentUser = userManager.getUserById("user1");
+  req["currentUser"] = currentUser;
+  next();
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-app.get("/receiveaddress", async function (_, response) {
-  const addresses = Key.getAddresses("user1", config.network);
+app.get("/receiveaddress", function (request, response) {
+  const currentUser = request["currentUser"];
+  const addresses = Key.getAddresses(currentUser.mnemonic, config.network);
 
-  const address = await getReceiveAddress(addresses);
-  response.send({ address });
+  const promise = getReceiveAddress(addresses);
+  promise.then((address) => {
+    response.send({ address });
+  });
 });
 //Even number are external addresses
 app.get("/api/balance", function (request, response) {
-  const addresses = Key.getAddresses("user1", config.network);
+  const currentUser = request["currentUser"];
+  const addresses = Key.getAddresses(currentUser, config.network);
 
   Blockchain.getBalance(addresses)
     .then((data) => response.send(data))
@@ -34,7 +45,8 @@ app.get("/api/balance", function (request, response) {
     });
 });
 app.get("/api/history", function (request, response) {
-  const addresses = Key.getAddresses("user1", config.network);
+  const currentUser = request["currentUser"];
+  const addresses = Key.getAddresses(currentUser, config.network);
   const promise = getHistory(addresses);
   promise
     .then((d) => {
@@ -45,7 +57,8 @@ app.get("/api/history", function (request, response) {
     });
 });
 app.get("/api/getaddressutxos", function (request, response) {
-  const addresses = Key.getAddresses("user1", config.network);
+  const currentUser = request["currentUser"];
+  const addresses = Key.getAddresses(currentUser, config.network);
 
   const promise = Blockchain.getUnspentTransactionOutputs(addresses);
   promise
@@ -62,10 +75,12 @@ app.get("/api/getaddressutxos", function (request, response) {
 });
 
 app.get("/publicprofile", function (request, response) {
-  const user1 = fs.readFileSync("./user1.json", "utf8");
+  const currentUser = request["currentUser"];
+  const user1 = fs.readFileSync("./" + currentUser.id + ".json", "utf8");
   const obj = JSON.parse(user1);
   const result = {
     displayName: obj.displayName,
+    profileImageURL: obj.profileImageURL,
   };
   response.send(result);
 });

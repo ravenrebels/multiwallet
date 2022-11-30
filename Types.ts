@@ -4,7 +4,10 @@ export interface IAddressMetaData {
   path: string;
   privateKey: string;
 }
-
+export interface IUser {
+  mnemonic: string;
+  id: string;
+}
 export interface IConfig {
   raven_username: string;
   raven_password: string;
