@@ -1,15 +1,19 @@
 import RavencoinKey from "@ravenrebels/ravencoin-key";
 import { IAddressMetaData, IUser } from "./Types";
 import * as fs from "fs";
-import * as userManager from "./userManager";
+
 export function getAddresses(user: IUser, network: string) {
+  if (!user.id) {
+    throw Error(user + " does not have id");
+  }
+
   const objects = getAddressObjects(user.mnemonic, network);
   const result = objects.map((obj) => obj.address);
   if (fs.existsSync("./temp") === false) {
     fs.mkdirSync("./temp");
   }
   fs.writeFileSync(
-    "./temp/addresses_" + user + ".json",
+    "./temp/addresses_" + user.id + ".json",
     JSON.stringify(result, null, 4)
   );
 

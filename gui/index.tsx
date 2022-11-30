@@ -1,4 +1,3 @@
-import axios from "axios";
 import * as React from "react";
 
 import { createRoot } from "react-dom/client";
@@ -10,6 +9,7 @@ import { Navigator } from "./Navigator";
 import { PageTop } from "./pageTop";
 import { Receive } from "./Receive";
 import { Transfer } from "./Transfer";
+import { useBalance } from "./useBalance";
 
 enum Routes {
   BALANCE = "BALANCE",
@@ -43,21 +43,6 @@ function App() {
       {route === Routes.RECEIVE && <Receive></Receive>}
     </div>
   );
-}
-
-export function useBalance(triggerDate?: string): null | Array<{
-  assetName: string;
-  balance: any;
-  received: any;
-}> {
-  const [balance, setBalance] = React.useState(null);
-  React.useEffect(() => {
-    axios
-      .get("/api/balance")
-      .then((axiosResponse) => setBalance(axiosResponse.data));
-  }, [triggerDate]);
-
-  return balance;
 }
 
 export function getAmount(balance, name: string): number {

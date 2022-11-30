@@ -1,11 +1,20 @@
 import * as fs from "fs";
 
+//Cache config, changes require restart of server
+//No need to read from disk for every request
+
+let config = null;
 export function getConfig() {
+  if (config) {
+    return config;
+  }
   const filePath = "./config.json";
 
   if (fs.existsSync(filePath) === true) {
     const text = fs.readFileSync(filePath, "utf-8");
     const obj = JSON.parse(text);
+
+    config = obj;
     return obj;
   } else {
     const template = `{

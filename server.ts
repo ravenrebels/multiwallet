@@ -5,17 +5,24 @@ import { getHistory } from "./blockchain/getHistory";
 import * as fs from "fs";
 import * as Key from "./Key";
 
-import { getConfig } from "./Utils";
+import { getConfig } from "./getConfig";
 import * as userManager from "./userManager";
+
+import * as Asdf from "./blockchain/Asdf";
 const app = express();
 const port = process.env.PORT || 80;
+
+//ACCEPT BODY POST DATA
+app.use(express.json());
+
+//We have static stuff in dist, that is our graphical user interface web
 app.use(express.static("dist"));
 
 const config = getConfig();
 
 //OUR MIDDLEWARE FOR USER MANAGEMENT
 app.use((req, res, next) => {
-  const currentUser = userManager.getUserById("user1");
+  const currentUser = userManager.getUserById("user3");
   req["currentUser"] = currentUser;
   next();
 });
@@ -25,7 +32,7 @@ app.listen(port, () => {
 });
 app.get("/receiveaddress", function (request, response) {
   const currentUser = request["currentUser"];
-  const addresses = Key.getAddresses(currentUser.mnemonic, config.network);
+  const addresses = Key.getAddresses(currentUser, config.network);
 
   const promise = getReceiveAddress(addresses);
   promise.then((address) => {
@@ -83,4 +90,19 @@ app.get("/publicprofile", function (request, response) {
     profileImageURL: obj.profileImageURL,
   };
   response.send(result);
+});
+
+app.post("/send", (request, response) => {
+  const user = request["currentUser"];
+
+  const promise = Asdf.sendRavencoin(
+    user,
+    request.body.to,
+    request.body.amount
+  );
+  promise
+    .then((txid) => response.send({ txid }))
+    .catch((e) => {
+      response.status(500).send({ error: e });
+    });
 });

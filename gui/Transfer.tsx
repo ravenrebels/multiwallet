@@ -4,6 +4,7 @@ import { getAmount } from "./index";
 import { Loading } from "./Loading";
 
 export function Transfer({ balance }) {
+  const [transactionId, setTransactionId] = React.useState("");
   const [amount, setAmount] = React.useState("0");
   const [to, setTo] = React.useState("");
   const [assetName, setAssetName] = React.useState("RVN");
@@ -30,22 +31,24 @@ export function Transfer({ balance }) {
     const obj = {
       assetName,
       to,
-      amount,
+      amount: parseFloat(amount),
     };
 
-    const amountValue = parseFloat(amount);
-    alert("Should send " + amountValue);
-    console.log("SHould send", obj);
-
     const promise = axios.post("/send", obj);
-    promise.then((data) => {
-      console.log("data", data);
+    console.log("promise", promise);
+    promise.then((axiosResponse) => {
+      console.log("Axios resonse data", axiosResponse.data);
+      setTransactionId(axiosResponse.data.txid);
     });
     promise.catch((e) => {
+      alert(e);
       console.log("Error while sending", e);
     });
     return false;
   };
+  if (transactionId) {
+    return <div className="plate">{transactionId}</div>;
+  }
   return (
     <div className="plate">
       <form className="row g-3" onSubmit={onSubmit}>
@@ -53,7 +56,7 @@ export function Transfer({ balance }) {
         <i>Not implemented yet</i>
         <div className="mb-3">
           <label htmlFor="assetSelect" className="form-label">
-            Email address
+            Asset
           </label>
 
           <select

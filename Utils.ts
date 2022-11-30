@@ -6,8 +6,6 @@ import * as Key from "./Key";
 
 const ONE_HUNDRED_MILLION = 1e8;
 
-const config = getConfig();
-
 export function getPrivateKey(
   addresses: Array<IAddressMetaData>,
   address: string
@@ -31,17 +29,4 @@ export function convertUTXOsToVOUT(UTXOs) {
     return obj;
   });
   return inputs;
-}
-
-export function getConfig(): IConfig {
-  //Validate that the config file exists
-
-  const fileName = "./config.json";
-  if (fs.existsSync(fileName) === false) {
-    throw new Error(fileName + " not found. Please create it");
-    process.exit(1);
-  }
-
-  const config = JSON.parse(fs.readFileSync(fileName, "utf-8"));
-  return config;
 }

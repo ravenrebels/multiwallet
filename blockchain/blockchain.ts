@@ -13,6 +13,34 @@ export const rpc = getRPC(
   config.raven_url
 );
 
+export function sendRawTransaction(signedTransaction) {
+  const p = rpc(methods.sendrawtransaction, [signedTransaction.hex]);
+  p.catch((e) => {
+    console.dir(e);
+  });
+  return p;
+}
+export function signRawTransaction(
+  rawTransactionHex: any,
+  privateKeys: Array<string>
+) {
+  console.log("raw transaction", rawTransactionHex);
+
+  const s = rpc(methods.signrawtransaction, [
+    rawTransactionHex,
+    null,
+    privateKeys,
+  ]);
+  return s;
+}
+
+export function decodeRawTransaction(raw) {
+  return rpc(methods.decoderawtransaction, [raw]);
+}
+export function createRawTransaction(inputs, outputs) {
+  return rpc(methods.createrawtransaction, [inputs, outputs]);
+}
+
 export function getBalance(addresses: Array<string>): Promise<any> {
   const includeAssets = true;
   const promise = rpc(methods.getaddressbalance, [
@@ -81,7 +109,7 @@ async function sendFromUser1ToUser2() {
     console.error("Could not find enough RVN to send");
     process.exit(1);
   }
-  console.log("PRIVATE KEYS", privateKeys);
+
   //OK now we know which unspent transaction outputs we must use.
   console.log("TO be able to send", amount, " we will input", unspentAmount);
   console.log("ENOUGH UNSPENT", enoughUnspent);
@@ -124,12 +152,10 @@ async function sendFromUser1ToUser2() {
   });
   const signedTransaction = await s;
 
-  console.log("PRIVATE KEYS", privateKeys);
-
   console.log("Lets publish the transaction");
 }
 
-function convertUTXOsToVOUT(UTXOs) {
+export function convertUTXOsToVOUT(UTXOs) {
   const inputs = UTXOs.map(function (bla) {
     //OK we have to convert from "unspent" format to "vout"
 
