@@ -2,7 +2,6 @@ import { getAddressObjects } from "../Key";
 import { IUser } from "../Types";
 import * as blockchain from "./blockchain";
 import { getConfig } from "../getConfig";
-import { response } from "express";
 
 const config = getConfig();
 

@@ -18,8 +18,18 @@ export function Transfer({ balance }) {
   const onSubmit = (event) => {
     event.preventDefault();
 
+    if (assetName !== "RVN") {
+      alert("Sorry, only supports RVN at the moment");
+      return;
+    }
+
     if (!amount) {
       alert("Please enter amount");
+      return;
+    }
+
+    if (parseFloat(amount) > rvnAmount) {
+      alert("Not enough RVN to send " + parseFloat(amount).toLocaleString());
       return;
     }
 

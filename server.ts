@@ -22,7 +22,7 @@ const config = getConfig();
 
 //OUR MIDDLEWARE FOR USER MANAGEMENT
 app.use((req, res, next) => {
-  const currentUser = userManager.getUserById("user3");
+  const currentUser = userManager.getUserById("user1");
   req["currentUser"] = currentUser;
   next();
 });
