@@ -6,7 +6,7 @@ import { Balance } from "./Balance";
 import { getRoute } from "./getRoute";
 import { History } from "./History";
 import { Navigator } from "./Navigator";
-import { PageTop } from "./pageTop";
+import { PageTop } from "./PageTop";
 import { Receive } from "./Receive";
 import { Transfer } from "./Transfer";
 import { useBalance } from "./useBalance";
