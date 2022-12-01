@@ -34,7 +34,7 @@ Use this template and replace the values
   "raven_username": "jfk38fn202jc53",
   "raven_password": "jfk38fn202jc53",
   "raven_url": "http://localhost:18766",
-  "network": "testnet"
+  "network": "rvn-test"
 }
 
 ```
