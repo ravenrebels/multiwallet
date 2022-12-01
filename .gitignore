@@ -4,6 +4,7 @@ sessions
 images
 temp
 *.js
+!/signin/index.js
 # Logs
 logs
 *.log
