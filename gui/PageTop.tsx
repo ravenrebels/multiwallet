@@ -13,9 +13,29 @@ export function PageTop() {
         </div>
         <div className="pageTop__avatar">
           <img
-            className="pageTop__avatar-image"
+            className="pageTop__avatar-image dropdown-toggle"
             src={profile.profileImageURL}
+            id="dropdownMenuButton"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
           ></img>
+
+          <div className="dropdown">
+            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a
+                className="dropdown-item"
+                href="#"
+                onClick={() => {
+                  axios
+                    .post("/signout", {})
+                    .then((d) => (window.location.href = "/"));
+                }}
+              >
+                Sign out
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </>

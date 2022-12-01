@@ -64,7 +64,7 @@ function Image({ assetName }) {
         event.currentTarget.style.display = "none";
       }}
       className="balance__item-thumbnail"
-      src={`https://rebel-balance-front.herokuapp.com/thumbnail?assetName=${encodedAssetName}`}
+      src={`/thumbnail?assetName=${encodedAssetName}`}
     ></img>
   );
 }

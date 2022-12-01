@@ -3,17 +3,7 @@ import axios from "axios";
 import { Loading } from "./Loading";
 
 export function History() {
-  const [history, setHistory] = React.useState<any>(null);
-
-  React.useEffect(() => {
-    const url = "/api/history";
-
-    const promise = axios.get(url);
-    promise.then((d) => {
-      const data = d.data;
-      setHistory(data);
-    });
-  }, []);
+  const history = useHistory();
 
   if (!history) {
     return <Loading />;
@@ -46,7 +36,6 @@ function Received({ history }) {
         <tbody>
           {inputs.map((transaction) => {
             const dateString = new Date(transaction.time * 1000);
-
             return (
               <tr key={transaction.txid}>
                 <td>{dateString.toLocaleString()}</td>
@@ -55,13 +44,19 @@ function Received({ history }) {
                   const isExternalAddress = vout.index % 2 === 0;
                   if (vout.scriptPubKey.asset && isExternalAddress) {
                     return [
-                      <td>{vout.scriptPubKey.asset.amount}</td>,
-                      <td>{vout.scriptPubKey.asset.name}</td>,
+                      <td key={"asset_amount_" + transaction.txid}>
+                        {vout.scriptPubKey.asset.amount}
+                      </td>,
+                      <td key={"asset_name_" + transaction.txid}>
+                        {vout.scriptPubKey.asset.name}
+                      </td>,
                     ];
                   } else if (isExternalAddress === true) {
                     return [
-                      <td>{vout.value.toLocaleString()}</td>,
-                      <td>RVN</td>,
+                      <td key={"rvn_amount_" + transaction.txid}>
+                        {vout.value.toLocaleString()}
+                      </td>,
+                      <td key={"rvn_name_" + transaction.txid}>RVN</td>,
                     ];
                   }
                   return null;
@@ -73,4 +68,17 @@ function Received({ history }) {
       </table>
     </div>
   );
+}
+
+function useHistory() {
+  const [history, setHistory] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const work = async () => setHistory((await axios.get("/api/history")).data);
+    work();
+    const interval = setInterval(work, 30 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return history;
 }

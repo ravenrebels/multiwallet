@@ -10,7 +10,7 @@ export function useBalance(triggerDate?: string): null | Array<{
 
   React.useEffect(() => {
     axios
-      .get("/api/balance")
+      .get("/api/balance?cachebuster=" + new Date().getMilliseconds())
       .then((axiosResponse) => setBalance(axiosResponse.data));
   }, [triggerDate]);
 

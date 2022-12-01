@@ -1,6 +1,6 @@
 import { getConfig } from "../getConfig";
 import { getRPC, methods } from "@ravenrebels/ravencoin-rpc";
-import { IAddressMetaData } from "../Types";
+
 import * as Key from "../Key";
 import { getPrivateKey } from "../Utils";
 
@@ -12,7 +12,9 @@ export const rpc = getRPC(
   config.raven_password,
   config.raven_url
 );
-
+export function getAssetData(assetName) {
+  return rpc(methods.getassetdata, [assetName]);
+}
 export function sendRawTransaction(signedTransaction) {
   const p = rpc(methods.sendrawtransaction, [signedTransaction.hex]);
   p.catch((e) => {
@@ -36,6 +38,10 @@ export function signRawTransaction(
 
 export function decodeRawTransaction(raw) {
   return rpc(methods.decoderawtransaction, [raw]);
+}
+
+export function getRawTransaction(id: string): any {
+  return rpc(methods.getrawtransaction, [id, true]);
 }
 export function createRawTransaction(inputs, outputs) {
   return rpc(methods.createrawtransaction, [inputs, outputs]);
@@ -154,7 +160,16 @@ async function sendFromUser1ToUser2() {
 
   console.log("Lets publish the transaction");
 }
+export async function getMempool() {
+  const ids = await rpc(methods.getrawmempool, []);
 
+  const result: any = [];
+  for (const id of ids) {
+    const transaction = await getRawTransaction(id);
+    result.push(transaction);
+  }
+  return result;
+}
 export function convertUTXOsToVOUT(UTXOs) {
   const inputs = UTXOs.map(function (bla) {
     //OK we have to convert from "unspent" format to "vout"

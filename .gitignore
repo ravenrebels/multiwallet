@@ -1,5 +1,7 @@
 .parcel-cache
 config.json
+sessions
+images
 temp
 *.js
 # Logs
