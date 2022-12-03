@@ -1,4 +1,9 @@
-import * as express from "express";
+//Weird imports for express but needed for Typescript to understand types
+import { Request, Response, Application, Express } from 'express';
+// TODO Figure out how NOT to use require here.
+const express = require('express');
+
+
 import * as Blockchain from "./blockchain/blockchain";
 import { getReceiveAddress } from "./blockchain/getReceiveAddress";
 import { getHistory } from "./blockchain/getHistory";
@@ -16,8 +21,9 @@ const FileStore = require("session-file-store")(session);
 import * as Asdf from "./blockchain/Asdf";
 
 import thumbnail from "./thumbnail";
+import { IUser } from "./Types";
 
-const app = express();
+const app:Express = express();
 const port = process.env.PORT || 80;
 
 //ACCEPT BODY POST DATA
@@ -46,13 +52,14 @@ app.use((req, res, next) => {
     next();
     return;
   }
-  console.log(req.path);
+//@ts-ignore
   const userId = req.session["userId"];
   if (!userId) {
     res.redirect("/signin");
     return;
   }
   const currentUser = userManager.getUserById(userId);
+  //@ts-ignore
   req["currentUser"] = currentUser;
   next();
 });
@@ -65,7 +72,7 @@ app.listen(port, () => {
 app.get("/thumbnail", thumbnail);
 
 app.get("/receiveaddress", function (request, response) {
-  const currentUser = request["currentUser"];
+  const currentUser = getCurrentUser(request);
   const addresses = Key.getAddresses(currentUser, config.network);
 
   const promise = getReceiveAddress(addresses);
@@ -75,7 +82,7 @@ app.get("/receiveaddress", function (request, response) {
 });
 //Even number are external addresses
 app.get("/api/balance", function (request, response) {
-  const currentUser = request["currentUser"];
+  const currentUser = getCurrentUser(request);
   const addresses = Key.getAddresses(currentUser, config.network);
 
   Blockchain.getBalance(addresses)
@@ -86,7 +93,7 @@ app.get("/api/balance", function (request, response) {
     });
 });
 app.get("/api/history", function (request, response) {
-  const currentUser = request["currentUser"];
+  const currentUser = getCurrentUser(request);
   const addresses = Key.getAddresses(currentUser, config.network);
   const promise = getHistory(addresses);
   promise
@@ -110,7 +117,7 @@ app.get("/api/mempool", async function (request, response) {
     });
 });
 app.get("/api/getaddressutxos", function (request, response) {
-  const currentUser = request["currentUser"];
+  const currentUser = getCurrentUser(request);
   const addresses = Key.getAddresses(currentUser, config.network);
 
   const promise = Blockchain.getUnspentTransactionOutputs(addresses);
@@ -127,12 +134,12 @@ app.get("/api/getaddressutxos", function (request, response) {
     });
 });
 app.post("/signin/setupsession", (request, response) => {
-  request.session["userId"] = request.body.userId;
-
+  //@ts-ignore
+  request.session["userId"] = request.body.userId; 
   response.send({ status: "success" });
 });
 app.get("/signin/publicprofiles", (request, response) => {
-  function getPublic(userId) {
+  function getPublic(userId:string) {
     const user = userManager.getUserById(userId);
     const obj = {
       displayName: user.displayName,
@@ -152,7 +159,7 @@ app.get("/signin/publicprofiles", (request, response) => {
   return;
 });
 app.get("/publicprofile", function (request, response) {
-  const currentUser = request["currentUser"];
+  const currentUser = getCurrentUser(request);
   const user1 = fs.readFileSync("./" + currentUser.id + ".json", "utf8");
   const obj = JSON.parse(user1);
   const result = {
@@ -163,7 +170,7 @@ app.get("/publicprofile", function (request, response) {
 });
 
 app.post("/send", (request, response) => {
-  const user = request["currentUser"];
+  const user = getCurrentUser(request);
 
   const promise = Asdf.sendRavencoin(
     user,
@@ -184,3 +191,12 @@ app.post("/signout", (request, response) => {
   });
   response.redirect("/");
 });
+
+
+function getCurrentUser(request:Request):IUser{
+
+  
+  //@ts-ignore
+  return request["currentUser"]
+ 
+}
