@@ -1,6 +1,12 @@
 import * as React from "react";
-
-export function Navigator({ balance, route }) {
+import { IBalance } from "../Types";
+import navigate from "./navigate";
+import { Routes } from "./Routes";
+interface IProps {
+  balance: IBalance;
+  route: Routes;
+}
+export function Navigator({ balance, route }: IProps) {
   const iconBalance = <i className="fa-solid fa-scale-balanced" />;
   const iconTransfer = <i className="fa-solid fa-paper-plane"></i>;
   const iconHistory = <i className="fa-solid fa-clock-rotate-left"></i>;
@@ -14,32 +20,35 @@ export function Navigator({ balance, route }) {
         <Item
           label="Balance"
           currentRoute={route}
-          targetRoute="BALANCE"
+          targetRoute={Routes.BALANCE}
           icon={iconBalance}
         />
         <Item
           label="Send"
           currentRoute={route}
-          targetRoute="TRANSFER"
+          targetRoute={Routes.TRANSFER}
           icon={iconTransfer}
         />
         <Item
           label="Receive"
           currentRoute={route}
-          targetRoute="RECEIVE"
+          targetRoute={Routes.RECEIVE}
           icon={iconReceive}
         />
         <Item
           label="History"
           currentRoute={route}
-          targetRoute="HISTORY"
+          targetRoute={Routes.HISTORY}
           icon={iconHistory}
         />
       </div>
     </div>
   );
 }
-function RavenBalance({ balance }) {
+interface IRavenBalanceProps {
+  balance: IBalance;
+}
+function RavenBalance({ balance }: IRavenBalanceProps) {
   if (!balance) {
     return (
       <div>
@@ -64,7 +73,14 @@ function RavenBalance({ balance }) {
     </div>
   );
 }
-function Item({ currentRoute, icon, label, targetRoute }) {
+
+interface ItemProps {
+  currentRoute: Routes;
+  icon: any;
+  label: string;
+  targetRoute: Routes;
+}
+function Item({ currentRoute, icon, label, targetRoute }: ItemProps) {
   const href = "?route=" + targetRoute;
   let className = "navigator__item";
   if (currentRoute === targetRoute) {
@@ -72,7 +88,14 @@ function Item({ currentRoute, icon, label, targetRoute }) {
   }
   return (
     <div className={className}>
-      <a href={href} className="btn btn-primary">
+      <a
+        href={href}
+        className="btn btn-primary"
+        onClick={(event) => {
+          event.preventDefault();
+          navigate(targetRoute);
+        }}
+      >
         <span className="navigation__item-icon">{icon} </span>
       </a>
       <div>{label}</div>

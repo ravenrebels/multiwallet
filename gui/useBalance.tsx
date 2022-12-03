@@ -1,11 +1,8 @@
 import axios from "axios";
 import * as React from "react";
-import { getConfig } from "../getConfig";
-export function useBalance(triggerDate?: string): null | Array<{
-  assetName: string;
-  balance: any;
-  received: any;
-}> {
+import { IBalance } from "../Types";
+
+export function useBalance(triggerDate?: string): IBalance {
   const [balance, setBalance] = React.useState(null);
 
   React.useEffect(() => {

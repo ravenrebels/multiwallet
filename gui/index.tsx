@@ -3,37 +3,21 @@ import * as React from "react";
 import { createRoot } from "react-dom/client";
 
 import { Balance } from "./Balance";
-import { getRoute } from "./getRoute";
 import { History } from "./History";
 import { Navigator } from "./Navigator";
 import { PageTop } from "./PageTop";
 import { Receive } from "./Receive";
+import { Routes } from "./Routes";
 import { Transfer } from "./Transfer";
 import { useBalance } from "./useBalance";
 
-enum Routes {
-  BALANCE = "BALANCE",
-  HISTORY = "HISTORY",
-  RECEIVE = "RECEIVE",
-  TRANSFER = "TRANSFER",
-}
-function App() {
-  const [triggerDate, setTriggerDate] = React.useState(
-    new Date().toISOString()
-  );
-  const balance = useBalance(triggerDate);
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      const newDate = new Date().toISOString();
-      setTriggerDate(newDate);
-    }, 30 * 1000);
-    const cleanUp = () => {
-      clearInterval(interval);
-    };
-    return cleanUp;
-  }, []);
-  const route = getRoute() ? getRoute() : Routes.BALANCE;
+//@ts-ignore
+createRoot(document.getElementById("pageTop")).render(<PageTop />);
 
+function App() {
+  const triggerDate = useTriggerDate();
+  const route = useRoute();
+  const balance = useBalance(triggerDate);
   return (
     <div>
       <Navigator balance={balance} route={route} />
@@ -45,8 +29,8 @@ function App() {
   );
 }
 
-export function getAmount(balance, name: string): number {
-  const asset = balance.find((a) => a.assetName === name);
+export function getAmount(balance: any, name: string): number {
+  const asset = balance.find((a: any) => a.assetName === name);
   if (!asset) {
     return NaN;
   }
@@ -54,6 +38,47 @@ export function getAmount(balance, name: string): number {
   return value;
 }
 
-createRoot(document.getElementById("pageTop")).render(<PageTop />);
-
+//@ts-ignore
 createRoot(document.getElementById("app")).render(<App />);
+
+function useRoute(): Routes {
+  const [route, setRoute] = React.useState(getRoute());
+
+  React.useEffect(() => {
+    window.addEventListener("navigate", (event) => {
+      setRoute(getRoute());
+    });
+    window.addEventListener("popstate", (event) => {
+      setRoute(getRoute());
+    });
+    //@ts-ignore
+  }, []);
+  const temp = (route ? route : Routes.BALANCE) as Routes;
+  return temp;
+}
+
+function useTriggerDate() {
+  const [triggerDate, setTriggerDate] = React.useState(
+    new Date().toISOString()
+  );
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      const newDate = new Date().toISOString();
+      setTriggerDate(newDate);
+    }, 30 * 1000);
+    const cleanUp = () => {
+      clearInterval(interval);
+    };
+    return cleanUp;
+  }, []);
+
+  return triggerDate;
+}
+export function getRoute() {
+  const searchParams = new URLSearchParams(window.location.search);
+
+  const route = searchParams.get("route");
+
+  return route as Routes;
+}

@@ -1,9 +1,13 @@
 import * as React from "react";
 import { SyntheticEvent } from "react";
+import { IBalance } from "../Types";
 
 import { Loading } from "./Loading";
 
-export function Balance({ balance }) {
+interface IBalanceProps {
+  balance: IBalance;
+}
+export function Balance({ balance }: IBalanceProps) {
   if (!balance) {
     return <Loading />;
   }
@@ -55,7 +59,10 @@ export function Balance({ balance }) {
 }
 
 /* Image that hides itself on error */
-function Image({ assetName }) {
+interface IImageProps {
+  assetName: string;
+}
+function Image({ assetName }: IImageProps) {
   const encodedAssetName = encodeURIComponent(assetName);
 
   return (

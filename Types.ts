@@ -1,3 +1,11 @@
+export type IBalance = BalanceRoot[] | null;
+
+export interface BalanceRoot {
+  assetName: string;
+  balance: number;
+  received: number;
+}
+
 export interface IAddressMetaData {
   address: string;
   WIF: string;
