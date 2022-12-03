@@ -1,5 +1,6 @@
 import * as React from "react";
 import axios from "axios";
+import { Loading } from "./Loading";
 export function Receive() {
   const [address, setAddress] = React.useState("");
   React.useEffect(() => {
@@ -7,11 +8,11 @@ export function Receive() {
     axiosResponse.then((response) => setAddress(response.data.address));
   }, []);
 
-  if (!address) return null;
+  if (!address) return  <Loading ></Loading>;
 
   return (
     <div className="plate">
-      {address}
+      {address}t
       <hr></hr>
       <img
         src={
