@@ -1,5 +1,5 @@
 import { getAddressObjects } from "../Key";
-import { IUser } from "../Types";
+import { IUser, IUTXO } from "../Types";
 import * as blockchain from "./blockchain";
 import { getConfig } from "../getConfig";
 
@@ -7,7 +7,7 @@ const config = getConfig();
 
 export async function sendRavencoin(
   fromUser: IUser,
-  toAddress,
+  toAddress: string,
   rvnAmount: number
 ) {
   const addressObjects = getAddressObjects(fromUser.mnemonic, config.network);
@@ -16,9 +16,9 @@ export async function sendRavencoin(
   let UTXOs = await blockchain.getUnspentTransactionOutputs(addresses);
 
   //Remove all UTXOS that are not RVN
-  UTXOs = UTXOs.filter(function (item) {
+  UTXOs = UTXOs.filter(function (item: IUTXO) {
     //RVN transactions do not have zero value
-    if (item.statoshis === 0) {
+    if (item.satoshis === 0) {
       return false;
     }
 
@@ -45,7 +45,7 @@ export async function sendRavencoin(
 
   //In JavaScript the number 77866.98 minus 111 minus 0.2 equals 77755.95999999999
   //We want it to be 77755.96
-  const twoDecimalTrunc = (num) => Math.trunc(num * 100) / 100;
+  const twoDecimalTrunc = (num: number) => Math.trunc(num * 100) / 100;
   const inputs = blockchain.convertUTXOsToVOUT(enough);
   const changeAddress = addresses[1];
   const outputs = {
@@ -60,7 +60,12 @@ export async function sendRavencoin(
   const raw = await rawPromise;
 
   //OK lets find the private keys (WIF) for input addresses
-  const privateKeys = {};
+
+  type TPrivateKey = {
+    [key: string]: string;
+  };
+
+  const privateKeys: TPrivateKey = {};
   inputs.map(function (input: any) {
     const addy = input.address;
     const addressObject = addressObjects.find((a) => a.address === addy);
@@ -84,7 +89,8 @@ export async function sendRavencoin(
 
   //OK now try to sign the transaction with bitcoinjs-lib
 }
-function getEnoughUTXOs(utxos, amount) {
+
+function getEnoughUTXOs(utxos: Array<IUTXO>, amount: number) {
   let tempAmount = 0;
   const returnValue: Array<any> = [];
 

@@ -6,6 +6,15 @@ export interface BalanceRoot {
   received: number;
 }
 
+export interface IUTXO {
+  address: string;
+  assetName: string;
+  txid: string;
+  outputIndex: number;
+  script: string;
+  satoshis: number;
+  height: number;
+}
 export interface IAddressMetaData {
   address: string;
   WIF: string;

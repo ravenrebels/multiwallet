@@ -1,8 +1,7 @@
 //Weird imports for express but needed for Typescript to understand types
-import { Request, Response, Application, Express } from 'express';
+import { Request, Response, Application, Express } from "express";
 // TODO Figure out how NOT to use require here.
-const express = require('express');
-
+const express = require("express");
 
 import * as Blockchain from "./blockchain/blockchain";
 import { getReceiveAddress } from "./blockchain/getReceiveAddress";
@@ -23,7 +22,7 @@ import * as Asdf from "./blockchain/Asdf";
 import thumbnail from "./thumbnail";
 import { IUser } from "./Types";
 
-const app:Express = express();
+const app: Express = express();
 const port = process.env.PORT || 80;
 
 //ACCEPT BODY POST DATA
@@ -52,7 +51,7 @@ app.use((req, res, next) => {
     next();
     return;
   }
-//@ts-ignore
+  //@ts-ignore
   const userId = req.session["userId"];
   if (!userId) {
     res.redirect("/signin");
@@ -116,6 +115,29 @@ app.get("/api/mempool", async function (request, response) {
       response.status(500).send({ error: e });
     });
 });
+
+app.get("/api/pendingtransactions", (request, response) => {
+  const mempoolPromise = Blockchain.getMempool();
+  mempoolPromise.then((data) => {
+    if (data.length === 0) {
+      response.status(204).send({});
+      return;
+    }
+
+    const result = data.filter((item: any) => {
+      const text = JSON.stringify(item);
+
+      const currentUser = getCurrentUser(request);
+      const addresses = Key.getAddresses(currentUser, config.network);
+      for (const addy of addresses) {
+        if (text.indexOf(addy) > -1) {
+          return true;
+        }
+      }
+    });
+    response.send(result);
+  });
+});
 app.get("/api/getaddressutxos", function (request, response) {
   const currentUser = getCurrentUser(request);
   const addresses = Key.getAddresses(currentUser, config.network);
@@ -133,13 +155,20 @@ app.get("/api/getaddressutxos", function (request, response) {
       });
     });
 });
+
+app.get("/api/addresses", (request, response) => {
+  const currentUser = getCurrentUser(request);
+  const addresses = Key.getAddresses(currentUser, config.network);
+
+  response.send(addresses);
+});
 app.post("/signin/setupsession", (request, response) => {
   //@ts-ignore
-  request.session["userId"] = request.body.userId; 
+  request.session["userId"] = request.body.userId;
   response.send({ status: "success" });
 });
 app.get("/signin/publicprofiles", (request, response) => {
-  function getPublic(userId:string) {
+  function getPublic(userId: string) {
     const user = userManager.getUserById(userId);
     const obj = {
       displayName: user.displayName,
@@ -192,11 +221,7 @@ app.post("/signout", (request, response) => {
   response.redirect("/");
 });
 
-
-function getCurrentUser(request:Request):IUser{
-
-  
+function getCurrentUser(request: Request): IUser {
   //@ts-ignore
-  return request["currentUser"]
- 
+  return request["currentUser"];
 }

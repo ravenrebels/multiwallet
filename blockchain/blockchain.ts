@@ -3,6 +3,7 @@ import { getRPC, methods } from "@ravenrebels/ravencoin-rpc";
 
 import * as Key from "../Key";
 import { getPrivateKey } from "../Utils";
+import { IUTXO } from "../Types";
 
 const ONE_HUNDRED_MILLION = 1e8;
 
@@ -12,10 +13,10 @@ export const rpc = getRPC(
   config.raven_password,
   config.raven_url
 );
-export function getAssetData(assetName) {
+export function getAssetData(assetName: string) {
   return rpc(methods.getassetdata, [assetName]);
 }
-export function sendRawTransaction(signedTransaction) {
+export function sendRawTransaction(signedTransaction: any) {
   const p = rpc(methods.sendrawtransaction, [signedTransaction.hex]);
   p.catch((e) => {
     console.dir(e);
@@ -36,14 +37,14 @@ export function signRawTransaction(
   return s;
 }
 
-export function decodeRawTransaction(raw) {
+export function decodeRawTransaction(raw: string) {
   return rpc(methods.decoderawtransaction, [raw]);
 }
 
 export function getRawTransaction(id: string): any {
   return rpc(methods.getrawtransaction, [id, true]);
 }
-export function createRawTransaction(inputs, outputs) {
+export function createRawTransaction(inputs: any, outputs: any) {
   return rpc(methods.createrawtransaction, [inputs, outputs]);
 }
 
@@ -70,6 +71,7 @@ export function getUnspentTransactionOutputs(addresses: Array<string>) {
     return all;
   });
 }
+/*
 async function sendFromUser1ToUser2() {
   //Lets send 1 000 RVN from user1 to user2
 
@@ -159,7 +161,7 @@ async function sendFromUser1ToUser2() {
   const signedTransaction = await s;
 
   console.log("Lets publish the transaction");
-}
+}*/
 export async function getMempool() {
   const ids = await rpc(methods.getrawmempool, []);
 
@@ -170,7 +172,7 @@ export async function getMempool() {
   }
   return result;
 }
-export function convertUTXOsToVOUT(UTXOs) {
+export function convertUTXOsToVOUT(UTXOs: Array<IUTXO>) {
   const inputs = UTXOs.map(function (bla) {
     //OK we have to convert from "unspent" format to "vout"
 

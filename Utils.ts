@@ -1,4 +1,4 @@
-import { IAddressMetaData } from "./Types";
+import { IAddressMetaData, IUTXO } from "./Types";
 import * as fs from "fs";
 import { IConfig } from "./Types";
 
@@ -17,7 +17,7 @@ export function getPrivateKey(
     }
   }
 }
-export function convertUTXOsToVOUT(UTXOs) {
+export function convertUTXOsToVOUT(UTXOs: Array<IUTXO>) {
   const inputs = UTXOs.map(function (bla) {
     //OK we have to convert from "unspent" format to "vout"
 

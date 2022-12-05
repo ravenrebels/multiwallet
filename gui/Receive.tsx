@@ -8,11 +8,11 @@ export function Receive() {
     axiosResponse.then((response) => setAddress(response.data.address));
   }, []);
 
-  if (!address) return  <Loading ></Loading>;
+  if (!address) return <Loading></Loading>;
 
   return (
     <div className="plate">
-      {address}t
+      {address}
       <hr></hr>
       <img
         src={

@@ -1,9 +1,11 @@
+import axios from "axios";
 import * as React from "react";
 
 import { createRoot } from "react-dom/client";
 
 import { Balance } from "./Balance";
 import { History } from "./History";
+import { Loading } from "./Loading";
 import { Navigator } from "./Navigator";
 import { PageTop } from "./PageTop";
 import { Receive } from "./Receive";
@@ -21,6 +23,7 @@ function App() {
   return (
     <div>
       <Navigator balance={balance} route={route} />
+      <MempoolStatus></MempoolStatus>
       {route === Routes.BALANCE && <Balance balance={balance} />}
       {route === Routes.TRANSFER && <Transfer balance={balance}></Transfer>}
       {route === Routes.HISTORY && <History></History>}
@@ -29,6 +32,37 @@ function App() {
   );
 }
 
+function MempoolStatus() {
+  const mempool: any = usePollEndpoint("/api/pendingtransactions", 10000);
+
+  if (mempool === null || mempool.length === 0) {
+    return null;
+  } else
+    return (
+      <div className="alert alert-primary" role="alert">
+        Incoming transactions <Loading subtle />
+      </div>
+    );
+}
+
+function usePollEndpoint(URL: string, sleep: number) {
+  const [data, setData] = React.useState(null);
+  React.useEffect(() => {
+    async function work() {
+      const hasQuestionMark = URL.indexOf("?") > 0;
+      let _URL = hasQuestionMark ? URL + "&" : URL + "?";
+      _URL = _URL + new Date().toISOString();
+      const asdf = await axios(_URL);
+      setData(asdf.data);
+    }
+    const interval = setInterval(work, sleep);
+    work(); //Invoke at start
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+  return data;
+}
 export function getAmount(balance: any, name: string): number {
   const asset = balance.find((a: any) => a.assetName === name);
   if (!asset) {
