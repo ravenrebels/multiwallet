@@ -40,7 +40,7 @@ function MempoolStatus() {
   } else
     return (
       <div className="alert alert-primary" role="alert">
-        Incoming transactions <Loading subtle />
+        In or Outgoing transactions <Loading subtle />
       </div>
     );
 }
