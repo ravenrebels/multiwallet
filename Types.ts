@@ -15,6 +15,9 @@ export interface IUTXO {
   satoshis: number;
   height: number;
 }
+export interface IAssetMetaData {
+  assetName: string;
+}
 export interface IAddressMetaData {
   address: string;
   WIF: string;

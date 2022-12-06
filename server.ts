@@ -209,7 +209,10 @@ app.post("/send", (request, response) => {
   promise
     .then((txid) => response.send({ txid }))
     .catch((e) => {
-      response.status(500).send({ error: e });
+      if (e.error && e.error.message) {
+        response.status(500).send({ error: e.error.message });
+        return;
+      } else response.status(500).send({ error: e });
     });
 });
 

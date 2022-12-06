@@ -2,7 +2,7 @@ import { methods } from "@ravenrebels/ravencoin-rpc";
 
 import { rpc } from "./blockchain";
 
-function indexOfAddress(obj, addresses) {
+function indexOfAddress(obj: any, addresses) {
   const text = JSON.stringify(obj);
   for (const a of addresses) {
     if (text.indexOf(a) > -1) {

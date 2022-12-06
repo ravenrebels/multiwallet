@@ -2,8 +2,8 @@ import axios from "axios";
 import * as React from "react";
 import { getAmount } from "./index";
 import { Loading } from "./Loading";
-
-export function Transfer({ balance }) {
+import { IAddressMetaData, IAssetMetaData } from "../Types";
+export function Transfer({ balance }: any) {
   const [transactionId, setTransactionId] = React.useState("");
   const [amount, setAmount] = React.useState("0");
   const [to, setTo] = React.useState("");
@@ -11,11 +11,11 @@ export function Transfer({ balance }) {
   if (!balance) {
     return <Loading />;
   }
-  const assetNames = balance.map((obj) => obj.assetName);
+  const assetNames = balance.map((obj: IAssetMetaData) => obj.assetName);
   assetNames.sort();
   const rvnAmount = getAmount(balance, "RVN");
 
-  const onSubmit = (event) => {
+  const onSubmit = (event: any) => {
     event.preventDefault();
 
     if (assetName !== "RVN") {
@@ -51,8 +51,8 @@ export function Transfer({ balance }) {
       setTransactionId(axiosResponse.data.txid);
     });
     promise.catch((e) => {
-      alert(e);
-      console.log("Error while sending", e);
+      alert(e.response.data.error);
+      console.log("Error while sending!", e.response.data.error);
     });
     return false;
   };
@@ -77,7 +77,7 @@ export function Transfer({ balance }) {
             }}
           >
             <option value="RVN">RVN - {rvnAmount.toLocaleString()}</option>
-            {assetNames.map((name) => {
+            {assetNames.map((name: string) => {
               if (name === "RVN") {
                 return null;
               }

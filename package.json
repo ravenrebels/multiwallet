@@ -4,7 +4,7 @@
   "description": "A hot custodial Ravencoin wallet",
   "scripts": {
     "build": "parcel build ./gui/index.html",
-    "dev": "parcel ./gui/index.html",
+    "dev": "parcel ./gui/index.html --no-cache",
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "npx tsc server.ts && node server"
   },
