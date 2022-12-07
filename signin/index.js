@@ -65,3 +65,15 @@ async function postData(url = "", data = {}) {
   });
   return response.json(); // parses JSON response into native JavaScript objects
 }
+
+//At startup make sure we clear the current session and sign out.
+//This mean that we can redirect here for sign out.
+
+const p = postData("/signout", {});
+console.log("P", p);
+p.then((data) => {
+  console.log("klart", data);
+});
+p.catch((data) => {
+  console.log(data);
+});

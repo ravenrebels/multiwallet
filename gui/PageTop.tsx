@@ -23,15 +23,7 @@ export function PageTop() {
 
           <div className="dropdown">
             <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a
-                className="dropdown-item"
-                href="#"
-                onClick={() => {
-                  axios
-                    .post("/signout", {})
-                    .then((d) => (window.location.href = "/"));
-                }}
-              >
+              <a className="dropdown-item" href="/signin">
                 Sign out
               </a>
             </div>

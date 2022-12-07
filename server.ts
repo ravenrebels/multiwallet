@@ -51,6 +51,10 @@ app.use((req, res, next) => {
     next();
     return;
   }
+  if (path.startsWith("/signout") === true) {
+    next();
+    return;
+  }
   //@ts-ignore
   const userId = req.session["userId"];
   if (!userId) {
@@ -218,10 +222,12 @@ app.post("/send", (request, response) => {
 
 app.post("/signout", (request, response) => {
   console.log("Sign out");
-  request.session.destroy(function (err) {
-    console.log("SIGNED OUT SESSION DESTROYED");
-  });
-  response.redirect("/");
+  if (request.session) {
+    request.session.destroy(function (err) {
+      console.log("SIGNED OUT SESSION DESTROYED");
+    });
+  }
+  response.send({ status: "success" });
 });
 
 function getCurrentUser(request: Request): IUser {
