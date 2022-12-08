@@ -16,7 +16,7 @@ import * as userManager from "./userManager";
 
 const session = require("express-session");
 const FileStore = require("session-file-store")(session);
-
+const nocache = require("nocache");
 import * as Asdf from "./blockchain/Asdf";
 
 import thumbnail from "./thumbnail";
@@ -28,6 +28,7 @@ const port = process.env.PORT || 80;
 //ACCEPT BODY POST DATA
 app.use(express.json());
 
+app.use(nocache());
 //We have static stuff in dist, that is our graphical user interface web
 
 app.use("/signin", express.static("signin"));
