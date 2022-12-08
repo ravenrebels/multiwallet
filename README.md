@@ -28,8 +28,8 @@ npm run build
 
 Create a file called ./config.json with your username/password/url etc
 Use this template and replace the values
-- rvn for Ravencoin mainnet
-- rvn-test for Ravencoin testnet 
+- **rvn** for Ravencoin mainnet
+- **rvn-test** for Ravencoin testnet 
 
 ```
 {
