@@ -37,7 +37,8 @@ function useProfile() {
   const [data, setData] = React.useState<any>(null);
 
   React.useEffect(() => {
-    const axiosResponse = axios.get("/publicprofile/");
+    const URL = "/publicprofile/?cacheBusting=" + new Date().toISOString();
+    const axiosResponse = axios.get(URL);
     axiosResponse.then((d) => {
       setData(d.data);
     });

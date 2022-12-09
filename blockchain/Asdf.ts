@@ -15,6 +15,8 @@ export async function sendRavencoin(
 
   let UTXOs = await blockchain.getUnspentTransactionOutputs(addresses);
 
+  //TODO, remove UTXOs that are in mempool (being used)
+
   //Remove all UTXOS that are not RVN
   UTXOs = UTXOs.filter(function (item: IUTXO) {
     //RVN transactions do not have zero value
