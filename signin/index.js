@@ -46,7 +46,7 @@ class User extends HTMLElement {
           //Seems like we have to wait a split second after getting the new session
           const ONE_SECOND = 1 * 1000;
           setTimeout(() => {
-            window.location.href = "/";
+            window.location.href = "/index.html?cacheBusting=" + new Date().toISOString();
           }, ONE_SECOND)
 
         }
