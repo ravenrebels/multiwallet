@@ -187,6 +187,8 @@ app.get("/signin/publicprofiles", (request, response) => {
     getPublic("user1"),
     getPublic("user2"),
     getPublic("user3"),
+    getPublic("user4"), 
+    getPublic("user5"),
   ];
 
   response.send(users);

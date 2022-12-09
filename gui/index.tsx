@@ -5,7 +5,7 @@ import { createRoot } from "react-dom/client";
 
 import { Balance } from "./Balance";
 import { History } from "./History";
-import { Loading } from "./Loading";
+import { MempoolStatus } from "./MempoolStatus";
 import { Navigator } from "./Navigator";
 import { PageTop } from "./PageTop";
 import { Receive } from "./Receive";
@@ -32,20 +32,7 @@ function App() {
   );
 }
 
-function MempoolStatus() {
-  const mempool: any = usePollEndpoint("/api/pendingtransactions", 10000);
-
-  if (mempool === null || mempool.length === 0) {
-    return null;
-  } else
-    return (
-      <div className="alert alert-primary" role="alert">
-        In or Outgoing transactions <Loading subtle />
-      </div>
-    );
-}
-
-function usePollEndpoint(URL: string, sleep: number) {
+export function usePollEndpoint(URL: string, sleep: number) {
   const [data, setData] = React.useState(null);
   React.useEffect(() => {
     async function work() {

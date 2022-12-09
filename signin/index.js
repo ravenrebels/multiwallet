@@ -32,14 +32,23 @@ class User extends HTMLElement {
         alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">${this.data.displayName}</h5>
-           <a href="#" class="btn btn-primary">Sign in</a>
+           <button class="btn btn-primary">Sign in</button>
         </div>
       </div>`;
 
-    this.querySelector("a").addEventListener("click", (event) => {
-      postData("/signin/setupsession", { userId: this.data.id }).then(
+    this.querySelector("button").addEventListener("click", (event) => {
+
+      //Disable the button when we click it
+      event.target.disabled = true;
+      const URL = "/signin/setupsession?cacheBusting=" + new Date().toISOString();
+      postData(URL, { userId: this.data.id }).then(
         (data) => {
-          window.location.href = "/"; // JSON data parsed by `data.json()` call
+          //Seems like we have to wait a split second after getting the new session
+          const ONE_SECOND = 1 * 1000;
+          setTimeout(() => {
+            window.location.href = "/index.html?cacheBusting=" + new Date().toISOString();
+          }, ONE_SECOND)
+
         }
       );
     });
