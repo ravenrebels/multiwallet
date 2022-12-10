@@ -83,17 +83,26 @@ function useTriggerDate() {
     new Date().toISOString()
   );
 
+  const trigger = () => {
+    const newDate = new Date().toISOString();
+    setTriggerDate(newDate);
+  };
   React.useEffect(() => {
-    const interval = setInterval(() => {
-      const newDate = new Date().toISOString();
-      setTriggerDate(newDate);
-    }, 30 * 1000);
+    const interval = setInterval(trigger, 30 * 1000);
     const cleanUp = () => {
       clearInterval(interval);
     };
     return cleanUp;
   }, []);
 
+  //Listen to mempoolChange event from document
+  React.useEffect(() => {
+    document.addEventListener("mempoolChange", trigger);
+
+    return () => {
+      document.removeEventListener("mempoolChange", trigger);
+    };
+  }, []);
   return triggerDate;
 }
 export function getRoute() {
