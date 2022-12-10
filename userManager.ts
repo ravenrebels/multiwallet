@@ -1,10 +1,10 @@
 import * as fs from "fs";
 
-const naiveCache = {};
+const naiveCache: any = {};
 
 //Clear cache every 10 minutes
 
-export function getUserById(id) {
+export function getUserById(id: string) {
   if (!naiveCache[id]) {
     const text = fs.readFileSync("./" + id + ".json", "utf-8");
     const obj = JSON.parse(text);

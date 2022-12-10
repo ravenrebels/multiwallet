@@ -147,7 +147,7 @@ app.get("/api/getaddressutxos", function (request, response) {
   const currentUser = getCurrentUser(request);
   const addresses = Key.getAddresses(currentUser, config.network);
 
-  const promise = Blockchain.getUnspentTransactionOutputs(addresses);
+  const promise = Blockchain.getAllUnspentTransactionOutputs(addresses);
   promise
     .then((data) => {
       response.send(data);
@@ -187,8 +187,9 @@ app.get("/signin/publicprofiles", (request, response) => {
     getPublic("user1"),
     getPublic("user2"),
     getPublic("user3"),
-    getPublic("user4"), 
+    getPublic("user4"),
     getPublic("user5"),
+    getPublic("user6"),
   ];
 
   response.send(users);
@@ -207,19 +208,20 @@ app.get("/publicprofile", function (request, response) {
 
 app.post("/send", (request, response) => {
   const user = getCurrentUser(request);
-
-  const promise = Asdf.sendRavencoin(
+  const promise = Asdf.send(
     user,
     request.body.to,
-    request.body.amount
+    parseFloat(request.body.amount),
+    request.body.assetName
   );
+
   promise
     .then((txid) => response.send({ txid }))
     .catch((e) => {
       if (e.error && e.error.message) {
         response.status(500).send({ error: e.error.message });
         return;
-      } else response.status(500).send({ error: e });
+      } else response.status(500).send({ error: e + "" });
     });
 });
 

@@ -6,6 +6,14 @@ export interface BalanceRoot {
   received: number;
 }
 
+export interface IValidateAddressResponse {
+  isvalid: boolean;
+  address: string;
+  scriptPubKey: string;
+  ismine: boolean;
+  iswatchonly: boolean;
+  isscript: boolean;
+}
 export interface IUTXO {
   address: string;
   assetName: string;
@@ -34,17 +42,11 @@ export interface IConfig {
   raven_url: string;
   network: string;
 }
-
-export interface IUTXO {
-  address: string;
-  assetName: string;
+export interface IVOUT {
   txid: string;
-  outputIndex: number;
-  script: string;
-  satoshis: number;
-  height: number;
+  vout: number;
+  address: string;
 }
-
 export interface IInput {
   txid: string;
   vout: number;

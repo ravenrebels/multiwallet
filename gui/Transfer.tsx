@@ -18,11 +18,6 @@ export function Transfer({ balance }: any) {
   const onSubmit = (event: any) => {
     event.preventDefault();
 
-    if (assetName !== "RVN") {
-      alert("Sorry, only supports RVN at the moment");
-      return;
-    }
-
     if (!amount) {
       alert("Please enter amount");
       return;
