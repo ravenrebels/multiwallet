@@ -13,7 +13,7 @@ cd ./multiwallet
 ```
 
 ```
-`npm install
+npm install
 ```
 
 ### Build
@@ -82,10 +82,7 @@ rpcallowip=127.0.0.1
 dbcache=4096
 
 upnp=1
-
-
-
-
+```
 
 ### Start the server
 
@@ -94,8 +91,10 @@ upnp=1
 npm run serve
 
 ```
+
 Server is now running on http://localhost:80
 
 You can change port by setting env variable PORT.
-So running `PORT=8080 npm run serve` will start the server on port 8080
-```
+So running
+`PORT=8080 npm run serve`
+will start the server on port 8080
