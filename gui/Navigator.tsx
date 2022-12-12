@@ -75,22 +75,30 @@ function RavenBalance({ balance }: IRavenBalanceProps) {
 }
 
 interface ItemProps {
+  buttonType?: string;
   currentRoute: Routes;
   icon: any;
   label: string;
   targetRoute: Routes;
 }
-function Item({ currentRoute, icon, label, targetRoute }: ItemProps) {
+function Item({
+  buttonType,
+  currentRoute,
+  icon,
+  label,
+  targetRoute,
+}: ItemProps) {
   const href = "?route=" + targetRoute;
   let className = "navigator__item";
   if (currentRoute === targetRoute) {
     className = className + " navigator__item--active";
   }
+
   return (
     <div className={className}>
       <a
         href={href}
-        className="btn btn-primary"
+        className={getButtonClass(buttonType)}
         onClick={(event) => {
           event.preventDefault();
           navigate(targetRoute);
@@ -101,4 +109,11 @@ function Item({ currentRoute, icon, label, targetRoute }: ItemProps) {
       <div>{label}</div>
     </div>
   );
+}
+
+function getButtonClass(buttonType: string | undefined) {
+  if (!buttonType) {
+    return "btn btn-primary";
+  }
+  return "btn btn-" + buttonType;
 }

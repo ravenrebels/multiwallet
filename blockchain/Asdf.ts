@@ -40,8 +40,10 @@ async function _send(options: IInternalSendIProp) {
   const addressObjects = getAddressObjects(fromUser.mnemonic, config.network);
   const addresses = addressObjects.map((a) => a.address);
 
+  //TODO change addresses should be checked with the blockchain,
+  //find first unused change address
   const ravencoinChangeAddress = addresses[1];
-  const assetChangeAddress = addresses[3]; //TODO change addresses should be checked with the blockchain, find first unused address
+  const assetChangeAddress = addresses[3];
 
   let UTXOs = await blockchain.getRavenUnspentTransactionOutputs(addresses);
 
@@ -81,9 +83,6 @@ async function _send(options: IInternalSendIProp) {
     outputs[toAddress] = rvnAmount;
   }
   outputs[ravencoinChangeAddress] = getTwoDecimalTrunc(ravencoinChangeAmount);
-
-  console.log("Total input value", unspentRavencoinAmount);
-  console.log("OUTPUTS", outputs);
   //Now we have enough UTXos, lets create a raw transactions
   const raw = await blockchain.createRawTransaction(inputs, outputs);
 
@@ -91,7 +90,6 @@ async function _send(options: IInternalSendIProp) {
   type TPrivateKey = {
     [key: string]: string;
   };
-
   const privateKeys: TPrivateKey = {};
   inputs.map(function (input: IVOUT) {
     const addy = input.address;
@@ -147,11 +145,11 @@ async function addAssetInputsAndOutputs(
 }
 
 function getTwoDecimalTrunc(num: number) {
+  //Found answer here https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
+  //In JavaScript the number 77866.98 minus 111 minus 0.2 equals 77755.95999999999
+  //We want it to be 77755.96
   return Math.trunc(num * 100) / 100;
 }
-//Find answer here https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
-//In JavaScript the number 77866.98 minus 111 minus 0.2 equals 77755.95999999999
-//We want it to be 77755.96
 
 export async function send(
   fromUser: IUser,
@@ -175,120 +173,3 @@ function getEnoughUTXOs(utxos: Array<IUTXO>, amount: number) {
   });
   return returnValue;
 }
-function getTotalAmount(utxos: Array<IUTXO>) {
-  let unspentAmount = 0;
-  utxos.map(function (item) {
-    const newValue = item.satoshis / 1e8;
-    unspentAmount = unspentAmount + newValue;
-  });
-  return unspentAmount;
-}
-/*
-async function transferAsset(
-  fromUser: IUser,
-  toAddress: string,
-  assetName: string,
-  amount: number
-) {
-  const addressObjects = getAddressObjects(fromUser.mnemonic, config.network);
-  const addresses = addressObjects.map((a) => a.address);
-
-  //Validate user has enough funds
-  const balance = await blockchain.getBalance(addresses);
-  console.log("BALANCE", fromUser, balance);
-  //We need Ravencoin UTXOs to be able to pay transactions fees
-  const UTXOs = await blockchain.getAssetUnspentTransactionOutputs(
-    addresses,
-    assetName
-  );
-
-  if (UTXOs.length === 0) {
-    throw new Error("No RVN, can't pay fee");
-  }
-  //Lets get all our unspent transaction for this *assetName*
-  const assetUTXOs = await blockchain.getAssetUnspentTransactionOutputs(
-    addresses,
-    assetName
-  );
-
-  //CALCULATE THE FEE
-  const enough = getEnoughUTXOs(UTXOs, 1); //For the fee
-
-  const enoughAssets = getEnoughUTXOs(assetUTXOs, amount);
-
-  const unspentAmount = getTotalAmount(enough);
-  const unspentAssetsAmount = getTotalAmount(enoughAssets);
-  console.log("ASSET UTXOs", assetUTXOs);
-  console.log("Unspent asset amount", unspentAssetsAmount);
-
-  const fee = 0.02;
-  const changeAmount = unspentAmount - fee;
-  const assetChangeAmount = unspentAssetsAmount - amount;
-
-  console.log("ASSET CHANGE AMOUNT", assetChangeAmount);
-  const s1 = blockchain.convertUTXOsToVOUT(enough);
-  const s2 = blockchain.convertUTXOsToVOUT(enoughAssets);
-  const inputs = s1.concat(s2);
-
-  const changeAddress = addresses[1];
-  const changeAddress2 = addresses[2];
-  const outputs = {
-    [changeAddress]: changeAmount,
-  };
-
-  //Now add the asset transfer output
-  outputs[toAddress] = {
-    transfer: {
-      [assetName]: amount,
-    },
-  };
-
-  if (assetChangeAmount > 0) {
-    //Add the "change" for assets
-    outputs[changeAddress2] = {
-      transfer: {
-        [assetName]: assetChangeAmount,
-      },
-    };
-  }
-
-  //Now we have enough UTXos, lets create a raw transactions
-  const rawPromise = blockchain.createRawTransaction(inputs, outputs);
-  rawPromise.then((data) => console.log(data)).catch((e) => console.log(e));
-  const raw = await rawPromise;
-
-  //OK lets find the private keys (WIF) for input addreses
-  const privateKeys = {};
-  inputs.map(function (input) {
-    const addy = input.address;
-    const addressObject = addressObjects.find((a) => a.address === addy);
-    privateKeys[addy] = addressObject.WIF;
-  });
-  result.privateKeys = privateKeys;
-
-  //Ask Ravencoin node to sign it, send private keys
-
-  const s = rpc(methods.signrawtransaction, [
-    result.hex,
-    null,
-    Object.values(privateKeys),
-  ]);
-  s.catch((e) => {
-    console.log(e);
-  });
-  const signedTransaction = await s;
-
-  result.signedTransaction = signedTransaction;
-  const asdf = rpc(methods.decoderawtransaction, [signedTransaction.hex]);
-  asdf.catch((e) => {
-    console.log(e);
-  });
-  const plainSignedTransaction = await asdf;
-
-  require("fs").writeFileSync(
-    "./write.txt",
-    JSON.stringify(plainSignedTransaction, null, 4)
-  );
-  const text = JSON.stringify(result, null, 4);
-  require("fs").writeFileSync("./result.json", text);
-}*/

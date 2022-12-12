@@ -3,7 +3,10 @@ import * as fs from "fs";
 //Cache config, changes require restart of server
 //No need to read from disk for every request
 
-let config = null;
+type TConfig = {
+  [key: string]: string;
+};
+let config: TConfig | null = null;
 export function getConfig() {
   if (config) {
     return config;
@@ -18,6 +21,7 @@ export function getConfig() {
     return obj;
   } else {
     const template = `{
+            "cacheKeys": false,
             "raven_username": "jfk38fn202jc53",
             "raven_password": "jfk38fn202jc53",
             "raven_url": "http://localhost:8766",
