@@ -39,6 +39,9 @@ export function Balance({ balance }: IBalanceProps) {
                 return null;
               }
               const asset = balance.find((a) => a.assetName === name);
+              if(asset && asset.balance === 0){
+                return null;
+              }
               const amount = asset ? asset.balance / 1e8 : 0;
 
               return (
