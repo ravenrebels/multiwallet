@@ -5,7 +5,7 @@
   "scripts": {
     "build": "parcel build ./gui/index.html --no-content-hash --no-cache && npx tsc server.ts",
     "dev": "parcel ./gui/index.html --no-cache ",
-    "test": "jest tests",
+    "test": "npx tsc server.ts && jest tests",
     "serve": "node server"
   },
   "repository": {

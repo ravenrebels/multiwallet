@@ -130,16 +130,16 @@ app.get("/api/pendingtransactions", (request, response) => {
       return;
     }
 
-
-
     const byUser: Array<UserTransaction.ITransaction> = [];
     const toUser: Array<UserTransaction.ITransaction> = [];
     const currentUser = getCurrentUser(request);
     const addresses = Key.getAddresses(currentUser, config.network);
 
+
+
     data.map((item: UserTransaction.ITransaction) => {
       delete item.hex;
-        //XOR, reg the transactions as EITHER by user OR to user, never both
+      //XOR, reg the transactions as EITHER by user OR to user, never both
       if (UserTransaction.isByUser(addresses, item) === true) {
         byUser.push(item);
         return;

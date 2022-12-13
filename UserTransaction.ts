@@ -65,7 +65,9 @@ export function isByUser(addresses: Array<string>, rawTransaction: ITransaction)
 }
 export function isToUser(addresses: Array<string>, rawTransaction: ITransaction) {
     const a = rawTransaction.vout.filter(vout => {
-        return getCommonObjects(vout.scriptPubKey.addresses, addresses);
+        const common = getCommonObjects(vout.scriptPubKey.addresses, addresses);
+
+        return common.length > 0;
     })
     return a.length > 0;
 } 
