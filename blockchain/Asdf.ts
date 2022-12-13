@@ -59,7 +59,7 @@ async function _send(options: IInternalSendIProp) {
 
   //Sum up the whole unspent amount
   let unspentRavencoinAmount = sumOfUTXOs(enoughRavencoinUTXOs);
-console.log("Total amount of UTXOs Ravencon being used in this trans", unspentRavencoinAmount.toLocaleString());
+  console.log("Total amount of UTXOs Ravencon being used in this trans", unspentRavencoinAmount.toLocaleString());
   if (isAssetTransfer === false) {
     if (amount > unspentRavencoinAmount) {
       throw Error("Insufficient funds, cant send " + amount);
@@ -86,10 +86,18 @@ console.log("Total amount of UTXOs Ravencon being used in this trans", unspentRa
   } else if (isAssetTransfer === false) {
     outputs[toAddress] = rvnAmount;
   }
-  outputs[ravencoinChangeAddress] = getTwoDecimalTrunc(ravencoinChangeAmount);
+
+  //Obviously we only add change address if there is any change
+  if (getTwoDecimalTrunc(ravencoinChangeAmount) > 0) {
+
+    outputs[ravencoinChangeAddress] = getTwoDecimalTrunc(ravencoinChangeAmount);
+  }
   //Now we have enough UTXos, lets create a raw transactions
+  console.log("INPUTS", inputs);
+  console.log("OUTPUTS", outputs);
   const raw = await blockchain.createRawTransaction(inputs, outputs);
 
+  console.log("Raw transaction", raw);
   //OK lets find the private keys (WIF) for input addresses
   type TPrivateKey = {
     [key: string]: string;
@@ -106,11 +114,12 @@ console.log("Total amount of UTXOs Ravencon being used in this trans", unspentRa
   //Sign the transaction
   const keys: Array<string> = Object.values(privateKeys);
   const signedTransactionPromise = blockchain.signRawTransaction(raw, keys);
-  signedTransactionPromise.catch((e:any) => {
+  signedTransactionPromise.catch((e: any) => {
     console.dir(e);
   });
 
   const signedTransaction = await signedTransactionPromise;
+  console.log("Will send", signedTransaction);
 
   const txid = await blockchain.sendRawTransaction(signedTransaction);
   console.log("Response after sending", txid);
@@ -141,11 +150,15 @@ async function addAssetInputsAndOutputs(
   };
 
   const assetSum = sumOfUTXOs(_UTXOs);
-  outputs[assetChangeAddress] = {
-    transfer: {
-      [assetName]: assetSum - amount,
-    },
-  };
+
+  //Only add change address if needed
+  if (assetSum - amount > 0) {
+    outputs[assetChangeAddress] = {
+      transfer: {
+        [assetName]: assetSum - amount,
+      },
+    };
+  }
 }
 
 function getTwoDecimalTrunc(num: number) {

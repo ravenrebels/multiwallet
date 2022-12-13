@@ -229,6 +229,7 @@ app.post("/send", (request, response) => {
     .then((txid) => response.send({ txid }))
     .catch((e) => {
       if (e.error && e.error.message) {
+        console.dir(e);
         response.status(500).send({ error: e.error.message });
         return;
       } else response.status(500).send({ error: e + "" });

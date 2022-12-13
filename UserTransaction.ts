@@ -15,7 +15,7 @@ export interface ITransaction {
     locktime: number
     vin: Vin[]
     vout: Vout[]
-    hex?:any;
+    hex?: any;
 }
 
 interface Vin {
@@ -56,7 +56,7 @@ function getCommonObjects(array1: Array<string>, array2: Array<string>) {
 export function isByUser(addresses: Array<string>, rawTransaction: ITransaction) {
 
     const a = rawTransaction.vin.filter(vin => {
-        console.log("Check if", addresses, "includes", vin.address);
+
         return addresses.includes(vin.address);
     })
 
