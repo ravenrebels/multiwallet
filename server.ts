@@ -59,6 +59,7 @@ app.use((req, res, next) => {
   //@ts-ignore
   const userId = req.session["userId"];
   if (!userId) {
+    console.log("No user id will redirect");
     res.redirect("/signin");
     return;
   }
@@ -226,7 +227,7 @@ app.post("/send", (request, response) => {
 });
 
 app.post("/signout", (request, response) => {
-  console.log("Sign out");
+  console.log("Sign out, terminating session for", getCurrentUser(request));
   if (request.session) {
     request.session.destroy(function (err) {
       console.log("SIGNED OUT SESSION DESTROYED");

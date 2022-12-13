@@ -1,4 +1,3 @@
-import axios from "axios";
 import * as React from "react";
 
 import { createRoot } from "react-dom/client";
@@ -20,6 +19,10 @@ function App() {
   const triggerDate = useTriggerDate();
   const route = useRoute();
   const balance = useBalance(triggerDate);
+  //If we fail getting balance, user is probably sign out, redirect to start page
+  React.useEffect( () => { 
+    document.body.addEventListener("USEBALANCE_FAILED", () => window.location.href="/");
+  }, []);
   return (
     <div>
       <Navigator balance={balance} route={route} />
@@ -32,24 +35,6 @@ function App() {
   );
 }
 
-export function usePollEndpoint(URL: string, sleep: number) {
-  const [data, setData] = React.useState(null);
-  React.useEffect(() => {
-    async function work() {
-      const hasQuestionMark = URL.indexOf("?") > 0;
-      let _URL = hasQuestionMark ? URL + "&" : URL + "?";
-      _URL = _URL + new Date().toISOString();
-      const asdf = await axios(_URL);
-      setData(asdf.data);
-    }
-    const interval = setInterval(work, sleep);
-    work(); //Invoke at start
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-  return data;
-}
 export function getAmount(balance: any, name: string): number {
   const asset = balance.find((a: any) => a.assetName === name);
   if (!asset) {

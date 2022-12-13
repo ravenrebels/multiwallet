@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Loading } from "./Loading";
-import { usePollEndpoint } from "./index";
+import { usePollEndpoint } from "./usePollEndpoint";
 
 export function MempoolStatus() {
   const mempool: any = usePollEndpoint("/api/pendingtransactions", 15000);
