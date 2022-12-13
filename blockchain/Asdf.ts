@@ -106,7 +106,7 @@ console.log("Total amount of UTXOs Ravencon being used in this trans", unspentRa
   //Sign the transaction
   const keys: Array<string> = Object.values(privateKeys);
   const signedTransactionPromise = blockchain.signRawTransaction(raw, keys);
-  signedTransactionPromise.catch((e) => {
+  signedTransactionPromise.catch((e:any) => {
     console.dir(e);
   });
 

@@ -11,7 +11,7 @@ import * as Key from "./Key";
 
 import { getConfig } from "./getConfig";
 import * as userManager from "./userManager";
-
+import * as UserTransaction from "./UserTransaction";
 //Due to express >= 4 changes, we need to pass express-session to the function session-file-store exports in order to extend session.Store:
 
 const session = require("express-session");
@@ -130,18 +130,27 @@ app.get("/api/pendingtransactions", (request, response) => {
       return;
     }
 
-    const result = data.filter((item: any) => {
-      const text = JSON.stringify(item);
 
-      const currentUser = getCurrentUser(request);
-      const addresses = Key.getAddresses(currentUser, config.network);
-      for (const addy of addresses) {
-        if (text.indexOf(addy) > -1) {
-          return true;
-        }
+
+    const byUser: Array<UserTransaction.ITransaction> = [];
+    const toUser: Array<UserTransaction.ITransaction> = [];
+    const currentUser = getCurrentUser(request);
+    const addresses = Key.getAddresses(currentUser, config.network);
+
+    data.map((item: UserTransaction.ITransaction) => {
+      delete item.hex;
+        //XOR, reg the transactions as EITHER by user OR to user, never both
+      if (UserTransaction.isByUser(addresses, item) === true) {
+        byUser.push(item);
+        return;
       }
+      UserTransaction.isToUser(addresses, item) && toUser.push(item);
+
     });
-    response.send(result);
+    response.send({
+      byUser, toUser
+    });
+
   });
 });
 app.get("/api/getaddressutxos", function (request, response) {

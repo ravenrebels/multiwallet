@@ -5,7 +5,7 @@ interface ILoadingProps {
 export function Loading({ subtle }: ILoadingProps) {
   if (subtle) {
     return (
-      <div className="spinner-grow " style={{ color: "#333333" }} role="status">
+      <div className="spinner-border spinner-border-sm " style={{fontSize: "10px", color: "#999999" }} role="status">
         <span className="sr-only">Loading...</span>
       </div>
     );

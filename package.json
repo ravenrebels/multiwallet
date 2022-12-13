@@ -5,7 +5,7 @@
   "scripts": {
     "build": "parcel build ./gui/index.html --no-content-hash --no-cache",
     "dev": "parcel ./gui/index.html  --no-cache ",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest tests",
     "serve": "npx tsc server.ts && node server"
   },
   "repository": {
@@ -44,6 +44,7 @@
   "devDependencies": {
     "@types/react-dom": "^18.0.9",
     "buffer": "^5.7.1",
+    "jest": "^29.3.1",
     "process": "^0.11.10"
   }
 }
