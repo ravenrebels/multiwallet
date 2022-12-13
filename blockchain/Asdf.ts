@@ -28,6 +28,8 @@ function sumOfUTXOs(UTXOs: Array<IUTXO>) {
 async function _send(options: IInternalSendIProp) {
   const { amount, assetName, fromUser, toAddress } = options;
 
+  const fee = 0.1; //TODO this should not be hardcoded in the long run
+
   const isAssetTransfer = assetName !== "RVN";
 
   //VALIDATION
@@ -47,22 +49,24 @@ async function _send(options: IInternalSendIProp) {
 
   let UTXOs = await blockchain.getRavenUnspentTransactionOutputs(addresses);
 
+  console.log("Total RVN unspent", sumOfUTXOs(UTXOs).toLocaleString());
+
   //TODO, remove UTXOs that are in mempool (being used)
   const enoughRavencoinUTXOs = getEnoughUTXOs(
     UTXOs,
-    isAssetTransfer ? 1 : amount
+    isAssetTransfer ? 1 : (amount + fee)
   );
 
   //Sum up the whole unspent amount
   let unspentRavencoinAmount = sumOfUTXOs(enoughRavencoinUTXOs);
-
+console.log("Total amount of UTXOs Ravencon being used in this trans", unspentRavencoinAmount.toLocaleString());
   if (isAssetTransfer === false) {
     if (amount > unspentRavencoinAmount) {
       throw Error("Insufficient funds, cant send " + amount);
     }
   }
 
-  const fee = 0.02; //TODO this should not be hardcoded in the long run
+
   const rvnAmount = isAssetTransfer ? 0 : amount;
   const ravencoinChangeAmount = unspentRavencoinAmount - rvnAmount - fee;
 
