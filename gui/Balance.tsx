@@ -16,7 +16,7 @@ export function Balance({ balance }: IBalanceProps) {
 
   const RVN = balance.find((a) => a.assetName === "RVN");
 
-  const rvnAmount = RVN ? (RVN.balance / 1e8).toLocaleString() : 0;
+  const rvnAmount = RVN ? (RVN.balance / 1e8).toLocaleString() : "0";
   return (
     <div className="balance">
       <div className="plate mb-3">
@@ -31,7 +31,7 @@ export function Balance({ balance }: IBalanceProps) {
           <tbody>
             <tr>
               <td>RVN</td>
-              <td>{rvnAmount}</td>
+              <td><FormattedAmount amount={rvnAmount} /></td>
               <td></td>
             </tr>
             {assetNames.map((name) => {
@@ -39,15 +39,15 @@ export function Balance({ balance }: IBalanceProps) {
                 return null;
               }
               const asset = balance.find((a) => a.assetName === name);
-              if(asset && asset.balance === 0){
+              if (asset && asset.balance === 0) {
                 return null;
               }
               const amount = asset ? asset.balance / 1e8 : 0;
 
               return (
                 <tr key={name}>
-                  <td>{name}</td>
-                  <td>{amount.toLocaleString()}</td>
+                  <td><FormattedName name={name} /></td>
+                  <td><FormattedAmount amount={amount.toLocaleString()} /></td>
                   <td>
                     <Image assetName={name} />
                   </td>
@@ -61,20 +61,61 @@ export function Balance({ balance }: IBalanceProps) {
   );
 }
 
+function FormattedAmount({ amount }: { amount: string }) {
+
+  const style = {
+    fontSize: "100%"
+  }
+
+  if (amount.length > 6) {
+    style.fontSize = "70%";
+  }
+  return <span style={style}>{amount}</span>
+
+}
+interface IFormattedNameProps {
+  name: string
+}
+function FormattedName({ name }: IFormattedNameProps) {
+
+  if (!name) {
+    return <span />;
+  }
+
+  //Ignore short names
+  if (name.length < 10) {
+    return <span>{name}</span>
+  }
+
+  if (name.indexOf("/") === -1) {
+    return <span>{name}</span>;
+  }
+
+  const splitty = name.split("/");
+
+  const result = <span>
+    <strong style={{ fontSize: "70%" }}>{splitty[0]}/</strong>
+    <wbr />
+    {splitty[1]}
+  </span>
+  return <span>{result}</span>;
+}
 /* Image that hides itself on error */
 interface IImageProps {
   assetName: string;
 }
 function Image({ assetName }: IImageProps) {
   const encodedAssetName = encodeURIComponent(assetName);
-
+  const URL_THUMBNAIL = `/thumbnail?assetName=${encodedAssetName}`;
+  const URL_TARGET = `/showasset?assetName=${encodedAssetName}`
   return (
-    <img
-      onError={(event: SyntheticEvent<HTMLImageElement, Event>) => {
-        event.currentTarget.style.display = "none";
-      }}
-      className="balance__item-thumbnail"
-      src={`/thumbnail?assetName=${encodedAssetName}`}
-    ></img>
+    <a href={URL_TARGET} target="_blank">
+      <img
+        onError={(event: SyntheticEvent<HTMLImageElement, Event>) => {
+          event.currentTarget.style.display = "none";
+        }}
+        className="balance__item-thumbnail"
+        src={URL_THUMBNAIL}
+      ></img></a>
   );
 }

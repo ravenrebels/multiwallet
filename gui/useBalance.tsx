@@ -10,15 +10,15 @@ export function useBalance(triggerDate?: string): IBalance {
   React.useEffect(() => {
     axios
       .get("/api/balance?cachebuster=" + new Date().toISOString())
-      .then((axiosResponse) => {  
-        console.log("RESPONSE", axiosResponse);
+      .then((axiosResponse) => {
+
 
         const ct = axiosResponse.headers["content-type"];
-        if(ct !== CORRECT_CONTENT_TYPE){
+        if (ct !== CORRECT_CONTENT_TYPE) {
           const event = new Event('USEBALANCE_FAILED');
           document.body.dispatchEvent(event);
         }
-        setBalance(axiosResponse.data) 
+        setBalance(axiosResponse.data)
       });
   }, [triggerDate]);
 

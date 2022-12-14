@@ -122,6 +122,30 @@ app.get("/api/mempool", async function (request, response) {
     });
 });
 
+app.get("/showasset", (request, response) => {
+  const assetName = request.query.assetName;
+  if (!assetName) {
+    response.status(400).send("Error, no assetName query parameter");
+    return;
+  }
+  if (assetName !== null) {
+    const dataPromise = Blockchain.getAssetData(assetName + "");
+    dataPromise.then((data) => {
+
+      if (data.ipfs_hash) {
+        response.redirect("https://dweb.link/ipfs/" + data.ipfs_hash);
+        return;
+      }
+      else {
+        response.send("<h1>" + assetName + "</h1><p>Does not have any IPFS data");
+      }
+
+    });
+  }
+});
+
+
+
 app.get("/api/pendingtransactions", (request, response) => {
   const mempoolPromise = Blockchain.getMempool();
   mempoolPromise.then((data) => {
