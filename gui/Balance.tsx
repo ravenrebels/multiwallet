@@ -67,8 +67,11 @@ function FormattedAmount({ amount }: { amount: string }) {
     fontSize: "100%"
   }
 
-  if (amount.length > 6) {
+  if (amount.length > 8) {
     style.fontSize = "70%";
+  }
+  else if (amount.length > 6) {
+    style.fontSize = "80%";
   }
   return <span style={style}>{amount}</span>
 

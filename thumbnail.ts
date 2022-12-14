@@ -3,9 +3,19 @@ import * as blockchain from "./blockchain/blockchain";
 import * as fs from "fs";
 import axios from "axios";
 import * as path from "path";
-let ipfsByAssetName = {};
 
+let ipfsByAssetName = {};
 let blockedIPFS = {};
+
+const HOUR = 3600000;
+const MINUTE = 60 * 1000;
+//Clear asset name > ipfs hash cache very X minutes
+setInterval(function () {
+  ipfsByAssetName = {};
+}, 3 * MINUTE); //Clear IPFS > asset mapping more often than blocked ipfs, since we can reissue assets/change ipfs
+setInterval(function () {
+  blockedIPFS = {};
+}, HOUR);
 
 /*
   Summary
@@ -41,12 +51,10 @@ interface IAssetData {
   ipfs_hash: string;
 }
 
-//Clear asset name > ipfs hash cache very X minutes
-const HOUR = 3600000;
-setInterval(function () {
-  ipfsByAssetName = {};
-  blockedIPFS = {};
-}, HOUR);
+
+
+
+
 const dir = path.resolve("./images");
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
