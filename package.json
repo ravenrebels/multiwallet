@@ -5,7 +5,7 @@
   "scripts": {
     "build": "parcel build ./gui/index.html --no-content-hash --no-cache && npx tsc server.ts",
     "dev": "parcel ./gui/index.html --no-cache ",
-    "test": "npx tsc server.ts && jest tests",
+    "test": "npx tsc server.ts && npx tsc ./tests/index.ts && jest tests",
     "serve": "node server"
   },
   "repository": {
@@ -16,6 +16,11 @@
     "Ravencoin",
     "Ravencoin wallet"
   ],
+  "jest": {
+    "testMatch": [
+        "**/?(*.)+(spec|test).[j]s?(x)"
+    ]
+},
   "author": "Raven Rebels / Dick Henrik Larsson",
   "license": "MIT",
   "bugs": {
@@ -42,6 +47,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.2.4",
     "@types/react-dom": "^18.0.9",
     "buffer": "^5.7.1",
     "jest": "^29.3.1",

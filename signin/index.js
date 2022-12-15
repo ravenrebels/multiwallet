@@ -32,7 +32,8 @@ class User extends HTMLElement {
         alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">${this.data.displayName}</h5>
-           <button class="btn btn-primary">Sign in</button>
+           <button class="btn btn-primary"> 
+           <i class="fa-solid fa-house" style="margin-right: 5px"></i>  Enter</button>
         </div>
       </div>`;
 

@@ -171,6 +171,12 @@ app.get("/api/pendingtransactions", (request, response) => {
       UserTransaction.isToUser(addresses, item) && toUser.push(item);
 
     });
+    const asdf = {
+      addresses, byUser, toUser
+    }
+    fs.writeFileSync("./byUser.json", JSON.stringify(asdf));
+
+
     response.send({
       byUser, toUser
     });

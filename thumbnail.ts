@@ -3,9 +3,15 @@ import * as blockchain from "./blockchain/blockchain";
 import * as fs from "fs";
 import axios from "axios";
 import * as path from "path";
+import { Request, Response, Application, Express } from "express";
 
-let ipfsByAssetName = {};
-let blockedIPFS = {};
+
+
+type StringStringMapper = {
+  [key: string]: string;
+};
+let ipfsByAssetName: StringStringMapper = {};
+let blockedIPFS: StringStringMapper = {};
 
 const HOUR = 3600000;
 const MINUTE = 60 * 1000;
@@ -60,7 +66,7 @@ if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
 
-export default async function thumbnail(request, response) {
+export default async function thumbnail(request: Request, response: Response) {
   const assetName = request.query.assetName;
   if (!assetName) {
     response.status(400).send({ error: "No assetName query parameter" });
@@ -68,13 +74,13 @@ export default async function thumbnail(request, response) {
   }
 
   //Get IPFS for asset, check if cached
-  let ipfs = ipfsByAssetName[assetName];
+  let ipfs = ipfsByAssetName[assetName + ""];
   try {
     if (!ipfs) {
-      const data: IAssetData = await blockchain.getAssetData(assetName);
+      const data: IAssetData = await blockchain.getAssetData(assetName + "");
       if (data) {
         ipfs = data.ipfs_hash;
-        ipfsByAssetName[assetName] = ipfs;
+        ipfsByAssetName[assetName + ""] = ipfs;
       }
     }
   } catch (e) {
@@ -100,7 +106,7 @@ export default async function thumbnail(request, response) {
     return;
   }
 
-  function isImage(contentType) {
+  function isImage(contentType: string) {
     const isImage = contentType.indexOf("image") > -1;
     return isImage;
   }
@@ -123,7 +129,7 @@ export default async function thumbnail(request, response) {
 
   //File exists, we have already cached it
   if (fs.existsSync(contentFilePath)) {
-    response.set("c-from-cache", true);
+    response.set("c-from-cache", "true");
 
     try {
       const contentType = fs.readFileSync(contentTypeFilePath, "utf-8");
@@ -200,7 +206,7 @@ export default async function thumbnail(request, response) {
     response.send(size);
   } catch (e) {
     console.dir(e + "");
-    blockedIPFS[ipfs] = new Date().getMilliseconds();
+    blockedIPFS[ipfs] = "" + new Date().getMilliseconds();
     response.status(500).send({ error: e + "" });
     return;
   }

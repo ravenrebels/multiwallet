@@ -9,13 +9,7 @@ export function getAddresses(user: IUser, network: string) {
 
   const objects = getAddressObjects(user.mnemonic, network);
   const result = objects.map((obj) => obj.address);
-  if (fs.existsSync("./temp") === false) {
-    fs.mkdirSync("./temp");
-  }
-  fs.writeFileSync(
-    "./temp/addresses_" + user.id + ".json",
-    JSON.stringify(result, null, 4)
-  );
+
 
   return result;
 }

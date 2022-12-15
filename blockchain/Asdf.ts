@@ -2,7 +2,8 @@ import { getAddressObjects } from "../Key";
 import { IUser, IUTXO, IVOUT } from "../Types";
 import * as blockchain from "./blockchain";
 import { getConfig } from "../getConfig";
-
+import * as  fs from "fs";
+import { IMempoolObject } from "../IMempool";
 const config = getConfig();
 
 interface IInternalSendIProp {
@@ -48,10 +49,20 @@ async function _send(options: IInternalSendIProp) {
   const assetChangeAddress = addresses[3];
 
   let UTXOs = await blockchain.getRavenUnspentTransactionOutputs(addresses);
-
+  //Remove UTXOs that are currently in mempool
+  const mempool = await blockchain.getMempool();
+  UTXOs = UTXOs.filter(UTXO => {
+    const isInMempool = isUTXOInMempool(mempool, UTXO);
+    if (isInMempool === true) {
+      console.log("Will exclude UTXO because exists in mempool", UTXO.txid + " " + UTXO.outputIndex);
+    }
+    return isInMempool === false
+  });
   console.log("Total RVN unspent", sumOfUTXOs(UTXOs).toLocaleString());
 
-  //TODO, remove UTXOs that are in mempool (being used)
+
+
+
   const enoughRavencoinUTXOs = getEnoughUTXOs(
     UTXOs,
     isAssetTransfer ? 1 : (amount + fee)
@@ -69,7 +80,6 @@ async function _send(options: IInternalSendIProp) {
 
   const rvnAmount = isAssetTransfer ? 0 : amount;
   const ravencoinChangeAmount = unspentRavencoinAmount - rvnAmount - fee;
-
   const inputs = blockchain.convertUTXOsToVOUT(enoughRavencoinUTXOs);
   const outputs: any = {};
   //Add asset inputs
@@ -189,4 +199,23 @@ function getEnoughUTXOs(utxos: Array<IUTXO>, amount: number) {
     }
   });
   return returnValue;
+}
+
+
+export function isUTXOInMempool(mempool: Array<IMempoolObject>, UTXO: IUTXO) {
+
+  function format(transactionId: string, index: number) {
+    return transactionId + "_" + index;
+  }
+  const outputs: Array<string> = [];
+  mempool.map(transaction => {
+    transaction.vin.map(vin => {
+      const value = format(vin.txid, vin.vout);
+      outputs.push(value);
+    });
+  })
+
+  const index = outputs.indexOf(format(UTXO.txid, UTXO.outputIndex));
+
+  return index > -1;
 }
