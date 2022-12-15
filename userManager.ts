@@ -25,7 +25,7 @@ export function getUserById(id: string): IUser {
       obj.profileImageURL = "https://cdn.pixabay.com/photo/2013/07/12/19/25/crowd-sourcing-154759_1280.png";
     }
     if(!obj.displayName){
-      obj.displayName = obj.id.substring(0, 2) + "..." + obj.id.charAt(obj.id.length - 1);
+      obj.displayName = obj.id;
     }
     naiveCache[id] = obj;
   }
