@@ -211,6 +211,15 @@ app.get("/api/addresses", (request, response) => {
 });
 app.post("/signin/setupsession", (request, response) => {
   //@ts-ignore
+  //Validate, get user
+  try {
+    userManager.getUserById(request.body.userId);
+  }
+  catch (e) {
+    response.status(400).send({ error: "" + e })
+    return;
+  }
+  //@ts-ignore
   request.session["userId"] = request.body.userId;
   response.send({ status: "success" });
 });
@@ -239,8 +248,8 @@ app.get("/signin/publicprofiles", (request, response) => {
 });
 app.get("/publicprofile", function (request, response) {
   const currentUser = getCurrentUser(request);
-  const user1 = fs.readFileSync("./" + currentUser.id + ".json", "utf8");
-  const obj = JSON.parse(user1);
+
+  const obj = userManager.getUserById(currentUser.id);
   const result = {
     displayName: obj.displayName,
     profileImageURL: obj.profileImageURL,

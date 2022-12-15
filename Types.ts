@@ -33,8 +33,10 @@ export interface IAddressMetaData {
   privateKey: string;
 }
 export interface IUser {
-  mnemonic: string;
   id: string;
+  mnemonic: string;
+  displayName?: string;
+  profileImageURL?: string;
 }
 export interface IConfig {
   raven_username: string;

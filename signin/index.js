@@ -1,14 +1,66 @@
 fetch("/signin/publicprofiles")
   .then((response) => response.json())
   .then((data) => {
-    data.map(createCustomElementAndAddToApp);
+    data.map(addProfile);
+
+    //Lastely add the annon
+    const dom = document.createElement("c-annon");
+    document.getElementById("app").appendChild(dom);
+
   });
 
-function createCustomElementAndAddToApp(userData) {
+function addProfile(userData) {
   const dom = document.createElement("c-user");
   document.getElementById("app").appendChild(dom);
   dom.setData(userData);
 }
+
+class Annon extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `<div class="plate card" style="width: 18rem;  ">
+      <img class="card-img-top"
+        style="height:  80px; object-fit: cover  ;"
+        src="https://cdn.pixabay.com/photo/2013/07/12/19/25/crowd-sourcing-154759_1280.png"
+
+        alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">Enter any name</h5> 
+           
+          <p style="font-size:70%">
+              If you for example enter <em>Elvis25</em> a new account for <em>Elvis25</em> will be created.
+          </p>
+ 
+          <input type="text" class="form-control"/>
+          <button class="btn btn-primary mt-3"> 
+            <i class="fa-solid fa-house" style="margin-right: 5px"></i>  Enter</button>
+        </div>
+    </div>`
+
+    const input = this.querySelector("input");
+    function submit(event) {
+
+
+      if (!input.value) {
+        return;
+      }
+      if (input.value.length < 3) {
+        alert("Enter more than 3 characters please");
+        return;
+      }
+
+      event.target.disabled = true;
+      const promise = signIn(input.value);
+      promise.catch((e) => {
+        alert(e);
+        event.target.disabled = false;
+      })
+      event.preventDefault();
+      return false;
+    }
+    this.querySelector("button").addEventListener("click", submit);
+  }
+}
+customElements.define("c-annon", Annon);
 /*
  Define a custom element, a web standard for encapsulated custom DOM elements
  
@@ -24,36 +76,50 @@ class User extends HTMLElement {
       return;
     }
     this.innerHTML = `
-        <div class="plate card" style="width: 18rem;">
-        <img class="card-img-top" 
-        style="height: 100px; object-fit: cover  ;"
-        src="${this.data.profileImageURL}" 
-      
-        alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">${this.data.displayName}</h5>
-           <button class="btn btn-primary"> 
-           <i class="fa-solid fa-house" style="margin-right: 5px"></i>  Enter</button>
-        </div>
-      </div>`;
+      <div class="plate card" style="width: 18rem;">
+        <img class="card-img-top"
+          style="height: 80px; object-fit: cover;"
+          src="${this.data.profileImageURL}"
+
+          alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">${this.data.displayName}</h5>
+            <button class="btn btn-primary">
+              <i class="fa-solid fa-house" style="margin-right: 5px"></i>  Enter</button>
+          </div>
+        </div>`;
 
     this.querySelector("button").addEventListener("click", (event) => {
 
       //Disable the button when we click it
       event.target.disabled = true;
-      const URL = "/signin/setupsession?cacheBusting=" + new Date().toISOString();
-      postData(URL, { userId: this.data.id }).then(
-        (data) => {
-          //Seems like we have to wait a split second after getting the new session
-          const ONE_SECOND = 1 * 1000;
-          setTimeout(() => {
-            window.location.href = "/index.html?cacheBusting=" + new Date().toISOString();
-          }, ONE_SECOND)
 
-        }
-      );
+      signIn(this.data.id);
+
     });
   }
+}
+
+function signIn(id) {
+
+  const promise = new Promise((resolve, reject) => {
+    const URL = "/signin/setupsession?cacheBusting=" + new Date().toISOString();
+    postData(URL, { userId: id }).then(
+      (data) => {
+        if (data.error) {
+          reject(data.error);
+          return;
+        }
+        //Seems like we have to wait a split second after getting the new session
+        const SOME_TIME = 1 * 500;
+        setTimeout(() => {
+          window.location.href = "/index.html?cacheBusting=" + new Date().toISOString();
+        }, SOME_TIME)
+        resolve("success");
+      }
+    );
+  });
+  return promise;
 }
 customElements.define("c-user", User);
 

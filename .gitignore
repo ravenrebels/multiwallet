@@ -1,3 +1,11 @@
+users/*
+!users/user1.json
+!users/user2.json
+!users/user3.json
+!users/user4.json
+!users/user5.json
+!users/user6.json
+
 .parcel-cache
 config.json
 sessions

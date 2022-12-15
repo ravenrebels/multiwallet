@@ -18,9 +18,9 @@
   ],
   "jest": {
     "testMatch": [
-        "**/?(*.)+(spec|test).[j]s?(x)"
+      "**/?(*.)+(spec|test).[j]s?(x)"
     ]
-},
+  },
   "author": "Raven Rebels / Dick Henrik Larsson",
   "license": "MIT",
   "bugs": {
