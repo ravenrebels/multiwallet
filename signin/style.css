@@ -7,7 +7,9 @@ body {
   font-family: "Quicksand", sans-serif;
   background: #eeeeee;
 }
-
+c-annon{
+  flex-basis: 100%;
+}
 #app {
   position: relative;
   color: var(--color);
