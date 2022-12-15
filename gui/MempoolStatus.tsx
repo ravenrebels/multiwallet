@@ -15,7 +15,7 @@ export function MempoolStatus() {
   const [active, setActive] = React.useState(false);
 
 
-  React.useEffect(() => { 
+  React.useEffect(() => {
 
     if (!pendingTransactions || Object.values(pendingTransactions).length === 0) {
       if (active) {
@@ -62,7 +62,7 @@ function Receiving({ shit }: any) {
         const name = keys[0];
         const amount = to[name];
         const __key = Math.random();
-        return <div key={__key}>{__key} Receiving {amount} {name} <Loading subtle /></div>;
+        return <div key={__key}>Receiving {amount} {name} <Loading subtle /></div>;
 
       })}
 
