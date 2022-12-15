@@ -23,15 +23,17 @@ export function Transfer({ balance }: any) {
       return;
     }
 
-    if (parseFloat(amount) > rvnAmount) {
-      alert("Not enough RVN to send " + parseFloat(amount).toLocaleString());
-      return;
-    }
 
     if (isNaN(parseFloat(amount)) === true) {
       alert(amount + " doesnt seem to be a number");
       return;
     }
+
+    if (assetName === "¤VN" && parseFloat(amount) > rvnAmount) {
+      alert("Not enough RVN to send " + parseFloat(amount).toLocaleString());
+      return;
+    }
+
 
     const obj = {
       assetName,
@@ -57,8 +59,7 @@ export function Transfer({ balance }: any) {
   return (
     <div className="plate">
       <form className="row g-3" onSubmit={onSubmit}>
-        <h3>Send / Transfer</h3>
-        <i>Not implemented yet</i>
+        <h3>Send / Transfer</h3> 
         <div className="mb-3">
           <label htmlFor="assetSelect" className="form-label">
             Asset

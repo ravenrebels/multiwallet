@@ -62,7 +62,7 @@ function Receiving({ shit }: any) {
         const name = keys[0];
         const amount = to[name];
         const __key = Math.random();
-        return <div key={__key}>Receiving {amount} {name} <Loading subtle /></div>;
+        return <div key={__key}>Receiving {amount.toLocaleString()} {name} <Loading subtle /></div>;
 
       })}
 
