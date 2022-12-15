@@ -52,7 +52,7 @@ export function MempoolStatus() {
           const keys = Object.keys(to);
           const name = keys[0];
           const amount = to[name];
-          return <div key={new Date() + ""}>Receiving {amount} {name} <Loading subtle /></div>;
+          return <div key={Math.random() + ""}>Receiving {amount} {name} <Loading subtle /></div>;
 
         })}
 
