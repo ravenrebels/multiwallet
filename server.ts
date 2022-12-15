@@ -161,6 +161,13 @@ app.get("/api/pendingtransactions", (request, response) => {
 
 
 
+    const assetsToUser: any = [];
+    data.map((item: UserTransaction.ITransaction) => {
+      const result = UserTransaction.getSumOfAssetOutputs(addresses, item);
+      if (Object.values(result).length > 0) {
+        assetsToUser.push(result);
+      }
+    });
     data.map((item: UserTransaction.ITransaction) => {
       delete item.hex;
       //XOR, reg the transactions as EITHER by user OR to user, never both
@@ -168,16 +175,14 @@ app.get("/api/pendingtransactions", (request, response) => {
         byUser.push(item);
         return;
       }
-      UserTransaction.isToUser(addresses, item) && toUser.push(item);
+      if (UserTransaction.isToUser(addresses, item) === true) {
+        item.c_amount_satoshis = UserTransaction.getSumOfOutputs(addresses, item);
+        toUser.push(item);
+      }
 
     });
-    const asdf = {
-      addresses, byUser, toUser
-    }
-    fs.writeFileSync("./byUser.json", JSON.stringify(asdf));
-
-
     response.send({
+      toUserAssets: assetsToUser,
       byUser, toUser
     });
 

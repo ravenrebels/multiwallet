@@ -1,3 +1,4 @@
+import { convertUTXOsToVOUT } from "./Utils";
 
 
 export interface UserTransaction {
@@ -5,6 +6,10 @@ export interface UserTransaction {
     outgoing: boolean;
     assetName: string;
     amount: number
+}
+export interface Asset {
+    name: string;
+    amount: number;
 }
 export interface ITransaction {
     txid: string
@@ -16,6 +21,12 @@ export interface ITransaction {
     vin: Vin[]
     vout: Vout[]
     hex?: any;
+    amount?: number;
+    asset?: Asset;
+    c_asset?: string;
+    c_amount_satoshis?: number;
+
+
 }
 
 interface Vin {
@@ -25,7 +36,7 @@ interface Vin {
     sequence: number
     value: number
     valueSat: number
-    address: string
+    address?: string
 }
 
 interface ScriptSig {
@@ -41,11 +52,12 @@ interface Vout {
 }
 
 interface ScriptPubKey {
-    asm: string
-    hex: string
-    reqSigs: number
-    type: string
+    asm: string;
+    hex: string;
+    reqSigs: number;
+    type: string;
     addresses: string[]
+    asset?: Asset;
 }
 function getCommonObjects(array1: Array<string>, array2: Array<string>) {
 
@@ -57,6 +69,9 @@ export function isByUser(addresses: Array<string>, rawTransaction: ITransaction)
 
     const a = rawTransaction.vin.filter(vin => {
 
+        if (!vin.address) {
+            return false;
+        }
         return addresses.includes(vin.address);
     })
 
@@ -70,4 +85,56 @@ export function isToUser(addresses: Array<string>, rawTransaction: ITransaction)
         return common.length > 0;
     })
     return a.length > 0;
-} 
+}
+
+export function getSumOfOutputs(addresses: Array<string>, transaction: ITransaction) {
+    let sum = 0;
+    transaction.vout.map(vout => {
+
+        const addy = vout.scriptPubKey.addresses[0];
+        if (addresses.includes(addy) == true) {
+            sum = sum + vout.valueSat;
+        }
+
+    });
+    return sum;
+}
+
+export function getSumOfAssetOutputs(addresses: Array<string>, transaction: ITransaction) {
+    type TResult = {
+        [key: string]: number;
+    };
+    const result: TResult = {
+
+    }
+    transaction.vout.map(vout => {
+        const spk = vout.scriptPubKey;
+        const addy = spk.addresses[0];
+        if (addresses.includes(addy) === false) {
+            return;
+        }
+        if (!spk.asset) {
+            return;
+        }
+
+        const assetName = spk.asset.name;
+        const amount = spk.asset.amount;
+
+        if (!result[assetName]) {
+            result[assetName] = 0;
+        }
+
+        result[assetName] = result[assetName] + amount;
+
+    });
+    return result;
+}
+
+
+export function getSumOfInputs(transaction: ITransaction) {
+    let sum = 0;
+    transaction.vin.map(vin => {
+        sum = sum + vin.valueSat;
+    })
+    return sum;
+}
