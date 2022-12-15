@@ -42,24 +42,20 @@ export function MempoolStatus() {
     //Creazy TypeScript forces us to do this, otherwise mempool is "never"
     const shit: IData = pendingTransactions;
 
-
-    if (shit.toUser.length > 0) {
+    console.log(shit.toUserAssets);
+    if (Object.keys(shit.toUserAssets).length > 0) {
 
       return <div className="alert alert-primary" role="alert">
 
 
-        {shit.toUserAssets.map((to:any) => {
+        {shit.toUserAssets.map((to: any) => {
           const keys = Object.keys(to);
           const name = keys[0];
           const amount = to[name];
-          return <div>Receiving {amount} {name} <Loading subtle /></div>;
+          return <div key={new Date() + ""}>Receiving {amount} {name} <Loading subtle /></div>;
 
         })}
-        {shit.toUser.map(to => {
-          if (to.c_asset === "RVN" && to.c_amount_satoshis) {
-            return <div>Receiving {to.c_amount_satoshis / 1e8} RVN <Loading subtle /></div>;
-          }
-        })}
+
 
       </div>
     }

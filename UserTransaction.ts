@@ -87,7 +87,7 @@ export function isToUser(addresses: Array<string>, rawTransaction: ITransaction)
     return a.length > 0;
 }
 
-export function getSumOfOutputs(addresses: Array<string>, transaction: ITransaction) {
+export function getSumOfRavencoinOutputs(addresses: Array<string>, transaction: ITransaction) {
     let sum = 0;
     transaction.vout.map(vout => {
 
@@ -127,6 +127,11 @@ export function getSumOfAssetOutputs(addresses: Array<string>, transaction: ITra
         result[assetName] = result[assetName] + amount;
 
     });
+
+    const RVN = getSumOfRavencoinOutputs(addresses, transaction);
+    if(RVN > 0){
+        result["RVN"] = RVN / 1e8;
+    }
     return result;
 }
 

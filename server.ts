@@ -155,35 +155,29 @@ app.get("/api/pendingtransactions", (request, response) => {
     }
 
     const byUser: Array<UserTransaction.ITransaction> = [];
-    const toUser: Array<UserTransaction.ITransaction> = [];
+
     const currentUser = getCurrentUser(request);
     const addresses = Key.getAddresses(currentUser, config.network);
 
 
 
-    const assetsToUser: any = [];
+    const toUserAssets: any = [];
     data.map((item: UserTransaction.ITransaction) => {
-      const result = UserTransaction.getSumOfAssetOutputs(addresses, item);
-      if (Object.values(result).length > 0) {
-        assetsToUser.push(result);
-      }
-    });
-    data.map((item: UserTransaction.ITransaction) => {
-      delete item.hex;
-      //XOR, reg the transactions as EITHER by user OR to user, never both
-      if (UserTransaction.isByUser(addresses, item) === true) {
+
+      //Only handle transactions  that he user has NOT SENT herself
+      if (UserTransaction.isByUser(addresses, item)) {
         byUser.push(item);
         return;
       }
-      if (UserTransaction.isToUser(addresses, item) === true) {
-        item.c_amount_satoshis = UserTransaction.getSumOfOutputs(addresses, item);
-        toUser.push(item);
+      const result = UserTransaction.getSumOfAssetOutputs(addresses, item);
+      if (Object.values(result).length > 0) {
+        toUserAssets.push(result);
       }
-
     });
+
     response.send({
-      toUserAssets: assetsToUser,
-      byUser, toUser
+      toUserAssets,
+      byUser
     });
 
   });

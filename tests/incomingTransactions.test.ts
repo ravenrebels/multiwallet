@@ -1,4 +1,4 @@
-import { getSumOfAssetOutputs, getSumOfOutputs, ITransaction } from "../UserTransaction";
+import { getSumOfAssetOutputs, getSumOfRavencoinOutputs, ITransaction } from "../UserTransaction";
 
 const { isByUser, isToUser } = require("../UserTransaction");
 
@@ -24,7 +24,7 @@ test('Sending transaction', () => {
 });
 
 test('Get receiving sum', () => {
-    const sum = getSumOfOutputs(addresses, transactions[0]);
+    const sum = getSumOfRavencoinOutputs(addresses, transactions[0]);
     const result = sum / 1e8;
     expect(result).toBe(10);
 });
