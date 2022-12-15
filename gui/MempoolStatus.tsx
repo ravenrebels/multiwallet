@@ -15,8 +15,7 @@ export function MempoolStatus() {
   const [active, setActive] = React.useState(false);
 
 
-  React.useEffect(() => {
-
+  React.useEffect(() => { 
 
     if (!pendingTransactions || Object.values(pendingTransactions).length === 0) {
       if (active) {
@@ -43,31 +42,41 @@ export function MempoolStatus() {
     const shit: IData = pendingTransactions;
 
     console.log(shit.toUserAssets);
-    if (Object.keys(shit.toUserAssets).length > 0) {
+    return <div>
+      <Receiving shit={shit} />
+      <Sending shit={shit} />
+    </div>
 
-      return <div className="alert alert-primary" role="alert">
-
-
-        {shit.toUserAssets.map((to: any) => {
-          const keys = Object.keys(to);
-          const name = keys[0];
-          const amount = to[name];
-          return <div key={Math.random() + ""}>Receiving {amount} {name} <Loading subtle /></div>;
-
-        })}
-
-
-      </div>
-    }
-    else if (shit.byUser.length > 0) {
-      return <div className="alert alert-primary" role="alert">
-        Sending <Loading subtle />
-      </div>
-    }
-    else {
-      return null;
-    }
   }
+  return null;
 
 }
 
+function Receiving({ shit }: any) {
+  if (Object.keys(shit.toUserAssets).length > 0) {
+
+    return <div className="alert alert-primary" role="alert">
+
+      {shit.toUserAssets.map((to: any) => {
+        const keys = Object.keys(to);
+        const name = keys[0];
+        const amount = to[name];
+        const __key = Math.random();
+        return <div key={__key}>{__key} Receiving {amount} {name} <Loading subtle /></div>;
+
+      })}
+
+
+    </div>
+  }
+  return null;
+}
+
+function Sending({ shit }: any) {
+  if (shit.byUser.length > 0) {
+    return <div className="alert alert-primary" role="alert">
+      Sending <Loading subtle />
+    </div>
+  }
+  return null;
+}
