@@ -15,6 +15,7 @@ export function Transfer({ balance }: any) {
   assetNames.sort();
   const rvnAmount = getAmount(balance, "RVN");
 
+
   const onSubmit = (event: any) => {
     event.preventDefault();
 
@@ -35,6 +36,10 @@ export function Transfer({ balance }: any) {
     }
 
 
+    if (getAmount(balance, assetName) < parseFloat(amount)) {
+      alert("Not enough " + assetName + " to send " + amount);
+      return;
+    }
     const obj = {
       assetName,
       to,
@@ -59,7 +64,7 @@ export function Transfer({ balance }: any) {
   return (
     <div className="plate">
       <form className="row g-3" onSubmit={onSubmit}>
-        <h3>Send / Transfer</h3> 
+        <h3>Send / Transfer</h3>
         <div className="mb-3">
           <label htmlFor="assetSelect" className="form-label">
             Asset
@@ -78,6 +83,9 @@ export function Transfer({ balance }: any) {
                 return null;
               }
               const value = getAmount(balance, name);
+              if (value === 0) {
+                return null;
+              }
               return (
                 <option key={name} value={name}>
                   {name} - {value.toLocaleString()}
