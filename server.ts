@@ -45,6 +45,19 @@ app.use(
 
 const config = getConfig();
 
+app.get("/api/mempool", async function (request, response) {
+  const promise = Blockchain.getMempool();
+  promise
+    .then((transactions) => {
+      response.send(transactions);
+    })
+    .catch((e) => {
+      console.dir(e);
+      response.status(500).send({ error: e });
+    });
+});
+
+
 //OUR MIDDLEWARE FOR USER MANAGEMENT
 app.use((req, res, next) => {
   const path = req.baseUrl + req.path;
@@ -110,17 +123,7 @@ app.get("/api/history", function (request, response) {
     });
 });
 
-app.get("/api/mempool", async function (request, response) {
-  const promise = Blockchain.getMempool();
-  promise
-    .then((transactions) => {
-      response.send(transactions);
-    })
-    .catch((e) => {
-      console.dir(e);
-      response.status(500).send({ error: e });
-    });
-});
+
 
 app.get("/showasset", (request, response) => {
   const assetName = request.query.assetName;
