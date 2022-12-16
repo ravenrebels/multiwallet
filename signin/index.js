@@ -29,17 +29,18 @@ class Annon extends HTMLElement {
           <p style="font-size:70%">
               If you for example enter <em>Elvis25</em> a new account for <em>Elvis25</em> will be created.
           </p>
- 
-          <input type="text" class="form-control"/>
-          <button class="btn btn-primary mt-3"> 
-            <i class="fa-solid fa-house" style="margin-right: 5px"></i>  Enter</button>
+          <form>
+            <input type="text" class="form-control"/>
+            <button class="btn btn-primary mt-3" type="submit"> 
+              <i class="fa-solid fa-house" style="margin-right: 5px"></i>  Enter
+            </button>
+          </form>
         </div>
     </div>`
 
     const input = this.querySelector("input");
+    const button = this.querySelector("button");
     function submit(event) {
-
-
       if (!input.value) {
         return;
       }
@@ -48,16 +49,16 @@ class Annon extends HTMLElement {
         return;
       }
 
-      event.target.disabled = true;
+      button.disabled = true;
       const promise = signIn(input.value);
       promise.catch((e) => {
         alert(e);
-        event.target.disabled = false;
+        button.disabled = false;
       })
       event.preventDefault();
       return false;
     }
-    this.querySelector("button").addEventListener("click", submit);
+    this.querySelector("form").addEventListener("submit", submit);
   }
 }
 customElements.define("c-annon", Annon);
@@ -84,17 +85,24 @@ class User extends HTMLElement {
           alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title">${this.data.displayName}</h5>
-            <button class="btn btn-primary">
-              <i class="fa-solid fa-house" style="margin-right: 5px"></i>  Enter</button>
+            <form>
+              <button class="btn btn-primary">
+                <i class="fa-solid fa-house" style="margin-right: 5px"></i>  Enter
+              </button>
+            </form>
           </div>
         </div>`;
 
-    this.querySelector("button").addEventListener("click", (event) => {
+    const button = this.querySelector("button");
+    this.querySelector("form").addEventListener("submit", (event) => {
+
+      event.preventDefault();
 
       //Disable the button when we click it
-      event.target.disabled = true;
+      button.disabled = true;
 
       signIn(this.data.id);
+      return false;
 
     });
   }
