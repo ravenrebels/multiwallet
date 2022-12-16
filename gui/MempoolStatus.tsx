@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ITransaction } from "../UserTransaction";
+import { EventNames } from "./EventNames";
 
 import { Loading } from "./Loading";
 import { usePollEndpoint } from "./usePollEndpoint";
@@ -10,11 +11,25 @@ interface IData {
   toUserAssets: any;
 }
 export function MempoolStatus() {
-  const pendingTransactions: IData | null = usePollEndpoint("/api/pendingtransactions", 15000);
+  const [triggerDate, setTriggerDate] = React.useState(new Date());
+  const pendingTransactions: IData | null = usePollEndpoint("/api/pendingtransactions", 15000, triggerDate);
 
   const [active, setActive] = React.useState(false);
 
 
+  React.useEffect(() => {
+ 
+    //Listen to Transfer:sent event
+    const listener = () => { 
+      setTriggerDate(new Date());
+    }
+    document.addEventListener(EventNames.TRANSFER__SENT, listener);
+
+    return () => {
+      document.removeEventListener(EventNames.TRANSFER__SENT, listener);
+    }
+
+  });
   React.useEffect(() => {
 
     if (!pendingTransactions || Object.values(pendingTransactions).length === 0) {

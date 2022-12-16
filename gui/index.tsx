@@ -3,6 +3,7 @@ import * as React from "react";
 import { createRoot } from "react-dom/client";
 
 import { Balance } from "./Balance";
+import { EventNames } from "./EventNames";
 import { History } from "./History";
 import { MempoolStatus } from "./MempoolStatus";
 import { Navigator } from "./Navigator";
@@ -51,7 +52,7 @@ function useRoute(): Routes {
   const [route, setRoute] = React.useState(getRoute());
 
   React.useEffect(() => {
-    window.addEventListener("navigate", (event) => {
+    window.addEventListener(EventNames.NAVIGATE, (event) => {
       setRoute(getRoute());
     });
     window.addEventListener("popstate", (event) => {

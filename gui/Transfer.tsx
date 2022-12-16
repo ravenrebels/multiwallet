@@ -3,6 +3,7 @@ import * as React from "react";
 import { getAmount } from "./index";
 import { Loading } from "./Loading";
 import { IAddressMetaData, IAssetMetaData } from "../Types";
+import { EventNames } from "./EventNames";
 export function Transfer({ balance }: any) {
   const [transactionId, setTransactionId] = React.useState("");
   const [amount, setAmount] = React.useState("0");
@@ -50,6 +51,8 @@ export function Transfer({ balance }: any) {
     console.log("promise", promise);
     promise.then((axiosResponse) => {
       console.log("Axios resonse data", axiosResponse.data);
+      const event = new Event(EventNames.TRANSFER__SENT);
+      document.dispatchEvent(event);
       setTransactionId(axiosResponse.data.txid);
     });
     promise.catch((e) => {
