@@ -2,6 +2,7 @@ import * as React from "react";
 import axios from "axios";
 import { Loading } from "../Loading";
 import { ITransaction } from "../../UserTransaction";
+import { couldStartTrivia } from "typescript";
 
 export function History() {
   const history = useHistory();
@@ -12,7 +13,7 @@ export function History() {
   return <Received history={history} />;
 }
 
-function Received({ history }:{history:IHistory}) {
+function Received({ history }: { history: IHistory }) {
   const inputs = history.inputs;
 
   if (inputs.length === 0) {
@@ -40,7 +41,11 @@ function Received({ history }:{history:IHistory}) {
                 <td>{dateString.toLocaleString()}</td>
 
                 {transaction.vout.map((vout) => {
-                  const isExternalAddress = !!vout.c_index && vout.c_index % 2 === 0;
+                  let isExternalAddress = !!vout.c_index && vout.c_index % 2 === 0;
+                  if (vout.c_index === 0) { //Special case for the very first receiving address
+                    isExternalAddress = true;
+                  }
+
                   if (vout.scriptPubKey.asset && isExternalAddress) {
                     return [
                       <td key={"asset_amount_" + transaction.txid}>
