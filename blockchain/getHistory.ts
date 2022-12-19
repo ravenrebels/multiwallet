@@ -1,8 +1,9 @@
 import { methods } from "@ravenrebels/ravencoin-rpc";
+import { ITransaction } from "../UserTransaction";
 
 import { rpc } from "./blockchain";
 
-function indexOfAddress(obj: any, addresses) {
+function indexOfAddress(obj: any, addresses: Array<string>) {
   const text = JSON.stringify(obj);
   for (const a of addresses) {
     if (text.indexOf(a) > -1) {
@@ -38,21 +39,27 @@ export async function getHistory(addresses: Array<string>): Promise<any> {
   for (const transactionId of asdf) {
     const method = "getrawtransaction";
     const args = [transactionId, true];
-    const rawTransaction = await rpc(method, args);
-    rawTransaction.hash = null;
-    rawTransaction.blockhash = null;
+    const rawTransaction: ITransaction = await rpc(method, args);
+    delete rawTransaction.hash;
+
     //Delete stuff from vin
     rawTransaction.vin.map((v) => {
+      //@ts-ignore
       delete v.scriptSig.asm;
+      //@ts-ignore
       delete v.scriptSig.hex;
+      //@ts-ignore
       delete v.txid;
-      v.index = indexOfAddress(v, addresses);
+      v.c_index = indexOfAddress(v, addresses);
     });
     rawTransaction.vout.map((v) => {
+      //@ts-ignore
       delete v.scriptPubKey.hex;
+      //@ts-ignore
       delete v.scriptPubKey.asm;
+      //@ts-ignore
       delete v.spentTxId;
-      v.index = indexOfAddress(v, addresses);
+      v.c_index = indexOfAddress(v, addresses);
     });
     const json = JSON.stringify(rawTransaction.vin);
 

@@ -21,6 +21,7 @@ import * as Asdf from "./blockchain/Asdf";
 
 import thumbnail from "./thumbnail";
 import { IUser } from "./Types";
+ 
 
 const app: Express = express();
 const port = process.env.PORT || 80;

@@ -4,13 +4,13 @@ import { createRoot } from "react-dom/client";
 
 import { Balance } from "./Balance";
 import { EventNames } from "./EventNames";
-import { History } from "./History";
+import { History } from "./views/History";
 import { MempoolStatus } from "./MempoolStatus";
 import { Navigator } from "./Navigator";
 import { PageTop } from "./PageTop";
-import { Receive } from "./Receive";
+import { Receive } from "./views/Receive";
 import { Routes } from "./Routes";
-import { Transfer } from "./Transfer";
+import { Transfer } from "./views/Transfer";
 import { useBalance } from "./useBalance";
 
 //@ts-ignore

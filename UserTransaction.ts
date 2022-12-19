@@ -1,4 +1,4 @@
-import { convertUTXOsToVOUT } from "./Utils";
+
 
 
 export interface UserTransaction {
@@ -12,31 +12,37 @@ export interface Asset {
     amount: number;
 }
 export interface ITransaction {
+    c_asset?: string;
+    c_amount_satoshis?: number;
+    
+    time: number;
     txid: string
-    hash: string
+    hash?: string
     version: number
     size: number
     vsize: number
     locktime: number
     vin: Vin[]
     vout: Vout[]
-    hex?: any;
+    hex?: string;
     amount?: number;
     asset?: Asset;
-    c_asset?: string;
-    c_amount_satoshis?: number;
 
+ 
+    
 
 }
 
 interface Vin {
-    txid: string
-    vout: number
+    c_index?: number;
+
+    address?: string
     scriptSig: ScriptSig
     sequence: number
+    txid: string
     value: number
     valueSat: number
-    address?: string
+    vout: number
 }
 
 interface ScriptSig {
@@ -45,10 +51,12 @@ interface ScriptSig {
 }
 
 interface Vout {
+    c_index?: number;
     value: number
     n: number
     scriptPubKey: ScriptPubKey
     valueSat: number
+    index?: number
 }
 
 interface ScriptPubKey {
@@ -129,7 +137,7 @@ export function getSumOfAssetOutputs(addresses: Array<string>, transaction: ITra
     });
 
     const RVN = getSumOfRavencoinOutputs(addresses, transaction);
-    if(RVN > 0){
+    if (RVN > 0) {
         result["RVN"] = RVN / 1e8;
     }
     return result;

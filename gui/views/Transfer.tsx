@@ -1,9 +1,9 @@
 import axios from "axios";
 import * as React from "react";
-import { getAmount } from "./index";
-import { Loading } from "./Loading";
-import { IAddressMetaData, IAssetMetaData } from "../Types";
-import { EventNames } from "./EventNames";
+import { getAmount } from "../index";
+import { Loading } from "../Loading";
+import { IAddressMetaData, IAssetMetaData } from "../../Types";
+import { EventNames } from "../EventNames";
 export function Transfer({ balance }: any) {
   const [transactionId, setTransactionId] = React.useState("");
   const [amount, setAmount] = React.useState("0");
