@@ -3,6 +3,7 @@
   --bs-primary: #4169e1;
   --bs-blue: blue;
 }
+
 body {
   font-family: "Quicksand", sans-serif;
   background: #eeeeee;
@@ -30,6 +31,7 @@ body {
   -webkit-backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
+
 .plate {
   /* From https://css.glass */
   background: white;
@@ -43,6 +45,7 @@ body {
   margin-bottom: 20px;
   padding: 20px;
 }
+
 .navigation__item-icon {
   font-size: 100%;
   display: block;
@@ -57,6 +60,7 @@ body {
   padding: 10px;
   text-align: center;
 }
+
 .navigator__items {
   display: flex;
   flex-direction: row;
@@ -80,22 +84,26 @@ body {
   color: black;
   padding-left: 10px;
 }
+
 .navigator__balance {
   font-size: 200%;
   color: black;
   padding: 10px;
 }
+
 .pageTop {
   background: var(--bs-primary);
   height: 200px;
 
   position: relative;
 }
+
 .pageTop__content {
   max-width: calc(96vw);
   margin: auto;
   text-align: center;
 }
+
 .pageTop__avatar {
   float: right;
   border-radius: 15%;
@@ -104,11 +112,13 @@ body {
   position: relative;
   /* filter: blur(2px);*/
 }
+
 .pageTop__avatar-image {
   max-width: 100px;
   max-height: 50px;
   border-radius: 15%;
 }
+
 .pageTop__title {
   display: inline-block;
   text-align: center;
@@ -116,16 +126,19 @@ body {
   color: white;
   margin-left: 20px;
 }
+
 .balance td,
 .balance th {
   color: var(--color);
 }
+
 .balance__item-thumbnail {
   max-width: 50px;
   max-height: 50px;
 
   border-radius: 5px;
 }
+
 .history td,
 .history th {
   color: var(--color);
@@ -136,18 +149,30 @@ body {
     padding-left: 40px;
     padding-right: 40px;
   }
+
   .navigation__item-icon {
     font-size: 300%;
   }
+
   .pageTop__content {
     padding-left: 40px;
     padding-right: 40px;
   }
+
   .balance__item-thumbnail {
     max-width: 100px;
     max-height: 100px;
   }
 }
+
+@media screen and (min-width: 1000px) {
+
+  .balance__item-thumbnail {
+    max-width: 200px;
+    max-height: 200px;
+  }
+}
+
 
 /** Bootstrap overrides */
 .btn-primary {
