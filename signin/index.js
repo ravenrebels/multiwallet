@@ -1,3 +1,13 @@
+
+//Get meta data info
+fetch("/info").then(response => response.json()).then(data => {
+
+  document.getElementById("headline").innerText = data.headline;
+  document.getElementById("tagline").innerText = data.tagline;
+  
+});
+
+
 fetch("/signin/publicprofiles")
   .then((response) => response.json())
   .then((data) => {

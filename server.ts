@@ -6,7 +6,7 @@ const express = require("express");
 import * as Blockchain from "./blockchain/blockchain";
 import { getReceiveAddress } from "./blockchain/getReceiveAddress";
 import { getHistory } from "./blockchain/getHistory";
-import * as fs from "fs";
+
 import * as Key from "./Key";
 
 import { getConfig } from "./getConfig";
@@ -45,7 +45,9 @@ app.use(
 
 const config = getConfig();
 
-app.get("/api/mempool", async function (request, response) {
+
+//Publicly avaiable routes declared BEFORE authentication/security middleware
+app.get("/api/mempool", async function (_, response) {
   const promise = Blockchain.getMempool();
   promise
     .then((transactions) => {
@@ -56,7 +58,15 @@ app.get("/api/mempool", async function (request, response) {
       response.status(500).send({ error: e });
     });
 });
+app.get("/info", (request, response) => {
 
+  const obj = {
+    mode: config.mode,
+    tagline: config.tagline,
+    headline: config.headline
+  }
+  response.send(obj);
+});
 
 //OUR MIDDLEWARE FOR USER MANAGEMENT
 app.use((req, res, next) => {
@@ -88,6 +98,17 @@ app.listen(port, () => {
 });
 
 app.get("/thumbnail", thumbnail);
+app.get("/publicprofile", function (request, response) {
+  const currentUser = getCurrentUser(request);
+
+  const obj = userManager.getUserById(currentUser.id);
+  const result = {
+    displayName: obj.displayName,
+    profileImageURL: obj.profileImageURL,
+  };
+  response.send(result);
+});
+
 
 app.get("/receiveaddress", function (request, response) {
   const currentUser = getCurrentUser(request);
@@ -160,9 +181,7 @@ app.get("/api/pendingtransactions", (request, response) => {
     const byUser: Array<UserTransaction.ITransaction> = [];
 
     const currentUser = getCurrentUser(request);
-    const addresses = Key.getAddresses(currentUser, config.network);
-
-
+    const addresses = Key.getAddresses(currentUser, config.network); 
 
     const toUserAssets: any = [];
     data.map((item: UserTransaction.ITransaction) => {
@@ -246,18 +265,20 @@ app.get("/signin/publicprofiles", (request, response) => {
   response.send(users);
   return;
 });
-app.get("/publicprofile", function (request, response) {
-  const currentUser = getCurrentUser(request);
-
-  const obj = userManager.getUserById(currentUser.id);
-  const result = {
-    displayName: obj.displayName,
-    profileImageURL: obj.profileImageURL,
-  };
-  response.send(result);
-});
 
 app.post("/send", (request, response) => {
+
+
+  //Validation, prevent RVN from being sent if not in RAVENCOIN_AND_ASSETS mode
+  if (request.body.assetName === "RVN") {
+    if (config.mode !== "RAVENCOIN_AND_ASSETS") {
+      response.status(400).send({
+        error: "You cant send RVN when in " + config.mode + " mode, can only send Assets"
+      });
+      return;
+    }
+  }
+
   const user = getCurrentUser(request);
   const promise = Asdf.send(
     user,
