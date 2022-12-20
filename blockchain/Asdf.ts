@@ -2,8 +2,8 @@ import { getAddressObjects } from "../Key";
 import { IUser, IUTXO, IVOUT } from "../Types";
 import * as blockchain from "./blockchain";
 import { getConfig } from "../getConfig";
-import * as  fs from "fs";
-import { IMempoolObject } from "../IMempool";
+import { ITransaction } from "../UserTransaction";
+
 const config = getConfig();
 
 interface IInternalSendIProp {
@@ -51,32 +51,34 @@ async function _send(options: IInternalSendIProp) {
   let UTXOs = await blockchain.getRavenUnspentTransactionOutputs(addresses);
   //Remove UTXOs that are currently in mempool
   const mempool = await blockchain.getMempool();
-  UTXOs = UTXOs.filter(UTXO => {
+  UTXOs = UTXOs.filter((UTXO) => {
     const isInMempool = isUTXOInMempool(mempool, UTXO);
     if (isInMempool === true) {
-      console.log("Will exclude UTXO because exists in mempool", UTXO.txid + " " + UTXO.outputIndex);
+      console.log(
+        "Will exclude UTXO because exists in mempool",
+        UTXO.txid + " " + UTXO.outputIndex
+      );
     }
-    return isInMempool === false
+    return isInMempool === false;
   });
   console.log("Total RVN unspent", sumOfUTXOs(UTXOs).toLocaleString());
 
-
-
-
   const enoughRavencoinUTXOs = getEnoughUTXOs(
     UTXOs,
-    isAssetTransfer ? 1 : (amount + fee)
+    isAssetTransfer ? 1 : amount + fee
   );
 
   //Sum up the whole unspent amount
   let unspentRavencoinAmount = sumOfUTXOs(enoughRavencoinUTXOs);
-  console.log("Total amount of UTXOs Ravencon being used in this trans", unspentRavencoinAmount.toLocaleString());
+  console.log(
+    "Total amount of UTXOs Ravencon being used in this trans",
+    unspentRavencoinAmount.toLocaleString()
+  );
   if (isAssetTransfer === false) {
     if (amount > unspentRavencoinAmount) {
       throw Error("Insufficient funds, cant send " + amount);
     }
   }
-
 
   const rvnAmount = isAssetTransfer ? 0 : amount;
   const ravencoinChangeAmount = unspentRavencoinAmount - rvnAmount - fee;
@@ -99,7 +101,6 @@ async function _send(options: IInternalSendIProp) {
 
   //Obviously we only add change address if there is any change
   if (getTwoDecimalTrunc(ravencoinChangeAmount) > 0) {
-
     outputs[ravencoinChangeAddress] = getTwoDecimalTrunc(ravencoinChangeAmount);
   }
   //Now we have enough UTXos, lets create a raw transactions
@@ -201,19 +202,17 @@ function getEnoughUTXOs(utxos: Array<IUTXO>, amount: number) {
   return returnValue;
 }
 
-
-export function isUTXOInMempool(mempool: Array<IMempoolObject>, UTXO: IUTXO) {
-
+export function isUTXOInMempool(mempool: Array<ITransaction>, UTXO: IUTXO) {
   function format(transactionId: string, index: number) {
     return transactionId + "_" + index;
   }
   const outputs: Array<string> = [];
-  mempool.map(transaction => {
-    transaction.vin.map(vin => {
+  mempool.map((transaction) => {
+    transaction.vin.map((vin) => {
       const value = format(vin.txid, vin.vout);
       outputs.push(value);
     });
-  })
+  });
 
   const index = outputs.indexOf(format(UTXO.txid, UTXO.outputIndex));
 

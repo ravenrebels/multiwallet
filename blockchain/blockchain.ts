@@ -4,7 +4,7 @@ import { getRPC, methods } from "@ravenrebels/ravencoin-rpc";
 import * as Key from "../Key";
 import { getPrivateKey } from "../Utils";
 import { IUTXO, IValidateAddressResponse, IVOUT } from "../Types";
-import { IMempoolObject } from "../IMempool";
+import { ITransaction } from "../UserTransaction";
 
 const ONE_HUNDRED_MILLION = 1e8;
 
@@ -62,7 +62,9 @@ export function getBalance(addresses: Array<string>): Promise<any> {
   ]);
   return promise;
 }
-export function getRavenUnspentTransactionOutputs(addresses: Array<string>): Promise<Array<IUTXO>> {
+export function getRavenUnspentTransactionOutputs(
+  addresses: Array<string>
+): Promise<Array<IUTXO>> {
   return rpc(methods.getaddressutxos, [{ addresses }]);
 }
 export function getAssetUnspentTransactionOutputs(
@@ -87,7 +89,7 @@ export function getAllUnspentTransactionOutputs(addresses: Array<string>) {
     return all;
   });
 }
-export async function getMempool():Promise<Array<IMempoolObject>> {
+export async function getMempool(): Promise<Array<ITransaction>> {
   const ids = await rpc(methods.getrawmempool, []);
 
   const result: any = [];
