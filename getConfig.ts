@@ -11,6 +11,7 @@ interface IConfig {
   raven_username: string;
   raven_password: string;
   raven_url: string;
+  subTagline?: string;
   tagline: string;
   headline: string;
 }

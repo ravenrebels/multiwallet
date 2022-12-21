@@ -21,7 +21,6 @@ import * as Asdf from "./blockchain/Asdf";
 
 import thumbnail from "./thumbnail";
 import { IUser } from "./Types";
- 
 
 const app: Express = express();
 const port = process.env.PORT || 80;
@@ -46,7 +45,6 @@ app.use(
 
 const config = getConfig();
 
-
 //Publicly avaiable routes declared BEFORE authentication/security middleware
 app.get("/api/mempool", async function (_, response) {
   const promise = Blockchain.getMempool();
@@ -60,12 +58,12 @@ app.get("/api/mempool", async function (_, response) {
     });
 });
 app.get("/info", (request, response) => {
-
   const obj = {
     mode: config.mode,
     tagline: config.tagline,
-    headline: config.headline
-  }
+    subTagline: config.subTagline,
+    headline: config.headline,
+  };
   response.send(obj);
 });
 
@@ -110,7 +108,6 @@ app.get("/publicprofile", function (request, response) {
   response.send(result);
 });
 
-
 app.get("/receiveaddress", function (request, response) {
   const currentUser = getCurrentUser(request);
   const addresses = Key.getAddresses(currentUser, config.network);
@@ -145,8 +142,6 @@ app.get("/api/history", function (request, response) {
     });
 });
 
-
-
 app.get("/showasset", (request, response) => {
   const assetName = request.query.assetName;
   if (!assetName) {
@@ -156,20 +151,17 @@ app.get("/showasset", (request, response) => {
   if (assetName !== null) {
     const dataPromise = Blockchain.getAssetData(assetName + "");
     dataPromise.then((data) => {
-
       if (data.ipfs_hash) {
         response.redirect("https://dweb.link/ipfs/" + data.ipfs_hash);
         return;
+      } else {
+        response.send(
+          "<h1>" + assetName + "</h1><p>Does not have any IPFS data"
+        );
       }
-      else {
-        response.send("<h1>" + assetName + "</h1><p>Does not have any IPFS data");
-      }
-
     });
   }
 });
-
-
 
 app.get("/api/pendingtransactions", (request, response) => {
   const mempoolPromise = Blockchain.getMempool();
@@ -182,11 +174,10 @@ app.get("/api/pendingtransactions", (request, response) => {
     const byUser: Array<UserTransaction.ITransaction> = [];
 
     const currentUser = getCurrentUser(request);
-    const addresses = Key.getAddresses(currentUser, config.network); 
+    const addresses = Key.getAddresses(currentUser, config.network);
 
     const toUserAssets: any = [];
     data.map((item: UserTransaction.ITransaction) => {
-
       //Only handle transactions  that he user has NOT SENT herself
       if (UserTransaction.isByUser(addresses, item)) {
         byUser.push(item);
@@ -200,9 +191,8 @@ app.get("/api/pendingtransactions", (request, response) => {
 
     response.send({
       toUserAssets,
-      byUser
+      byUser,
     });
-
   });
 });
 app.get("/api/getaddressutxos", function (request, response) {
@@ -234,9 +224,8 @@ app.post("/signin/setupsession", (request, response) => {
   //Validate, get user
   try {
     userManager.getUserById(request.body.userId);
-  }
-  catch (e) {
-    response.status(400).send({ error: "" + e })
+  } catch (e) {
+    response.status(400).send({ error: "" + e });
     return;
   }
   //@ts-ignore
@@ -268,13 +257,14 @@ app.get("/signin/publicprofiles", (request, response) => {
 });
 
 app.post("/send", (request, response) => {
-
-
   //Validation, prevent RVN from being sent if not in RAVENCOIN_AND_ASSETS mode
   if (request.body.assetName === "RVN") {
     if (config.mode !== "RAVENCOIN_AND_ASSETS") {
       response.status(400).send({
-        error: "You cant send RVN when in " + config.mode + " mode, can only send Assets"
+        error:
+          "You cant send RVN when in " +
+          config.mode +
+          " mode, can only send Assets",
       });
       return;
     }
