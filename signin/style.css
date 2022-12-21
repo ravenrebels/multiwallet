@@ -2,14 +2,20 @@
   --color: black;
   --bs-primary: #4169e1;
   --bs-blue: blue;
+
+  --opacity: 0.8;
 }
 body {
   font-family: "Quicksand", sans-serif;
   background: #eeeeee;
+
+  background-image: url("./background_03.png");
+  /* background-image: url("./background_02.png"); */
+
+  background-repeat: no-repeat;
+  background-size: cover;
 }
-c-annon{
-  flex-basis: 100%;
-}
+
 #app {
   position: relative;
   color: var(--color);
@@ -19,6 +25,7 @@ c-annon{
   min-height: 400px;
 
   padding: 2px;
+  padding-top: 40px;
   border-radius: 20px;
 
   align-items: center;
@@ -29,8 +36,24 @@ c-annon{
   gap: 30px;
 }
 
+footer {
+  margin-top: 20px;
+  background: white;
+  opacity: var(--opacity);
+}
+c-annon {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  opacity: var(--opacity);
+  flex-basis: 100%;
+}
+c-user {
+  display: block;
+  opacity: var(--opacity);
+}
+
 .plate {
-  /* From https://css.glass */
   background: white;
   border-radius: 5px;
   padding: 20px;
@@ -47,10 +70,12 @@ c-annon{
 
 .pageTop {
   background: var(--bs-primary);
-  height: 200px;
+  height: 150px;
   text-align: center;
   color: white;
   position: relative;
+  padding-top: 20px;
+  opacity: var(--opacity);
 }
 
 /** Bootstrap overrides */

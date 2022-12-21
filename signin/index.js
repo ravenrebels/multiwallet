@@ -1,22 +1,20 @@
-
 //Get meta data info
-fetch("/info").then(response => response.json()).then(data => {
-
-  document.getElementById("headline").innerText = data.headline;
-  document.getElementById("tagline").innerText = data.tagline;
-  
-});
-
+fetch("/info")
+  .then((response) => response.json())
+  .then((data) => {
+    document.getElementById("headline").innerText = data.headline;
+    document.getElementById("tagline").innerText = data.tagline;
+  });
 
 fetch("/signin/publicprofiles")
   .then((response) => response.json())
   .then((data) => {
+    //Now add each public profile
     data.map(addProfile);
 
-    //Lastely add the annon
+    // add the annon
     const dom = document.createElement("c-annon");
     document.getElementById("app").appendChild(dom);
-
   });
 
 function addProfile(userData) {
@@ -46,7 +44,7 @@ class Annon extends HTMLElement {
             </button>
           </form>
         </div>
-    </div>`
+    </div>`;
 
     const input = this.querySelector("input");
     const button = this.querySelector("button");
@@ -64,7 +62,7 @@ class Annon extends HTMLElement {
       promise.catch((e) => {
         alert(e);
         button.disabled = false;
-      })
+      });
       event.preventDefault();
       return false;
     }
@@ -105,7 +103,6 @@ class User extends HTMLElement {
 
     const button = this.querySelector("button");
     this.querySelector("form").addEventListener("submit", (event) => {
-
       event.preventDefault();
 
       //Disable the button when we click it
@@ -113,29 +110,26 @@ class User extends HTMLElement {
 
       signIn(this.data.id);
       return false;
-
     });
   }
 }
 
 function signIn(id) {
-
   const promise = new Promise((resolve, reject) => {
     const URL = "/signin/setupsession?cacheBusting=" + new Date().toISOString();
-    postData(URL, { userId: id }).then(
-      (data) => {
-        if (data.error) {
-          reject(data.error);
-          return;
-        }
-        //Seems like we have to wait a split second after getting the new session
-        const SOME_TIME = 1 * 500;
-        setTimeout(() => {
-          window.location.href = "/index.html?cacheBusting=" + new Date().toISOString();
-        }, SOME_TIME)
-        resolve("success");
+    postData(URL, { userId: id }).then((data) => {
+      if (data.error) {
+        reject(data.error);
+        return;
       }
-    );
+      //Seems like we have to wait a split second after getting the new session
+      const SOME_TIME = 1 * 500;
+      setTimeout(() => {
+        window.location.href =
+          "/index.html?cacheBusting=" + new Date().toISOString();
+      }, SOME_TIME);
+      resolve("success");
+    });
   });
   return promise;
 }
