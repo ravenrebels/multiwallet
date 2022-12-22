@@ -45,7 +45,7 @@ export function decodeRawTransaction(raw: string) {
 export function getRawTransaction(id: string): any {
   return rpc(methods.getrawtransaction, [id, true]);
 }
-export function createRawTransaction(inputs: any, outputs: any) {
+export function createRawTransaction(inputs: any, outputs: any):Promise<string> {
   return rpc(methods.createrawtransaction, [inputs, outputs]);
 }
 
@@ -62,6 +62,7 @@ export function getBalance(addresses: Array<string>): Promise<any> {
   ]);
   return promise;
 }
+
 export function getRavenUnspentTransactionOutputs(
   addresses: Array<string>
 ): Promise<Array<IUTXO>> {
@@ -70,7 +71,7 @@ export function getRavenUnspentTransactionOutputs(
 export function getAssetUnspentTransactionOutputs(
   addresses: Array<string>,
   assetName: string
-) {
+): Promise<Array<IUTXO>> {
   const assets = rpc(methods.getaddressutxos, [{ addresses, assetName }]);
   return assets;
 }

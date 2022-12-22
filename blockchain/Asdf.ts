@@ -2,7 +2,7 @@ import { getAddressObjects } from "../Key";
 import { IUser, IUTXO, IVOUT } from "../Types";
 import * as blockchain from "./blockchain";
 import { getConfig } from "../getConfig";
-import { ITransaction } from "../UserTransaction";
+import { getSumOfAssetOutputs, ITransaction } from "../UserTransaction";
 
 const config = getConfig();
 
@@ -26,10 +26,38 @@ function sumOfUTXOs(UTXOs: Array<IUTXO>) {
   });
   return unspentRavencoinAmount;
 }
+/*
+
+    "Chicken and egg" situation.
+    We need to calculate how much we shall pay in fees based on the size of the transaction.
+    When adding inputs/outputs for the fee, we increase the fee.
+
+    Lets start by first assuming that we will pay 1 RVN in fee (that is sky high).
+    Than we check the size of the transaction and then we just adjust the change output so the fee normalizes
+*/
+async function getFee(inputs: Array<IVOUT>, outputs: Array<IVOUT>):Promise<number> {
+  const ONE_KILOBYTE = 1024;
+  //Create a raw transaction to get an aproximation for transaction size.
+  const raw = await blockchain.createRawTransaction(inputs, outputs);
+
+  //Get the lengt of the string bytes not the string
+  //This is NOT the exact size since we will add an output for the change address to the transaction
+  //Perhaps we should calculate size plus 10%?
+  const size = Buffer.from(raw).length / ONE_KILOBYTE;
+
+  let fee = 0.02;
+  //TODO should ask the "blockchain" **estimatesmartfee**
+
+  console.log("Transaction fee", fee, "for", size);
+  return fee * size;
+
+}
+
 async function _send(options: IInternalSendIProp) {
   const { amount, assetName, fromUser, toAddress } = options;
 
-  const fee = 0.1; //TODO this should not be hardcoded in the long run
+  const MAX_FEE = 1;
+
 
   const isAssetTransfer = assetName !== "RVN";
 
@@ -51,37 +79,29 @@ async function _send(options: IInternalSendIProp) {
   let UTXOs = await blockchain.getRavenUnspentTransactionOutputs(addresses);
   //Remove UTXOs that are currently in mempool
   const mempool = await blockchain.getMempool();
-  UTXOs = UTXOs.filter((UTXO) => {
-    const isInMempool = isUTXOInMempool(mempool, UTXO);
-    if (isInMempool === true) {
-      console.log(
-        "Will exclude UTXO because exists in mempool",
-        UTXO.txid + " " + UTXO.outputIndex
-      );
-    }
-    return isInMempool === false;
-  });
-  console.log("Total RVN unspent", sumOfUTXOs(UTXOs).toLocaleString());
-
+  console.log("innan vi tar bort mempool transar " + sumOfUTXOs(UTXOs));
+  UTXOs = UTXOs.filter(UTXO => isUTXOInMempool(mempool, UTXO) === false);
+  console.log("EFTER vi tar bort mempool transar " + sumOfUTXOs(UTXOs));
   const enoughRavencoinUTXOs = getEnoughUTXOs(
     UTXOs,
-    isAssetTransfer ? 1 : amount + fee
+    isAssetTransfer ? 1 : amount + MAX_FEE
   );
 
   //Sum up the whole unspent amount
   let unspentRavencoinAmount = sumOfUTXOs(enoughRavencoinUTXOs);
   console.log(
-    "Total amount of UTXOs Ravencon being used in this trans",
+    "Total amount of UTXOs Ravencon being used in this transaction",
     unspentRavencoinAmount.toLocaleString()
   );
   if (isAssetTransfer === false) {
     if (amount > unspentRavencoinAmount) {
-      throw Error("Insufficient funds, cant send " + amount);
+      throw Error("Insufficient funds, cant send " + amount.toLocaleString() + " only have " + unspentRavencoinAmount.toLocaleString());
     }
   }
 
   const rvnAmount = isAssetTransfer ? 0 : amount;
-  const ravencoinChangeAmount = unspentRavencoinAmount - rvnAmount - fee;
+
+
   const inputs = blockchain.convertUTXOsToVOUT(enoughRavencoinUTXOs);
   const outputs: any = {};
   //Add asset inputs
@@ -99,6 +119,11 @@ async function _send(options: IInternalSendIProp) {
     outputs[toAddress] = rvnAmount;
   }
 
+
+  const fee = await getFee(inputs, outputs);
+
+  const ravencoinChangeAmount = unspentRavencoinAmount - rvnAmount - fee;
+
   //Obviously we only add change address if there is any change
   if (getTwoDecimalTrunc(ravencoinChangeAmount) > 0) {
     outputs[ravencoinChangeAddress] = getTwoDecimalTrunc(ravencoinChangeAmount);
@@ -107,6 +132,7 @@ async function _send(options: IInternalSendIProp) {
   console.log("INPUTS", inputs);
   console.log("OUTPUTS", outputs);
   const raw = await blockchain.createRawTransaction(inputs, outputs);
+
 
   console.log("Raw transaction", raw);
   //OK lets find the private keys (WIF) for input addresses
@@ -133,7 +159,6 @@ async function _send(options: IInternalSendIProp) {
   console.log("Will send", signedTransaction);
 
   const txid = await blockchain.sendRawTransaction(signedTransaction);
-  console.log("Response after sending", txid);
   return txid;
 }
 
@@ -146,10 +171,15 @@ async function addAssetInputsAndOutputs(
   toAddress: string,
   assetChangeAddress: string
 ) {
-  const assetUTXOs = await blockchain.getAssetUnspentTransactionOutputs(
+  let assetUTXOs = await blockchain.getAssetUnspentTransactionOutputs(
     addresses,
     assetName
   );
+
+  const mempool = await blockchain.getMempool();
+  assetUTXOs = assetUTXOs.filter(UTXO => isUTXOInMempool(mempool, UTXO) === false);
+
+
   const _UTXOs = getEnoughUTXOs(assetUTXOs, amount);
   const _inputs = blockchain.convertUTXOsToVOUT(_UTXOs);
   _inputs.map((item) => inputs.push(item));
@@ -188,9 +218,9 @@ export async function send(
   return _send({ fromUser, toAddress, amount, assetName });
 }
 
-function getEnoughUTXOs(utxos: Array<IUTXO>, amount: number) {
+function getEnoughUTXOs(utxos: Array<IUTXO>, amount: number): Array<IUTXO> {
   let tempAmount = 0;
-  const returnValue: Array<any> = [];
+  const returnValue: Array<IUTXO> = [];
 
   utxos.map(function (utxo) {
     if (utxo.satoshis !== 0 && tempAmount < amount) {
@@ -202,19 +232,20 @@ function getEnoughUTXOs(utxos: Array<IUTXO>, amount: number) {
   return returnValue;
 }
 
-export function isUTXOInMempool(mempool: Array<ITransaction>, UTXO: IUTXO) {
+export function isUTXOInMempool(mempool: Array<ITransaction>, UTXO: IUTXO): boolean {
   function format(transactionId: string, index: number) {
     return transactionId + "_" + index;
   }
-  const outputs: Array<string> = [];
+
+  const listOfUTXOsInMempool: Array<string> = [];
   mempool.map((transaction) => {
     transaction.vin.map((vin) => {
-      const value = format(vin.txid, vin.vout);
-      outputs.push(value);
+      const id = format(vin.txid, vin.vout);
+      listOfUTXOsInMempool.push(id);
     });
   });
 
-  const index = outputs.indexOf(format(UTXO.txid, UTXO.outputIndex));
 
+  const index = listOfUTXOsInMempool.indexOf(format(UTXO.txid, UTXO.outputIndex));
   return index > -1;
 }
