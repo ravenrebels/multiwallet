@@ -1,3 +1,4 @@
+//@ts-ignore
 import * as imageThumbnail from "image-thumbnail";
 import * as blockchain from "./blockchain/blockchain";
 import * as fs from "fs";
@@ -67,13 +68,15 @@ if (!fs.existsSync(dir)) {
 }
 
 export default async function thumbnail(request: Request, response: Response) {
+  
+  //VALIDATE THAT WE HAVE ASSET NAME
   const assetName = request.query.assetName;
   if (!assetName) {
     response.status(400).send({ error: "No assetName query parameter" });
     return;
   }
 
-  //Get IPFS for asset, check if cached
+  //GET IPFS FOR ASSET IF NOT CACHED
   let ipfs = ipfsByAssetName[assetName + ""];
   try {
     if (!ipfs) {
@@ -92,11 +95,14 @@ export default async function thumbnail(request: Request, response: Response) {
     return;
   }
 
+  //IF ASSET DO NOT HAVE IPFS, WELL, RETURN
   if (!ipfs) {
     response.status(204).send({ error: `${assetName} cant find IPFS` });
     return;
   }
 
+
+  //RETURN IF WE HAVE BLOCKED THE IPFS,FOR EXAMPLE IF WE COULD NOT FIND THE CONTENT
   if (blockedIPFS[ipfs]) {
     response.set("c-blocked", "could not get meta info from IPFS");
     response.status(500).send({
@@ -114,9 +120,21 @@ export default async function thumbnail(request: Request, response: Response) {
   const contentTypeFilePath = "./images/" + ipfs + "_contentType";
   const contentFilePath = "./images/" + ipfs;
 
-  //If we have the content type but its not an image, return
+  //CHECK IF WE HAVE ALREADY LOCALLLY STORED THE CONTENT TYPE FOR THIS IPFS
   if (fs.existsSync(contentTypeFilePath)) {
-    const contentType = fs.readFileSync(contentTypeFilePath, "utf-8");
+    const contentType = fs.readFileSync(contentTypeFilePath, "utf-8"); 
+
+    //SPECIAL TREATMENT FOR PFS, WELL IT IS NOT A PREVIEW/THUMBNAIL OF THE ACTUAL CONTENT BUT AT LEAST WE SERVER THE USERS A TASTY PDF ICON
+    if (contentType === "application/pdf") { 
+      //Send PDF icon
+      const asdf = fs.readFileSync("./static/images/pdf.png");
+      response.set("content-type", "image/png");
+      response.set("ipfs", ipfs);
+      response.send(asdf);
+      return; 
+    }
+
+    //NOT AN IMAGE, NOTHING WE CAN DO, RETURN
     if (isImage(contentType) === false) {
       console.log("Return before talking to Ravencoin IPFS");
       response.status(204).send({
@@ -127,7 +145,7 @@ export default async function thumbnail(request: Request, response: Response) {
     }
   }
 
-  //File exists, we have already cached it
+  //IF FILE IS ALREADY STORED LOCALLY (AS THUMBNAIL) RETURN IT
   if (fs.existsSync(contentFilePath)) {
     response.set("c-from-cache", "true");
 
@@ -146,21 +164,23 @@ export default async function thumbnail(request: Request, response: Response) {
     return;
   }
 
-  console.log("Do NOT have info for", ipfs, "asking Ravencoin IPFS");
+  console.log("Do NOT have info for", ipfs, assetName, "asking Ravencoin IPFS");
   response.set("fetch-ipfs", "fetching asset from IPFS");
+  
   //Ask ravencoinipfs for size
   const url = "https://ravencoinipfs-gateway.com/ipfs/" + ipfs;
 
   try {
     const config = {
-      timeout: 5000, //10 seconds timeout
+      timeout: 10000, //10 seconds timeout
     };
     const asdf = await axios.head(url, config);
-
+    console.log(asdf.headers);
     const size = parseInt("" + asdf.headers["content-length"]);
     const contentType: string = asdf.headers["content-type"] + "";
 
     fs.writeFileSync(contentTypeFilePath, contentType || "EMPTY");
+
 
     //Cache content type
     if (isImage(contentType) === false) {

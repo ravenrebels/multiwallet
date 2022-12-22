@@ -2,6 +2,7 @@ import * as React from "react";
 import { IBalance } from "../Types";
 import navigate from "./navigate";
 import { Routes } from "./Routes";
+const converter = require('number-to-words');
 interface IProps {
   balance: IBalance;
   route: Routes;
@@ -65,11 +66,14 @@ function RavenBalance({ balance }: IRavenBalanceProps) {
 
   const RVN = balance.find((a) => a.assetName === "RVN");
 
-  const present = RVN ? (RVN.balance / 1e8).toLocaleString() : 0;
+  const a = RVN ? (RVN.balance / 1e8) : 0;
+  const present = a ? a.toLocaleString() : "0";
+  const words = converter.toWords(a);
   return (
     <div>
       <label className="navigator__title">Total balance</label>
       <div className="navigator__balance">{present}</div>
+      <div className="navigator__words">{words}</div>
     </div>
   );
 }
