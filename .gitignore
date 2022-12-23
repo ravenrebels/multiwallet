@@ -9,7 +9,7 @@ users/*
 .parcel-cache
 config.json
 sessions
-images
+/images
 temp
 *.js
 !/signin/index.js
