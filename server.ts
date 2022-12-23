@@ -195,6 +195,14 @@ app.get("/api/pendingtransactions", (request, response) => {
     });
   });
 });
+
+app.get("/api/myUTXOs",async function(request, response){
+  const currentUser = getCurrentUser(request);
+  const addresses = Key.getAddresses(currentUser, config.network);
+  const asdf = await Blockchain.getRavenUnspentTransactionOutputs(addresses);
+  response.send(asdf);
+
+});
 app.get("/api/getaddressutxos", function (request, response) {
   const currentUser = getCurrentUser(request);
   const addresses = Key.getAddresses(currentUser, config.network);

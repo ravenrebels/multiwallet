@@ -1,8 +1,7 @@
 import { getConfig } from "../getConfig";
 import { getRPC, methods } from "@ravenrebels/ravencoin-rpc";
 
-import * as Key from "../Key";
-import { getPrivateKey } from "../Utils";
+ 
 import { IUTXO, IValidateAddressResponse, IVOUT } from "../Types";
 import { ITransaction } from "../UserTransaction";
 
@@ -45,7 +44,7 @@ export function decodeRawTransaction(raw: string) {
 export function getRawTransaction(id: string): any {
   return rpc(methods.getrawtransaction, [id, true]);
 }
-export function createRawTransaction(inputs: any, outputs: any):Promise<string> {
+export function createRawTransaction(inputs: any, outputs: any): Promise<string> {
   return rpc(methods.createrawtransaction, [inputs, outputs]);
 }
 
@@ -63,10 +62,33 @@ export function getBalance(addresses: Array<string>): Promise<any> {
   return promise;
 }
 
-export function getRavenUnspentTransactionOutputs(
+export function _sortUTXOs(list: Array<IUTXO>) {
+
+  //Remember, sort mutates the underlaying array
+  //Sort by satoshis, lowest first to prevent dust.
+  return list.sort(function (a, b) {
+
+    if (a.satoshis > b.satoshis) {
+      return 1;
+    }
+    if (a.satoshis < b.satoshis) {
+      return -1;
+    }
+    return 0;
+  });
+
+
+}
+export async function getRavenUnspentTransactionOutputs(
   addresses: Array<string>
 ): Promise<Array<IUTXO>> {
-  return rpc(methods.getaddressutxos, [{ addresses }]);
+
+
+  const list: Array<IUTXO> = await rpc(methods.getaddressutxos, [{ addresses }]);
+  _sortUTXOs(list);
+  return list;
+
+
 }
 export function getAssetUnspentTransactionOutputs(
   addresses: Array<string>,
