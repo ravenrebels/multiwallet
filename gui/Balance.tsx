@@ -50,6 +50,7 @@ export function Balance({ balance }: IBalanceProps) {
                 <tr key={name}>
                   <td>
                     <a
+                      className="balance__asset-link"
                       target="_blank"
                       href={"/showasset?assetName=" + encodeURIComponent(name)}
                     >

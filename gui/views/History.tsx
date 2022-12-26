@@ -2,7 +2,7 @@ import * as React from "react";
 import axios from "axios";
 import { Loading } from "../Loading";
 import { ITransaction } from "../../UserTransaction";
-import { couldStartTrivia } from "typescript";
+
 
 export function History() {
   const history = useHistory();
@@ -21,10 +21,12 @@ function Received({ history }: { history: IHistory }) {
   }
   //Resort the inputs so that newer inputs come first
   inputs.sort(function (a: ITransaction, b: ITransaction) {
-    if (a.time < b.time) {
+    const timeA = a.time || 1;
+    const timeB = b.time || 1;
+    if (timeA < timeB) {
       return 1;
     }
-    if (a.time > b.time) {
+    if (timeA > timeB) {
       return -1;
     }
     return 0;
@@ -35,7 +37,7 @@ function Received({ history }: { history: IHistory }) {
       <table className="table">
         <tbody>
           {inputs.map((transaction) => {
-            const dateString = new Date(transaction.time * 1000);
+            const dateString = new Date((transaction.time || 1) * 1000);
             return (
               <tr key={transaction.txid}>
                 <td>{dateString.toLocaleString()}</td>
