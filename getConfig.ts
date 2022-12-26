@@ -11,9 +11,11 @@ interface IConfig {
   raven_username: string;
   raven_password: string;
   raven_url: string;
-  subTagline?: string;
-  tagline: string;
-  headline: string;
+  gui: {
+    subTagline?: string;
+    tagline: string;
+    headline: string;
+  };
 }
 let config: IConfig | null = null;
 export function getConfig(): IConfig {
@@ -34,14 +36,24 @@ export function getConfig(): IConfig {
     return obj;
   } else {
     const template = `{
-      "fundingWallet": "12 words mnemonic key",
-      "cacheKeys": true, 
-      "mode": "ASSETS",
+      "gui": {
+        "headline": "Playground",
+        "tagline": "Send RVN and Assets/Tokens",
+        "subTagline": "Ravencoin testnet"
+      },
+    
+      "assets": ["QKN"],
+      "baseCurrency": "RVN",
+      "cacheKeys": false,
+    
+      "mode": "RAVENCOIN_AND_ASSETS",
       "network": "rvn-test",
-      "raven_username": "secret user name",
-      "raven_password": "secret password",
-      "raven_url": "http://localhost:8888"
-          }
+    
+      "pay_fees_with_this_mnemonic": "not used yet satisfy arctic left moon text",
+      "raven_username": "SECRET",
+      "raven_password": "SECRET",
+      "raven_url": "http://localhost:18766"
+    }
           `;
 
     const message = `config.json not found. Please create a ${filePath} file and fill in your information.

@@ -5,6 +5,17 @@
 
   --opacity: 0.8;
 }
+html {
+  background-color: #000;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+body {
+  min-height: 100%;
+  min-width: 100%;
+  background-color: papayawhip;
+  margin: 0 auto;
+}
 body {
   font-family: "Quicksand", sans-serif;
   background: #eeeeee;
@@ -70,6 +81,7 @@ c-user {
 
 .pageTop {
   background: var(--bs-primary);
+  background: black;
   height: 150px;
   text-align: center;
   color: white;
