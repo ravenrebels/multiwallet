@@ -6,7 +6,8 @@
     "build": "parcel build ./gui/index.html --no-content-hash --no-cache && npx tsc server.ts",
     "dev": "parcel ./gui/index.html --no-cache ",
     "test": "npx tsc ./tests/index.ts && jest tests",
-    "serve": "node server"
+    "serve": "node server",
+    "watch": "tsc --watch"
   },
   "repository": {
     "type": "git",

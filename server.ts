@@ -138,7 +138,7 @@ app.get("/api/history", function (request, response) {
       response.send(d);
     })
     .catch((e) => {
-      response.status(500).send(e);
+      response.status(500).send({ "error": e + "" });
     });
 });
 
