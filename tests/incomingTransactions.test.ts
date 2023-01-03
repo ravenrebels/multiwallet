@@ -1,6 +1,6 @@
-import { getSumOfAssetOutputs, getSumOfRavencoinOutputs, ITransaction } from "../UserTransaction";
+import { getSumOfAssetOutputs, getSumOfRavencoinOutputs, ITransaction ,isByUser, isToUser} from "../src/UserTransaction";
 
-const { isByUser, isToUser } = require("../UserTransaction");
+ 
 
 //Import test data
 import data1 from "./incomingTransactions.json";

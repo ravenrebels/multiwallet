@@ -1,4 +1,4 @@
-import * as Blockchain from "../blockchain/blockchain";
+import * as Blockchain from "../src/blockchain/blockchain";
 
 const data = [
 

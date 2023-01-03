@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "A hot custodial Ravencoin wallet",
   "scripts": {
-    "build": "parcel build ./gui/index.html --no-content-hash --no-cache && npx tsc server.ts",
+    "build": "parcel build ./gui/index.html --no-content-hash --no-cache && npx tsc ./src/server.ts",
     "dev": "parcel ./gui/index.html --no-cache ",
     "test": "npx tsc ./tests/index.ts && jest tests",
-    "serve": "node server",
+    "serve": "node ./src/server",
     "watch": "tsc --watch"
   },
   "repository": {

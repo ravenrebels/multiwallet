@@ -80,7 +80,7 @@ c-user {
 }
 
 .pageTop {
-  background: var(--bs-primary);
+  background: darkslateblue;/* var(--bs-primary);*/
 
   height: 150px;
   text-align: center;
