@@ -1,5 +1,5 @@
 //Weird imports for express but needed for Typescript to understand types
-import { Request, Response, Application, Express } from "express";
+import { Request, Express } from "express";
 // TODO Figure out how NOT to use require here.
 const express = require("express");
 
@@ -17,10 +17,22 @@ import * as UserTransaction from "./UserTransaction";
 const session = require("express-session");
 const FileStore = require("session-file-store")(session);
 const nocache = require("nocache");
-import * as Asdf from "./blockchain/Asdf";
+import * as Transactor from "./blockchain/Transactor";
 
 import thumbnail from "./thumbnail";
-import { IUser } from "./Types";
+import { IUser } from "./Types"; 
+
+//Healthcheck
+console.info("Initiating health check, running ", getConfig().network, getConfig().raven_url);
+Blockchain.isHealthy().then(data => {
+  if (!data) {
+    process.exit(0);
+  }
+}).catch(e => {
+  console.log(e);
+  process.exit(1);
+})
+
 
 const app: Express = express();
 const port = process.env.PORT || 80;
@@ -278,7 +290,7 @@ app.post("/send", (request, response) => {
   }
 
   const user = getCurrentUser(request);
-  const promise = Asdf.send(
+  const promise = Transactor.send(
     user,
     request.body.to,
     parseFloat(request.body.amount),

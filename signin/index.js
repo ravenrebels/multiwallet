@@ -9,12 +9,14 @@ fetch("/info")
 fetch("/signin/publicprofiles")
   .then((response) => response.json())
   .then((data) => {
+    // add the annon first
+    const dom = document.createElement("c-annon");
+    document.getElementById("app").appendChild(dom);
+
     //Now add each public profile
     data.map(addProfile);
 
-    // add the annon
-    const dom = document.createElement("c-annon");
-    document.getElementById("app").appendChild(dom);
+
   });
 
 function addProfile(userData) {
@@ -25,16 +27,16 @@ function addProfile(userData) {
 
 class Annon extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div class="plate card" style="width: 18rem;  ">
+    this.innerHTML = `<div class="plate card" style="width: 20rem;  ">
       <img class="card-img-top"
-        style="height:  80px; object-fit: cover  ;"
+        style="height:  120px; object-fit: cover  ;"
         src="https://cdn.pixabay.com/photo/2013/07/12/19/25/crowd-sourcing-154759_1280.png"
 
         alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">Enter any name</h5> 
            
-          <p style="font-size:70%">
+          <p>
               If you for example enter <em>Elvis25</em> a new account for <em>Elvis25</em> will be created.
           </p>
           <form>

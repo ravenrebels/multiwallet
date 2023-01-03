@@ -1,4 +1,4 @@
-import { isUTXOInMempool } from "../blockchain/Asdf";
+import { isUTXOInMempool } from "../blockchain/Transactor";
 
 import { IUTXO } from "../Types";
 import { ITransaction } from "../UserTransaction";

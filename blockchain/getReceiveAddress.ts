@@ -1,4 +1,4 @@
-import { getHistory } from "./getHistory";
+import { hasHistory } from "./getHistory";
 
 export async function getReceiveAddress(addresses: Array<string>) {
   //even addresses are external, odd address are internal/changes
@@ -8,10 +8,14 @@ export async function getReceiveAddress(addresses: Array<string>) {
       continue;
     }
     const address = addresses[counter];
-    const asdf = await getHistory([address]);
 
-    if (asdf.inputs.length === 0) {
+    //If an address has tenth of thousands of transactions, getHistory will throw an exception
+
+    const asdf = await hasHistory([address]);
+
+    if (asdf === false) {
       return address;
     }
+
   }
 }

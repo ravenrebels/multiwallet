@@ -1,5 +1,5 @@
 //@ts-ignore
-import * as imageThumbnail from "image-thumbnail";
+import imageThumbnail from "image-thumbnail";
 import * as blockchain from "./blockchain/blockchain";
 import * as fs from "fs";
 import axios from "axios";
@@ -7,6 +7,7 @@ import * as path from "path";
 import { Request, Response, Application, Express } from "express";
 
 
+console.log("Image Thumbnail function", imageThumbnail);
 
 type StringStringMapper = {
   [key: string]: string;
@@ -68,7 +69,7 @@ if (!fs.existsSync(dir)) {
 }
 
 export default async function thumbnail(request: Request, response: Response) {
-  
+
   //VALIDATE THAT WE HAVE ASSET NAME
   const assetName = request.query.assetName;
   if (!assetName) {
@@ -122,16 +123,16 @@ export default async function thumbnail(request: Request, response: Response) {
 
   //CHECK IF WE HAVE ALREADY LOCALLLY STORED THE CONTENT TYPE FOR THIS IPFS
   if (fs.existsSync(contentTypeFilePath)) {
-    const contentType = fs.readFileSync(contentTypeFilePath, "utf-8"); 
+    const contentType = fs.readFileSync(contentTypeFilePath, "utf-8");
 
     //SPECIAL TREATMENT FOR PFS, WELL IT IS NOT A PREVIEW/THUMBNAIL OF THE ACTUAL CONTENT BUT AT LEAST WE SERVER THE USERS A TASTY PDF ICON
-    if (contentType === "application/pdf") { 
+    if (contentType === "application/pdf") {
       //Send PDF icon
       const asdf = fs.readFileSync("./static/images/pdf.png");
       response.set("content-type", "image/png");
       response.set("ipfs", ipfs);
       response.send(asdf);
-      return; 
+      return;
     }
 
     //NOT AN IMAGE, NOTHING WE CAN DO, RETURN
@@ -166,7 +167,7 @@ export default async function thumbnail(request: Request, response: Response) {
 
   console.log("Do NOT have info for", ipfs, assetName, "asking Ravencoin IPFS");
   response.set("fetch-ipfs", "fetching asset from IPFS");
-  
+
   //Ask ravencoinipfs for size
   const url = "https://ravencoinipfs-gateway.com/ipfs/" + ipfs;
 
@@ -175,7 +176,7 @@ export default async function thumbnail(request: Request, response: Response) {
       timeout: 10000, //10 seconds timeout
     };
     const asdf = await axios.head(url, config);
-    console.log(asdf.headers);
+
     const size = parseInt("" + asdf.headers["content-length"]);
     const contentType: string = asdf.headers["content-type"] + "";
 
@@ -225,7 +226,7 @@ export default async function thumbnail(request: Request, response: Response) {
     }
     response.send(size);
   } catch (e) {
-    console.dir(e + "");
+    console.dir("Major error " + e);
     blockedIPFS[ipfs] = "" + new Date().getMilliseconds();
     response.status(500).send({ error: e + "" });
     return;

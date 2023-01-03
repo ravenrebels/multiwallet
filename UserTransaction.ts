@@ -28,8 +28,8 @@ export interface ITransaction {
 
 interface Vin {
   c_index?: number;
-
   address?: string;
+
   scriptSig: ScriptSig;
   sequence: number;
   txid: string;
@@ -49,7 +49,7 @@ interface Vout {
   n: number;
   scriptPubKey: ScriptPubKey;
   valueSat: number;
-  index?: number;
+
 }
 
 interface ScriptPubKey {
@@ -96,6 +96,11 @@ export function getSumOfRavencoinOutputs(
 ) {
   let sum = 0;
   transaction.vout.map((vout) => {
+
+    if (!vout.scriptPubKey || !vout.scriptPubKey.addresses) {
+      return;
+    }
+
     const addy = vout.scriptPubKey.addresses[0];
     if (addresses.includes(addy) == true) {
       sum = sum + vout.valueSat;
@@ -114,11 +119,12 @@ export function getSumOfAssetOutputs(
   const result: TResult = {};
   transaction.vout.map((vout) => {
     const spk = vout.scriptPubKey;
-    const addy = spk.addresses[0];
-    if (addresses.includes(addy) === false) {
+    if (!spk.asset) {
       return;
     }
-    if (!spk.asset) {
+
+    const addy = spk.addresses[0];
+    if (addresses.includes(addy) === false) {
       return;
     }
 

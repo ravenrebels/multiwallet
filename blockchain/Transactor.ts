@@ -2,7 +2,10 @@ import { getAddressObjects } from "../Key";
 import { IUser, IUTXO, IVOUT } from "../Types";
 import * as blockchain from "./blockchain";
 import { getConfig } from "../getConfig";
-import { getSumOfAssetOutputs, ITransaction } from "../UserTransaction";
+import {   ITransaction } from "../UserTransaction";
+
+
+
 
 const config = getConfig();
 
@@ -35,7 +38,7 @@ function sumOfUTXOs(UTXOs: Array<IUTXO>) {
     Lets start by first assuming that we will pay 1 RVN in fee (that is sky high).
     Than we check the size of the transaction and then we just adjust the change output so the fee normalizes
 */
-async function getFee(inputs: Array<IVOUT>, outputs: Array<IVOUT>):Promise<number> {
+async function getFee(inputs: Array<IVOUT>, outputs: Array<IVOUT>): Promise<number> {
   const ONE_KILOBYTE = 1024;
   //Create a raw transaction to get an aproximation for transaction size.
   const raw = await blockchain.createRawTransaction(inputs, outputs);
@@ -48,7 +51,6 @@ async function getFee(inputs: Array<IVOUT>, outputs: Array<IVOUT>):Promise<numbe
   let fee = 0.02;
   //TODO should ask the "blockchain" **estimatesmartfee**
 
-  console.log("Transaction fee", fee, "for", size);
   return fee * size;
 
 }
@@ -77,11 +79,12 @@ async function _send(options: IInternalSendIProp) {
   const assetChangeAddress = addresses[3];
 
   let UTXOs = await blockchain.getRavenUnspentTransactionOutputs(addresses);
+
   //Remove UTXOs that are currently in mempool
   const mempool = await blockchain.getMempool();
-  console.log("innan vi tar bort mempool transar " + sumOfUTXOs(UTXOs));
+
   UTXOs = UTXOs.filter(UTXO => isUTXOInMempool(mempool, UTXO) === false);
-  console.log("EFTER vi tar bort mempool transar " + sumOfUTXOs(UTXOs));
+
   const enoughRavencoinUTXOs = getEnoughUTXOs(
     UTXOs,
     isAssetTransfer ? 1 : amount + MAX_FEE
@@ -89,15 +92,18 @@ async function _send(options: IInternalSendIProp) {
 
   //Sum up the whole unspent amount
   let unspentRavencoinAmount = sumOfUTXOs(enoughRavencoinUTXOs);
+
   console.log(
     "Total amount of UTXOs Ravencon being used in this transaction",
-    unspentRavencoinAmount.toLocaleString()
+    unspentRavencoinAmount.toLocaleString(), amount.toLocaleString()
   );
   if (isAssetTransfer === false) {
     if (amount > unspentRavencoinAmount) {
       throw Error("Insufficient funds, cant send " + amount.toLocaleString() + " only have " + unspentRavencoinAmount.toLocaleString());
     }
   }
+
+
 
   const rvnAmount = isAssetTransfer ? 0 : amount;
 
@@ -129,12 +135,12 @@ async function _send(options: IInternalSendIProp) {
     outputs[ravencoinChangeAddress] = getTwoDecimalTrunc(ravencoinChangeAmount);
   }
   //Now we have enough UTXos, lets create a raw transactions
-  console.log("INPUTS", inputs);
-  console.log("OUTPUTS", outputs);
+
+
   const raw = await blockchain.createRawTransaction(inputs, outputs);
 
 
-  console.log("Raw transaction", raw);
+
   //OK lets find the private keys (WIF) for input addresses
   type TPrivateKey = {
     [key: string]: string;
@@ -156,7 +162,7 @@ async function _send(options: IInternalSendIProp) {
   });
 
   const signedTransaction = await signedTransactionPromise;
-  console.log("Will send", signedTransaction);
+
 
   const txid = await blockchain.sendRawTransaction(signedTransaction);
   return txid;
@@ -176,13 +182,14 @@ async function addAssetInputsAndOutputs(
     assetName
   );
 
+  console.log("Asset UTXOs", assetUTXOs);
   const mempool = await blockchain.getMempool();
   assetUTXOs = assetUTXOs.filter(UTXO => isUTXOInMempool(mempool, UTXO) === false);
 
 
   const _UTXOs = getEnoughUTXOs(assetUTXOs, amount);
-  const _inputs = blockchain.convertUTXOsToVOUT(_UTXOs);
-  _inputs.map((item) => inputs.push(item));
+  const tempInputs = blockchain.convertUTXOsToVOUT(_UTXOs);
+  tempInputs.map((item) => inputs.push(item));
 
   outputs[toAddress] = {
     transfer: {
@@ -223,7 +230,8 @@ function getEnoughUTXOs(utxos: Array<IUTXO>, amount: number): Array<IUTXO> {
   const returnValue: Array<IUTXO> = [];
 
   utxos.map(function (utxo) {
-    if (utxo.satoshis !== 0 && tempAmount < amount) {
+
+    if (utxo.satoshis !== 0 && tempAmount < amount) { 
       const value = utxo.satoshis / 1e8;
       tempAmount = tempAmount + value;
       returnValue.push(utxo);

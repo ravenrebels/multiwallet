@@ -1,7 +1,7 @@
 import { getConfig } from "../getConfig";
 import { getRPC, methods } from "@ravenrebels/ravencoin-rpc";
 
- 
+
 import { IUTXO, IValidateAddressResponse, IVOUT } from "../Types";
 import { ITransaction } from "../UserTransaction";
 
@@ -13,12 +13,16 @@ export const rpc = getRPC(
   config.raven_password,
   config.raven_url
 );
+export function isHealthy(){
+  return rpc(methods.getblockcount, []);
+}
 export function getAssetData(assetName: string) {
   return rpc(methods.getassetdata, [assetName]);
 }
 export function sendRawTransaction(signedTransaction: any) {
   const p = rpc(methods.sendrawtransaction, [signedTransaction.hex]);
   p.catch((e) => {
+    console.log("send raw transaction");
     console.dir(e);
   });
   return p;
@@ -27,7 +31,7 @@ export function signRawTransaction(
   rawTransactionHex: any,
   privateKeys: Array<string>
 ) {
-  console.log("raw transaction", rawTransactionHex);
+
 
   const s = rpc(methods.signrawtransaction, [
     rawTransactionHex,

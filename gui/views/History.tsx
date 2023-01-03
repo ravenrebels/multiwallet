@@ -10,6 +10,9 @@ export function History() {
   if (!history) {
     return <Loading />;
   }
+  if (history.error) {
+    return <div className="plate">{history.error}</div>
+  }
   return <Received history={history} />;
 }
 
@@ -79,12 +82,33 @@ function Received({ history }: { history: IHistory }) {
 interface IHistory {
   inputs: Array<ITransaction>,
   outputs: Array<ITransaction>
+  error: string
 }
 function useHistory() {
+
   const [history, setHistory] = React.useState<IHistory | null>(null);
 
   React.useEffect(() => {
-    const work = async () => setHistory((await axios.get("/api/history")).data);
+    const work = async () => {
+
+      if (history && history.error) {
+        return;
+      }
+      const promise = axios.get("/api/history?cacheBustin=" + new Date().toISOString());
+      promise.then(axiosResponse => {
+        setHistory(axiosResponse.data);
+      });
+      promise.catch(error => {
+
+        const h = {
+          inputs: [],
+          outputs: [],
+          error: error.response.data.error
+        }
+        setHistory(h);
+      });
+
+    }
     work();
     const interval = setInterval(work, 30 * 1000);
     return () => clearInterval(interval);
