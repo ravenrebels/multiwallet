@@ -1,7 +1,8 @@
 import * as React from "react";
-import { IBalance } from "../Types";
+import { IBalance } from "../src/Types";
 import navigate from "./navigate";
 import { Routes } from "./Routes";
+import { useSettings } from "./useSettings";
 const converter = require('number-to-words');
 interface IProps {
   balance: IBalance;
@@ -50,7 +51,9 @@ interface IRavenBalanceProps {
   balance: IBalance;
 }
 function RavenBalance({ balance }: IRavenBalanceProps) {
-  if (!balance) {
+
+  const settings = useSettings();
+  if (!balance || !settings) {
     return (
       <div>
         <label className="navigator__title">Total balance</label>
@@ -59,6 +62,10 @@ function RavenBalance({ balance }: IRavenBalanceProps) {
         </div>
       </div>
     );
+  }
+
+  if(settings.mode !== "RAVENCOIN_AND_ASSETS"){
+    return null;
   }
 
   const assetNames = balance.map((obj: any) => obj.assetName);

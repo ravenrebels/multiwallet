@@ -2,13 +2,16 @@ import axios from "axios";
 import * as React from "react";
 import { getAmount } from "../index";
 import { Loading } from "../Loading";
-import { IAddressMetaData, IAssetMetaData } from "../../Types";
+import { IAssetMetaData } from "../../src/Types";
 import { EventNames } from "../EventNames";
 export function Transfer({ balance }: any) {
+
   const [transactionId, setTransactionId] = React.useState("");
   const [amount, setAmount] = React.useState("0");
   const [to, setTo] = React.useState("");
   const [assetName, setAssetName] = React.useState("RVN");
+
+  const selectRef = React.useRef<HTMLSelectElement>(null);
   if (!balance) {
     return <Loading />;
   }
@@ -18,6 +21,15 @@ export function Transfer({ balance }: any) {
 
 
   const onSubmit = (event: any) => {
+
+    console.log(selectRef);
+
+    let asset = assetName
+
+    if (selectRef && selectRef.current) {
+      asset = selectRef.current.value;
+    }
+
     event.preventDefault();
 
     if (!amount) {
@@ -31,18 +43,18 @@ export function Transfer({ balance }: any) {
       return;
     }
 
-    if (assetName === "¤VN" && parseFloat(amount) > rvnAmount) {
+    if (asset === "RVN" && parseFloat(amount) > rvnAmount) {
       alert("Not enough RVN to send " + parseFloat(amount).toLocaleString());
       return;
     }
 
 
-    if (getAmount(balance, assetName) < parseFloat(amount)) {
-      alert("Not enough " + assetName + " to send " + amount);
+    if (getAmount(balance, asset) < parseFloat(amount)) {
+      alert("Not enough " + asset + " to send " + amount);
       return;
     }
     const obj = {
-      assetName,
+      assetName: asset,
       to,
       amount: parseFloat(amount),
     };
@@ -74,13 +86,15 @@ export function Transfer({ balance }: any) {
           </label>
 
           <select
+            ref={selectRef}
             className="form-select form-control"
             id="assetSelect"
             onChange={(event) => {
               setAssetName(event.target.value);
             }}
           >
-            <option value="RVN">RVN - {rvnAmount.toLocaleString()}</option>
+            {rvnAmount && <option value="RVN">RVN - {rvnAmount.toLocaleString()}</option>}
+
             {assetNames.map((name: string) => {
               if (name === "RVN") {
                 return null;

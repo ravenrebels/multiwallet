@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { createRoot } from "react-dom/client";
 
-import { Balance } from "./Balance";
+import { Balance } from "./views/Balance";
 import { EventNames } from "./EventNames";
 import { History } from "./views/History";
 import { MempoolStatus } from "./MempoolStatus";
@@ -13,6 +13,7 @@ import { Routes } from "./Routes";
 import { Transfer } from "./views/Transfer";
 import { useBalance } from "./useBalance";
 
+
 //@ts-ignore
 createRoot(document.getElementById("pageTop")).render(<PageTop />);
 
@@ -20,10 +21,15 @@ function App() {
   const triggerDate = useTriggerDate();
   const route = useRoute();
   const balance = useBalance(triggerDate);
-  //If we fail getting balance, user is probably sign out, redirect to start page
-  React.useEffect( () => { 
-    document.body.addEventListener("USEBALANCE_FAILED", () => window.location.href="/");
+
+
+  React.useEffect(() => {
+    //If we fail getting balance, user is probably sign out, redirect to start page
+    document.body.addEventListener("USEBALANCE_FAILED", () => window.location.href = "/");
   }, []);
+
+
+
   return (
     <div>
       <Navigator balance={balance} route={route} />
@@ -47,6 +53,7 @@ export function getAmount(balance: any, name: string): number {
 
 //@ts-ignore
 createRoot(document.getElementById("app")).render(<App />);
+
 
 function useRoute(): Routes {
   const [route, setRoute] = React.useState(getRoute());

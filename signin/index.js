@@ -1,5 +1,5 @@
 //Get meta data info
-fetch("/info")
+fetch("/settings")
   .then((response) => response.json())
   .then((data) => {
     document.getElementById("headline").innerText = data.headline;

@@ -1,3 +1,14 @@
+
+export interface ISettings {
+  assets?: Array<string>,
+  baseCurrency: "RVN", //TODO is this really needed? do we not get that info from the network attribute?
+  mode: "RAVENCOIN_AND_ASSETS" | "ASSETS" | "SOME_ASSETS";
+
+  subTagline?: string;
+  tagline: string;
+  headline: string;
+
+}
 export type IBalance = BalanceRoot[] | null;
 
 export interface BalanceRoot {

@@ -4,8 +4,10 @@ import * as fs from "fs";
 //No need to read from disk for every request
 
 interface IConfig {
-  fundingWallet?: string;
+  assets?: Array<string>,
+  baseCurrency: "RVN", //TODO is this really needed? do we not get that info from the network attribute?
   cacheKeys: boolean;
+  fundingWallet?: string;
   mode: "RAVENCOIN_AND_ASSETS" | "ASSETS" | "SOME_ASSETS";
   network: string;
   raven_username: string;
@@ -19,6 +21,8 @@ interface IConfig {
 }
 let config: IConfig | null = null;
 export function getConfig(): IConfig {
+
+  //If config is already cached, return it
   if (config) {
     return config;
   }
@@ -33,6 +37,7 @@ export function getConfig(): IConfig {
       throw Error("config.json must contain attribute *mode*");
     }
     config = obj;
+    validateConfig(obj);
     return obj;
   } else {
     const template = `{
@@ -61,4 +66,15 @@ export function getConfig(): IConfig {
           *mode* can be either RAVENCOIN_AND_ASSETS, ASSETS or SOME_ASSETS`;
     throw new Error(message);
   }
+}
+
+
+function validateConfig(config: IConfig) {
+
+  if (config.mode === "SOME_ASSETS") {
+    if (!config.assets || config.assets.length === 0) {
+      throw Error("config.json, please configure *assets*")
+    }
+  }
+
 }

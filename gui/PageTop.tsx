@@ -1,22 +1,28 @@
 import * as React from "react";
 import axios from "axios";
+import { useSettings } from "./useSettings";
 
-interface IInfo {
-  subTagline?: string;
-}
+
 export function PageTop() {
   const profile = useProfile();
-  const info = useInfo();
+  const settings = useSettings();
   if (!profile) {
+    console.log("Page top return no balance");
     return null;
   }
 
+  if (!settings) {
+    console.log("Page top return no settings");
+    return null;
+  }
+
+  console.log("Page top about to render");
   return (
     <>
       <div className="pageTop__content">
         <div className="pageTop__title">
           <small className="h4">Hello, {profile.displayName} </small>
-          <div>{info && info.subTagline}</div>
+          <div>{settings && settings.subTagline}</div>
         </div>
         <div className="pageTop__avatar">
           <img
@@ -41,20 +47,6 @@ export function PageTop() {
   );
 }
 
-function useInfo(): IInfo | null {
-  const [info, setInfo] = React.useState<IInfo | null>(null);
-
-  const runOnce: any = [];
-  React.useEffect(() => {
-    const URL = "/info";
-    axios.get(URL).then((axiosResponse) => {
-      //@ts-ignore
-      setInfo(axiosResponse.data);
-    });
-  }, runOnce);
-
-  return info;
-}
 function useProfile() {
   const [data, setData] = React.useState<any>(null);
 

@@ -21,6 +21,7 @@ import * as Transactor from "./blockchain/Transactor";
 
 import thumbnail from "./thumbnail";
 import { IUser } from "./Types"; 
+import { getParsedCommandLineOfConfigFile } from "typescript";
 
 //Healthcheck
 console.info("Initiating health check, running ", getConfig().network, getConfig().raven_url);
@@ -69,12 +70,13 @@ app.get("/api/mempool", async function (_, response) {
       response.status(500).send({ error: e });
     });
 });
-app.get("/info", (request, response) => {
+app.get("/settings", (request, response) => {
   const obj = {
+    assets: config.assets,
     mode: config.mode,
-    tagline: config.gui.tagline,
-    subTagline: config.gui.subTagline,
     headline: config.gui.headline,
+    subTagline: config.gui.subTagline,
+    tagline: config.gui.tagline,
   };
   response.send(obj);
 });
