@@ -34,10 +34,21 @@ Use this template and replace the values
 
 ```
 {
-  "raven_username": "jfk38fn202jc53",
-  "raven_password": "jfk38fn202jc53",
-  "raven_url": "http://localhost:18766",
-  "network": "rvn-test"
+  "assets": ["LEMONADE"],
+  "gui": {
+    "tagline": "Wallet",
+    "headline": "LEMONADE",
+    "subTagline": "LEMONADE WALLET"
+  },
+
+  "cacheKeys": true,
+  "mode": "SOME_ASSETS",
+  "network": "rvn-test",     
+
+  "fundingWallet": "focus strike fire tongue plunge length aisle whale frost laundry extra truck",
+  "raven_username": "SECRET",
+  "raven_password": "SECRET",
+  "raven_url": "http://localhost:8888"
 }
 
 ```
