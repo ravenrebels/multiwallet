@@ -1,5 +1,5 @@
 :root {
-  --color: darksilver;
+  --color: #444444;
   --bs-primary: #4169e1;
   --bs-blue: blue;
   --opacity: 1;
@@ -25,7 +25,9 @@ body {
   margin: 0 auto;
 
   font-family: "Quicksand", sans-serif;
-  background: #eeeeee;
+  
+
+  color:var(--color) !important;
 
 
   background-repeat: no-repeat;
