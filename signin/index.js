@@ -4,6 +4,8 @@ fetch("/settings")
   .then((data) => {
     document.getElementById("headline").innerText = data.headline;
     document.getElementById("tagline").innerText = data.tagline;
+
+    document.title = data.headline;
   });
 
 fetch("/signin/publicprofiles")
