@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as React from "react";
 import { getAmount } from "../index";
-import { Loading } from "../Loading";
+import { Loading } from "../components/Loading";
 import { IAssetMetaData } from "../../src/Types";
 import { EventNames } from "../EventNames";
 export function Transfer({ balance }: any) {
@@ -21,11 +21,7 @@ export function Transfer({ balance }: any) {
 
 
   const onSubmit = (event: any) => {
-
-    console.log(selectRef);
-
     let asset = assetName
-
     if (selectRef && selectRef.current) {
       asset = selectRef.current.value;
     }
@@ -60,9 +56,9 @@ export function Transfer({ balance }: any) {
     };
 
     const promise = axios.post("/send", obj);
-    console.log("promise", promise);
+
     promise.then((axiosResponse) => {
-      console.log("Axios resonse data", axiosResponse.data);
+
       const event = new Event(EventNames.TRANSFER__SENT);
       document.dispatchEvent(event);
       setTransactionId(axiosResponse.data.txid);

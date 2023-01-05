@@ -1,6 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import { Loading } from "../Loading";
+import { Loading } from "../components/Loading";
 export function Receive() {
   const [address, setAddress] = React.useState("");
   React.useEffect(() => {

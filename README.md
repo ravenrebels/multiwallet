@@ -43,9 +43,10 @@ Use this template and replace the values
 
   "cacheKeys": true,
   "mode": "SOME_ASSETS",
+  "mode_docs: "The mode attribute can have the value RAVENCOIN_AND_ASSSETS or SOME_ASSETS or ASSETS
   "network": "rvn-test",     
 
-  "fundingWallet": "focus strike fire tongue plunge length aisle whale frost laundry extra truck",
+  "fundingWallet": "mimic correct nurse toward educate negative giant beach bicycle cage gaze when",
   "raven_username": "SECRET",
   "raven_password": "SECRET",
   "raven_url": "http://localhost:8888"

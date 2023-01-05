@@ -5,13 +5,13 @@ import { createRoot } from "react-dom/client";
 import { Balance } from "./views/Balance";
 import { EventNames } from "./EventNames";
 import { History } from "./views/History";
-import { MempoolStatus } from "./MempoolStatus";
-import { Navigator } from "./Navigator";
+import { MempoolStatus } from "./components/MempoolStatus";
+import { Navigator } from "./components/Navigator";
 import { PageTop } from "./PageTop";
 import { Receive } from "./views/Receive";
 import { Routes } from "./Routes";
 import { Transfer } from "./views/Transfer";
-import { useBalance } from "./useBalance";
+import { useBalance } from "./hooks/useBalance";
 
 
 //@ts-ignore

@@ -1,8 +1,8 @@
 import * as React from "react";
-import { IBalance } from "../src/Types";
-import navigate from "./navigate";
-import { Routes } from "./Routes";
-import { useSettings } from "./useSettings";
+import { IBalance } from "../../src/Types";
+import navigate from "../navigate";
+import { Routes } from "../Routes";
+import { useSettings } from "../hooks/useSettings";
 const converter = require('number-to-words');
 interface IProps {
   balance: IBalance;

@@ -2,8 +2,8 @@ import * as React from "react";
 import { SyntheticEvent } from "react";
 import { IBalance, ISettings } from "../../src/Types";
 
-import { Loading } from "../Loading";
-import { useSettings } from "../useSettings";
+import { Loading } from "../components/Loading";
+import { useSettings } from "../hooks/useSettings";
 interface IBalanceProps {
   balance: IBalance;
 }
@@ -11,34 +11,6 @@ interface IBalanceProps {
 interface IRavenAmount {
   balance: IBalance,
   settings: ISettings | null
-}
-function RavenAmount({ balance, settings }: IRavenAmount) {
-
-  if (!balance) {
-    return null;
-  }
-  if (!settings) {
-    return null;
-  }
-
-  if (settings.mode !== "RAVENCOIN_AND_ASSETS") {
-    return null;
-  }
-
-  const assetNames = balance.map((obj) => obj.assetName);
-  assetNames.sort();
-
-  const RVN = balance.find((a) => a.assetName === "RVN");
-
-  const rvnAmount = RVN ? (RVN.balance / 1e8).toLocaleString() : "0";
-
-  return <tr>
-    <td>RVN</td>
-    <td>
-      <FormattedAmount amount={rvnAmount} />
-    </td>
-    <td></td>
-  </tr>
 }
 export function Balance({ balance }: IBalanceProps) {
   if (!balance) {
@@ -48,7 +20,7 @@ export function Balance({ balance }: IBalanceProps) {
   const settings = useSettings();
   const assetNames = balance.map((obj) => obj.assetName);
   assetNames.sort();
-
+ 
 
   return (
     <div className="balance">
@@ -170,4 +142,34 @@ function Image({ assetName }: IImageProps) {
       ></img>
     </a>
   );
+}
+
+function RavenAmount({ balance, settings }: IRavenAmount) {
+
+
+  if (!balance) {
+    return null;
+  }
+  if (!settings) {
+    return null;
+  }
+
+  if (settings.mode !== "RAVENCOIN_AND_ASSETS") {
+    return null;
+  }
+
+  const assetNames = balance.map((obj) => obj.assetName);
+  assetNames.sort();
+
+  const RVN = balance.find((a) => a.assetName === "RVN");
+
+  const rvnAmount = RVN ? (RVN.balance / 1e8).toLocaleString() : "0";
+
+  return <tr>
+    <td>RVN</td>
+    <td>
+      <FormattedAmount amount={rvnAmount} />
+    </td>
+    <td></td>
+  </tr>
 }

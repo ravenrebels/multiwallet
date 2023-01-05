@@ -1,9 +1,9 @@
 import * as React from "react";
-import { ITransaction } from "../UserTransaction";
-import { EventNames } from "./EventNames";
+import { ITransaction } from "../../src/UserTransaction";
+import { EventNames } from "../EventNames";
 
 import { Loading } from "./Loading";
-import { usePollEndpoint } from "./usePollEndpoint";
+import { usePollEndpoint } from "../hooks/usePollEndpoint";
 
 interface IData {
   toUser: Array<ITransaction>;

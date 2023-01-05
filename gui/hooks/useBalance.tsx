@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as React from "react";
-import { IBalance } from "../src/Types";
+import { IBalance } from "../../src/Types";
 import { useSettings } from "./useSettings";
 
 const CORRECT_CONTENT_TYPE = "application/json; charset=utf-8";

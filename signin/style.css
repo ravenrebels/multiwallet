@@ -1,8 +1,7 @@
 :root {
   --color: black;
   --bs-primary: #4169e1;
-  --bs-blue: blue;
-
+  --bs-blue: blue; 
   --opacity: 0.9;
 }
 
@@ -26,23 +25,23 @@ body {
 }
 
 #app {
-  position: relative;
+  align-items: center;
+  border-radius: 20px;
   color: var(--color);
+  display: flex;
+  flex-flow: row wrap;
+  gap: 30px;
+  justify-content: center;
   margin: auto;
   margin-top: 40px;
   max-width: calc(96vw);
   min-height: 400px;
-
+  
   padding: 2px;
   padding-top: 40px;
-  border-radius: 20px;
-
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  flex-flow: row wrap;
-
-  gap: 30px;
+  position: relative;
+  
+  
 }
 
 footer {
