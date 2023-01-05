@@ -4,14 +4,20 @@
   --bs-blue: blue;
   --opacity: 1;
 }
-
-html,
-body {
-  margin: 0;
-  padding: 0;
+html
+{
+    overflow: visible;
 }
 
+ 
+html, body
+{
+  height: auto;
+}
+ 
 body {
+  margin: 0;
+  box-sizing: border-box;
   height: 100%;
   min-height: 100vh;
   min-width: 90%;
