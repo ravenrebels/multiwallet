@@ -27,12 +27,7 @@ function addProfile(userData) {
 
 class Annon extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div class="plate card" style="width: 20rem;  ">
-      <img class="card-img-top"
-        style="height:  120px; object-fit: cover  ;"
-        src="https://cdn.pixabay.com/photo/2013/07/12/19/25/crowd-sourcing-154759_1280.png"
-
-        alt="Card image cap">
+    this.innerHTML = `<div class="paper card">
         <div class="card-body">
           <h5 class="card-title">Enter any name</h5> 
            
@@ -87,9 +82,9 @@ class User extends HTMLElement {
       return;
     }
     this.innerHTML = `
-      <div class="plate card" style="width: 18rem;">
-        <img class="card-img-top"
-          style="height: 80px; object-fit: cover;"
+    <div class="paper">
+      <div class="card" style="width: 18rem;">
+        <img class="card-img-top" 
           src="${this.data.profileImageURL}"
 
           alt="Card image cap">
@@ -101,7 +96,8 @@ class User extends HTMLElement {
               </button>
             </form>
           </div>
-        </div>`;
+        </div>
+      </div>`;
 
     const button = this.querySelector("button");
     this.querySelector("form").addEventListener("submit", (event) => {

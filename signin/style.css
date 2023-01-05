@@ -1,27 +1,36 @@
 :root {
-  --color: black;
+  --color: darksilver;
   --bs-primary: #4169e1;
-  --bs-blue: blue; 
-  --opacity: 0.9;
+  --bs-blue: blue;
+  --opacity: 1;
 }
 
-
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
 
 body {
-  min-height: 100%;
+  height: 100%;
+  min-height: 100vh;
   min-width: 90%;
   background-color: papayawhip;
   margin: 0 auto;
-}
 
-body {
   font-family: "Quicksand", sans-serif;
   background: #eeeeee;
- 
+
 
   background-repeat: no-repeat;
-  background-image: url(layer-170971_960_720.jpg);
+  background-image: url(https://cdn.pixabay.com/photo/2016/03/27/07/32/clouds-1282314_960_720.jpg);
   background-size: cover;
+}
+
+.card-img-top {
+  height: 80px;
+  object-fit: cover;
+  width: 100%;
 }
 
 #app {
@@ -36,12 +45,12 @@ body {
   margin-top: 40px;
   max-width: calc(96vw);
   min-height: 400px;
-  
+
   padding: 2px;
-  padding-top: 40px;
+
   position: relative;
-  
-  
+
+
 }
 
 footer {
@@ -73,20 +82,29 @@ c-user {
   #app {
     padding-left: 40px;
     padding-right: 40px;
-
     justify-content: space-between;
   }
 }
 
 .pageTop {
-  background: darkslateblue;/* var(--bs-primary);*/
 
-  height: 150px;
+  /* var(--bs-primary);*/
+
+
   text-align: center;
-  color: white;
+
   position: relative;
-  padding-top: 20px;
+
   opacity: var(--opacity);
+  max-width: calc(80vw);
+  margin: auto;
+}
+
+.paperTop__wrapper {
+  box-sizing: border-box;
+  width: min(960px, calc(90vw));
+  margin: auto;
+  padding: 20px;
 }
 
 /** Bootstrap overrides */
@@ -107,4 +125,32 @@ c-user {
   --bs-btn-disabled-color: #fff;
   --bs-btn-disabled-bg: #4169e1;
   --bs-btn-disabled-border-color: #4169e1;
+}
+
+@media (min-width: 800px) {
+  #headline {
+    margin: 0;
+    padding: 0;
+
+    font-size: 110px;
+    line-height: 1.1;
+  }
+
+  #tagline {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1023px) {
+  #headline {
+    margin: 0;
+    padding: 0;
+
+    font-size: 160px;
+    line-height: 1.1;
+  }
+
+  #tagline {
+    font-size: 20px;
+  }
 }
