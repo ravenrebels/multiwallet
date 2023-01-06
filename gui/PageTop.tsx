@@ -6,6 +6,16 @@ import { useSettings } from "./hooks/useSettings";
 export function PageTop() {
   const profile = useProfile();
   const settings = useSettings();
+
+  React.useEffect( () => {
+
+    if(!settings){
+      return;
+    }
+    document.title = settings.subTagline + ""
+  }, [settings]);
+
+
   if (!profile) {
     console.log("Page top return no balance");
     return null;
