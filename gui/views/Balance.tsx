@@ -20,7 +20,7 @@ export function Balance({ balance }: IBalanceProps) {
   const settings = useSettings();
   const assetNames = balance.map((obj) => obj.assetName);
   assetNames.sort();
- 
+
 
   return (
     <div className="balance">
@@ -116,8 +116,8 @@ function FormattedName({ name }: IFormattedNameProps) {
 
   const result = (
     <span>
-      <strong style={{ fontSize: "70%" }}>{splitty[0]}/</strong>
-      <wbr />
+     <span className="balance__asset-link-tinypart">{splitty[0]}/</span>
+      <br />
       {splitty[1]}
     </span>
   );

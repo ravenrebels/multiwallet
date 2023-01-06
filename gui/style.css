@@ -162,11 +162,17 @@ body {
 }
 
 .balance__asset-link {
-  text-decoration: underline;
   color: var(--color);
+
+  text-decoration: none;
+
 }
 
+.balance__asset-link-tinypart {
+  color: #555555;
+  font-size: 90%;
 
+}
 
 
 
