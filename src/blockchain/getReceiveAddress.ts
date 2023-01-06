@@ -18,4 +18,7 @@ export async function getReceiveAddress(addresses: Array<string>) {
     }
 
   }
+
+  //IF we have not found one, return the first address
+  return addresses[0];
 }

@@ -1,29 +1,32 @@
 import RavencoinKey from "@ravenrebels/ravencoin-key";
 import { IAddressMetaData, IUser } from "./Types";
-import * as fs from "fs";
+
 import { getConfig } from "./getConfig";
-export function getAddresses(user: IUser, network: string) {
+import { hasHistory } from "./blockchain/getHistory";
+export async function getAddresses(user: IUser, network: string) {
   if (!user.id) {
     throw Error(user + " does not have id");
   }
 
-  const objects = getAddressObjects(user.mnemonic, network);
+  const objects = await getAddressObjects(user.mnemonic, network);
   const result = objects.map((obj) => obj.address);
 
 
   return result;
 }
-function _getAddressObjects(mnemonic: string, network: string) {
+async function _getAddressObjects(mnemonic: string, network: string) {
   const isNetworkValid = network === "rvn" || network === "rvn-test";
   if (!isNetworkValid) {
     throw new Error("Network *" + network + "* not valid");
   }
 
-  //TODO sloppy, generate 1000 addresses, should be enough, in real world must be endless
+
   const addresses: Array<IAddressMetaData> = [];
 
-  //TODO start by getting 1000 addresses, in the long run, dynamically check how many is needed
-  for (let position = 0; position < 500; position++) {
+  //Never generate more than 1000 addresses.
+  //Stop when found 20 unused external addresses
+  let lastUsedAddressPosition = 0;
+  for (let position = 0; position < 1000; position++) {
     const ACCOUNT = 0;
 
     const obj = RavencoinKey.getAddressPair(
@@ -34,8 +37,19 @@ function _getAddressObjects(mnemonic: string, network: string) {
     );
     addresses.push(obj.external);
     addresses.push(obj.internal);
-  }
 
+    if (await hasHistory([obj.external.address])) {
+      lastUsedAddressPosition = position;
+    }
+
+    //Break when we have 20 unused addresses
+    if (position > (lastUsedAddressPosition + 20)) {
+      break;
+    }
+
+
+  }
+  console.log("lastUsedAddressPosition", lastUsedAddressPosition);
   return addresses;
 }
 
@@ -44,20 +58,20 @@ const ONE_HOUR = 1000 * 60 * 60;
 let cache = new Map<string, IAddressMetaData[]>();
 setInterval(() => cache.clear(), ONE_HOUR);
 
-export function getAddressObjects(
+export async function getAddressObjects(
   mnemonic: string,
   network: string
-): Array<IAddressMetaData> {
+): Promise<IAddressMetaData[]> {
   //Should we cache or not?
   if (getConfig().cacheKeys !== true) {
-    return _getAddressObjects(mnemonic, network);
+    return await _getAddressObjects(mnemonic, network);
   }
   //Because of TypeScript we have to write the if like this
   //Otherwise TypeScript
   const ao = cache.get(mnemonic);
   if (ao) {
   } else {
-    const addressObjects = _getAddressObjects(mnemonic, network);
+    const addressObjects = await _getAddressObjects(mnemonic, network);
     cache.set(mnemonic, addressObjects);
     return addressObjects;
   }

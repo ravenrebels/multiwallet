@@ -44,6 +44,7 @@ export interface IAddressMetaData {
   privateKey: string;
 }
 export interface IUser {
+  lastKnownUsedPosition?: number;
   id: string;
   mnemonic: string;
   displayName?: string;

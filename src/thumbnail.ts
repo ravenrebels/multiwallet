@@ -4,7 +4,7 @@ import * as blockchain from "./blockchain/blockchain";
 import * as fs from "fs";
 import axios from "axios";
 import * as path from "path";
-import { Request, Response, Application, Express } from "express";
+import { Request, Response } from "express";
 
 
 console.log("Image Thumbnail function", imageThumbnail);

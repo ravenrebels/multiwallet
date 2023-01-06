@@ -1,10 +1,7 @@
 import { IAddressMetaData, IUTXO } from "./Types";
-import * as fs from "fs";
-import { IConfig } from "./Types";
 
-import * as Key from "./Key";
 
-const ONE_HUNDRED_MILLION = 1e8;
+
 
 export function getPrivateKey(
   addresses: Array<IAddressMetaData>,

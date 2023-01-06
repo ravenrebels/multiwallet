@@ -20,8 +20,8 @@ const nocache = require("nocache");
 import * as Transactor from "./blockchain/Transactor";
 
 import thumbnail from "./thumbnail";
-import { IUser } from "./Types"; 
-import { getParsedCommandLineOfConfigFile } from "typescript";
+import { IUser } from "./Types";
+
 
 //Healthcheck
 console.info("Initiating health check, running ", getConfig().network, getConfig().raven_url);
@@ -111,6 +111,8 @@ app.listen(port, () => {
 });
 
 app.get("/thumbnail", thumbnail);
+
+
 app.get("/publicprofile", function (request, response) {
   const currentUser = getCurrentUser(request);
 
@@ -122,19 +124,19 @@ app.get("/publicprofile", function (request, response) {
   response.send(result);
 });
 
-app.get("/receiveaddress", function (request, response) {
+app.get("/receiveaddress", async function (request, response) {
   const currentUser = getCurrentUser(request);
-  const addresses = Key.getAddresses(currentUser, config.network);
+  const addresses = await Key.getAddresses(currentUser, config.network);
 
   const promise = getReceiveAddress(addresses);
-  promise.then((address) => {
+  promise.then((address: string) => {
     response.send({ address });
   });
 });
 //Even number are external addresses
-app.get("/api/balance", function (request, response) {
+app.get("/api/balance", async function (request, response) {
   const currentUser = getCurrentUser(request);
-  const addresses = Key.getAddresses(currentUser, config.network);
+  const addresses = await Key.getAddresses(currentUser, config.network);
 
   Blockchain.getBalance(addresses)
     .then((data) => response.send(data))
@@ -143,9 +145,9 @@ app.get("/api/balance", function (request, response) {
       response.status(500).send({ error: "Technical error" });
     });
 });
-app.get("/api/history", function (request, response) {
+app.get("/api/history", async function (request, response) {
   const currentUser = getCurrentUser(request);
-  const addresses = Key.getAddresses(currentUser, config.network);
+  const addresses = await Key.getAddresses(currentUser, config.network);
   const promise = getHistory(addresses);
   promise
     .then((d) => {
@@ -177,48 +179,48 @@ app.get("/showasset", (request, response) => {
   }
 });
 
-app.get("/api/pendingtransactions", (request, response) => {
-  const mempoolPromise = Blockchain.getMempool();
-  mempoolPromise.then((data) => {
-    if (data.length === 0) {
-      response.status(204).send({});
+app.get("/api/pendingtransactions", async (request, response) => {
+  const data = await Blockchain.getMempool();
+
+  if (data.length === 0) {
+    response.status(204).send({});
+    return;
+  }
+
+  const byUser: Array<UserTransaction.ITransaction> = [];
+
+  const currentUser = getCurrentUser(request);
+  const addresses = await Key.getAddresses(currentUser, config.network);
+
+  const toUserAssets: any = [];
+  data.map((item: UserTransaction.ITransaction) => {
+    //Only handle transactions  that he user has NOT SENT herself
+    if (UserTransaction.isByUser(addresses, item)) {
+      byUser.push(item);
       return;
     }
-
-    const byUser: Array<UserTransaction.ITransaction> = [];
-
-    const currentUser = getCurrentUser(request);
-    const addresses = Key.getAddresses(currentUser, config.network);
-
-    const toUserAssets: any = [];
-    data.map((item: UserTransaction.ITransaction) => {
-      //Only handle transactions  that he user has NOT SENT herself
-      if (UserTransaction.isByUser(addresses, item)) {
-        byUser.push(item);
-        return;
-      }
-      const result = UserTransaction.getSumOfAssetOutputs(addresses, item);
-      if (Object.values(result).length > 0) {
-        toUserAssets.push(result);
-      }
-    });
-
-    response.send({
-      toUserAssets,
-      byUser,
-    });
+    const result = UserTransaction.getSumOfAssetOutputs(addresses, item);
+    if (Object.values(result).length > 0) {
+      toUserAssets.push(result);
+    }
   });
+
+  response.send({
+    toUserAssets,
+    byUser,
+  });
+
 });
 
 app.get("/api/myUTXOs", async function (request, response) {
   const currentUser = getCurrentUser(request);
-  const addresses = Key.getAddresses(currentUser, config.network);
+  const addresses = await Key.getAddresses(currentUser, config.network);
   const asdf = await Blockchain.getRavenUnspentTransactionOutputs(addresses);
   response.send(asdf);
 });
-app.get("/api/getaddressutxos", function (request, response) {
+app.get("/api/getaddressutxos", async function (request, response) {
   const currentUser = getCurrentUser(request);
-  const addresses = Key.getAddresses(currentUser, config.network);
+  const addresses = await Key.getAddresses(currentUser, config.network);
 
   const promise = Blockchain.getAllUnspentTransactionOutputs(addresses);
   promise
@@ -276,6 +278,7 @@ app.get("/signin/publicprofiles", (request, response) => {
   response.send(users);
   return;
 });
+
 
 app.post("/send", (request, response) => {
   //Validation, prevent RVN from being sent if not in RAVENCOIN_AND_ASSETS mode

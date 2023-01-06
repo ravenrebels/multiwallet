@@ -70,7 +70,7 @@ async function _send(options: IInternalSendIProp) {
   if (amount < 0) {
     throw Error("Cant send less than zero");
   }
-  const addressObjects = getAddressObjects(fromUser.mnemonic, config.network);
+  const addressObjects = await getAddressObjects(fromUser.mnemonic, config.network);
   const addresses = addressObjects.map((a) => a.address);
 
   //TODO change addresses should be checked with the blockchain,

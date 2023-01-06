@@ -3,6 +3,21 @@ import { ITransaction } from "../UserTransaction";
 
 import { rpc } from "./blockchain";
 
+export async function getPositionOfLastUsedAddress(addresses: Array<string>) {
+
+  let position = 0;
+  let index = 0;
+  for (const addy of addresses) {
+    const a = [addy];
+    const _hasHistory = await hasHistory(a);
+    if (await hasHistory(a) === true) {
+      position = index;
+    }
+    index = index + 1;
+  }
+  return position;
+
+}
 
 function indexOfAddress(obj: any, addresses: Array<string>) {
   const text = JSON.stringify(obj);

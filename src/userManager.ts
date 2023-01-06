@@ -3,7 +3,7 @@ import { IUser } from "./Types";
 import RavencoinKey from "@ravenrebels/ravencoin-key";
 const naiveCache: any = {};
 
-//Clear cache every 10 minutes
+
 
 export function getUserById(id: string): IUser {
   if (!naiveCache[id]) {
@@ -19,12 +19,15 @@ export function getUserById(id: string): IUser {
     }
 
     const text = fs.readFileSync(fileName, "utf-8");
-    const obj:IUser = JSON.parse(text);
- 
-    if(!obj.profileImageURL){
+    const obj: IUser = JSON.parse(text);
+
+    if(!obj.lastKnownUsedPosition){
+      obj.lastKnownUsedPosition = 0;
+    }
+    if (!obj.profileImageURL) {
       obj.profileImageURL = "https://cdn.pixabay.com/photo/2013/07/12/19/25/crowd-sourcing-154759_1280.png";
     }
-    if(!obj.displayName){
+    if (!obj.displayName) {
       obj.displayName = obj.id;
     }
     naiveCache[id] = obj;
