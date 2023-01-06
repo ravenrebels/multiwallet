@@ -3,6 +3,8 @@
   --bs-primary: #4169e1;
   --bs-blue: blue;
   --opacity: 1;
+
+  --baseSpace: 24px;
 }
 
 html {
@@ -25,13 +27,13 @@ body {
   margin: 0 auto;
 
   font-family: "Quicksand", sans-serif;
-  
 
-  color:var(--color) !important;
+
+  color: var(--color) !important;
 
 
   background-repeat: no-repeat;
- /* background-image: url(https://cdn.pixabay.com/photo/2016/03/27/07/32/clouds-1282314_960_720.jpg); */
+  /* background-image: url(https://cdn.pixabay.com/photo/2016/03/27/07/32/clouds-1282314_960_720.jpg); */
   background-size: cover;
 }
 
@@ -43,26 +45,24 @@ body {
 
 #app {
   align-items: center;
-  border-radius: 20px;
+  border-radius: var(--baseSpace);
+  box-sizing: border-box;
   color: var(--color);
   display: flex;
   flex-flow: row wrap;
-  gap: 30px;
+  gap: var(--baseSpace);
   justify-content: center;
   margin: auto;
-  margin-top: 40px;
-  max-width: calc(96vw);
   min-height: 400px;
 
-  padding: 2px;
-
   position: relative;
+  width: 100%;
 
 
 }
 
 footer {
-  margin-top: 20px;
+  margin-top: var(--baseSpace);
   background: white;
   opacity: var(--opacity);
 }
@@ -73,6 +73,8 @@ c-annon {
   justify-content: center;
   opacity: var(--opacity);
   flex-basis: 100%;
+  margin-left: var(--baseSpace);
+  margin-right: var(--baseSpace);
 }
 
 c-user {
@@ -83,13 +85,13 @@ c-user {
 .plate {
   background: white;
   border-radius: 5px;
-  padding: 20px;
+  padding: var(--baseSpace);
 }
 
 @media screen and (min-width: 600px) {
   #app {
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: var(--baseSpace);
+    padding-right: var(--baseSpace);
     justify-content: space-between;
   }
 }
@@ -112,7 +114,8 @@ c-user {
   box-sizing: border-box;
   width: min(960px, calc(90vw));
   margin: auto;
-  padding: 20px;
+  margin-top: var(--baseSpace);;
+  padding: var(--baseSpace);;
 }
 
 /** Bootstrap overrides */
@@ -135,18 +138,19 @@ c-user {
   --bs-btn-disabled-border-color: #4169e1;
 }
 
-#tagline {
-  font-size: 20px;
-}
+
 
 #headline {
   margin: 0;
+  margin-bottom: calc( var(--baseSpace) / 2);
   padding: 0;
 
   font-size: 60px;
   line-height: 1.1;
 }
-
+#tagline {
+  font-size: 20px;
+}
 @media (min-width: 800px) {
   #headline {
 
