@@ -15,6 +15,7 @@ html {
 html,
 body {
   height: auto;
+  user-select:inherit;
 }
 
 body {
