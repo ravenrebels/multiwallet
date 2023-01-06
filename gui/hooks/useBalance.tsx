@@ -28,9 +28,26 @@ export function useBalance(triggerDate?: string): IBalance {
     return null;
   }
 
-  if (settings && settings.mode !== "RAVENCOIN_AND_ASSETS" && balance) {
 
 
+  if(settings){
+
+    if(settings.mode === "RAVENCOIN_AND_ASSETS"){
+      return balance;
+    }
+
+    if(settings.mode === "ASSETS" && balance){
+
+      //Assets only
+
+      const result = balance.filter(b => {
+        return b.assetName !== "RVN"
+      })
+      return result;
+
+    }
+  }
+  if (settings && settings.mode === "SOME_ASSETS" && balance) {
 
     //Remove everything but the allowed assets
     const newBalance = balance.filter(b => {
@@ -44,6 +61,6 @@ export function useBalance(triggerDate?: string): IBalance {
     return newBalance;
 
   }
+  return null;
 
-  return balance;
 }

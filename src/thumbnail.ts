@@ -1,5 +1,5 @@
 //@ts-ignore
-import imageThumbnail from "image-thumbnail";
+import * as imageThumbnail from "image-thumbnail";
 import * as blockchain from "./blockchain/blockchain";
 import * as fs from "fs";
 import axios from "axios";
