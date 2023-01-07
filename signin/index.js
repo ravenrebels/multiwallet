@@ -32,7 +32,7 @@ class Annon extends HTMLElement {
           <h5 class="card-title">Enter any name</h5> 
            
           <p>
-              Enter <em>Elvis25</em> a new account for <em>Elvis25</em> will be created.
+              Enter <em>Elvis25</em> and a new account for <em>Elvis25</em> will be created.
           </p>
           <form>
             <input type="text" class="form-control"/>
