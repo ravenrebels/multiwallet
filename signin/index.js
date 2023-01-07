@@ -17,8 +17,6 @@ fetch("/signin/publicprofiles")
 
     //Now add each public profile
     data.map(addProfile);
-
-
   });
 
 function addProfile(userData) {
@@ -29,7 +27,7 @@ function addProfile(userData) {
 
 class Annon extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div class="paper card">
+    this.innerHTML = `<article>
         <div class="card-body">
           <h5 class="card-title">Enter any name</h5> 
            
@@ -43,7 +41,7 @@ class Annon extends HTMLElement {
             </button>
           </form>
         </div>
-    </div>`;
+    </article>`;
 
     const input = this.querySelector("input");
     const button = this.querySelector("button");
@@ -84,11 +82,10 @@ class User extends HTMLElement {
       return;
     }
     this.innerHTML = `
-    <div class="paper">
+    <article>
       <div class="card" style="width: 18rem;">
         <img class="card-img-top" 
-          src="${this.data.profileImageURL}"
-
+          src="${this.data.profileImageURL}" 
           alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title">${this.data.displayName}</h5>
@@ -99,7 +96,7 @@ class User extends HTMLElement {
             </form>
           </div>
         </div>
-      </div>`;
+      </article>`;
 
     const button = this.querySelector("button");
     this.querySelector("form").addEventListener("submit", (event) => {
