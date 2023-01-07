@@ -1,5 +1,5 @@
 :root {
-  --color: #444444;
+  --color: black;
   --bs-primary: #4169e1;
   --bs-blue: blue;
   --opacity: 1;
@@ -15,7 +15,7 @@ html {
 html,
 body {
   height: auto;
-  user-select:inherit;
+  user-select: inherit;
 }
 
 body {
@@ -27,11 +27,8 @@ body {
   /* background-color: papayawhip; */
   margin: 0 auto;
 
-  font-family: "Quicksand", sans-serif;
-
-
-  color: var(--color) !important;
-
+  font-family: "Quicksand", sans-serif; 
+  color: var(--color) !important; 
 
   background-repeat: no-repeat;
   /* background-image: url(https://cdn.pixabay.com/photo/2016/03/27/07/32/clouds-1282314_960_720.jpg); */
@@ -89,21 +86,10 @@ c-user {
   padding: var(--baseSpace);
 }
 
-@media screen and (min-width: 600px) {
-  #app {
-    padding-left: var(--baseSpace);
-    padding-right: var(--baseSpace);
-    justify-content: space-between;
-  }
-}
+
 
 .pageTop {
-
-  /* var(--bs-primary);*/
-
-
   text-align: center;
-
   position: relative;
 
   opacity: var(--opacity);
@@ -115,47 +101,43 @@ c-user {
   box-sizing: border-box;
   width: min(960px, calc(90vw));
   margin: auto;
-  margin-top: var(--baseSpace);;
-  padding: var(--baseSpace);;
+  margin-top: var(--baseSpace);
+  padding: var(--baseSpace);
 }
 
-/** Bootstrap overrides */
-.btn-primary {
-  --color: black;
-
-  --bs-btn-color: #fff;
-  --bs-btn-bg: #4169e1;
-  --bs-btn-border-color: #4169e1;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #0b5ed7;
-  --bs-btn-hover-border-color: #0a58ca;
-  --bs-btn-focus-shadow-rgb: 49, 132, 253;
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #0a58ca;
-  --bs-btn-active-border-color: #0a53be;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #4169e1;
-  --bs-btn-disabled-border-color: #4169e1;
-}
 
 
 
 #headline {
   margin: 0;
-  margin-bottom: calc( var(--baseSpace) / 2);
+  margin-bottom: calc(var(--baseSpace) / 2);
   padding: 0;
 
   font-size: 60px;
   line-height: 1.1;
+  font-weight: 500;
 }
-#tagline {
-  font-size: 20px;
-}
-@media (min-width: 800px) {
-  #headline {
 
+#tagline {
+  font-size: 20px; 
+}
+
+@media screen and (min-width: 600px) {
+  #app {
+    padding-left: var(--baseSpace);
+    padding-right: var(--baseSpace);
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 800px) {
+  :root {
+    --color: #444444;
+  }
+
+  #headline {
     font-size: 110px;
+    font-weight: lighter; 
   }
 }
 
