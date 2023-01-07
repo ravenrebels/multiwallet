@@ -2,9 +2,8 @@
   --color: black;
   --bs-primary: #4169e1;
   --bs-blue: blue;
-  --opacity: 1;
-
-  --baseSpace: 24px;
+  --opacity: 1; 
+  --baseSpace: 24px; 
 }
 
 html {
@@ -26,19 +25,22 @@ body {
   /* background-color: papayawhip; */
   margin: 0 auto;
 
-  font-family: "Quicksand", sans-serif;
+  /* font-family: "Quicksand", sans-serif; */
   color: var(--color) !important;
 
   background-repeat: no-repeat;
   /* background-image: url(https://cdn.pixabay.com/photo/2016/03/27/07/32/clouds-1282314_960_720.jpg); */
   background-size: cover;
 }
+
 article {
   margin-bottom: 0px !important;
 }
+
 form {
   margin-bottom: 0px !important;
 }
+
 .card-img-top {
   height: 80px;
   object-fit: cover;
@@ -126,7 +128,7 @@ c-user {
   #app {
     padding-left: var(--baseSpace);
     padding-right: var(--baseSpace);
-    justify-content: space-between;
+    justify-content: center;
   }
 }
 
@@ -149,4 +151,22 @@ c-user {
   #tagline {
     font-size: 30px;
   }
+}
+
+/*
+
+OVERRIDE SOME PICO CSS STUFF
+
+*/
+@media (min-width: 992px) {
+
+  body>footer,
+  body>header,
+  body>main,
+  section {
+    --block-spacing-vertical: calc(var(--spacing) * 2);
+  }
+}
+button{
+  margin-bottom: 0px;
 }
