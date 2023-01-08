@@ -1,7 +1,7 @@
 import * as React from "react";
 import axios from "axios";
 import { Loading } from "../components/Loading";
-import { ITransaction } from "../../src/UserTransaction";
+import { ITransaction } from "../../src/Types";
 
 
 export function History() {

@@ -1,8 +1,8 @@
 import { getAddressObjects } from "../Key";
-import { IUser, IUTXO, IVOUT } from "../Types";
+import { IUser, IUTXO, IVout, IVout_when_creating_transactions } from "../Types";
 import * as blockchain from "./blockchain";
 import { getConfig } from "../getConfig";
-import {   ITransaction } from "../UserTransaction";
+import { ITransaction } from "../Types";
 
 
 
@@ -38,7 +38,7 @@ function sumOfUTXOs(UTXOs: Array<IUTXO>) {
     Lets start by first assuming that we will pay 1 RVN in fee (that is sky high).
     Than we check the size of the transaction and then we just adjust the change output so the fee normalizes
 */
-async function getFee(inputs: Array<IVOUT>, outputs: Array<IVOUT>): Promise<number> {
+async function getFee(inputs: Array<IVout_when_creating_transactions>, outputs: Array<IVout>): Promise<number> {
   const ONE_KILOBYTE = 1024;
   //Create a raw transaction to get an aproximation for transaction size.
   const raw = await blockchain.createRawTransaction(inputs, outputs);
@@ -146,7 +146,7 @@ async function _send(options: IInternalSendIProp) {
     [key: string]: string;
   };
   const privateKeys: TPrivateKey = {};
-  inputs.map(function (input: IVOUT) {
+  inputs.map(function (input: IVout_when_creating_transactions) {
     const addy = input.address;
     const addressObject = addressObjects.find((a) => a.address === addy);
     if (addressObject) {
@@ -172,7 +172,7 @@ async function addAssetInputsAndOutputs(
   addresses: string[],
   assetName: string,
   amount: number,
-  inputs: IVOUT[],
+  inputs: IVout_when_creating_transactions[],
   outputs: any,
   toAddress: string,
   assetChangeAddress: string
@@ -231,7 +231,7 @@ function getEnoughUTXOs(utxos: Array<IUTXO>, amount: number): Array<IUTXO> {
 
   utxos.map(function (utxo) {
 
-    if (utxo.satoshis !== 0 && tempAmount < amount) { 
+    if (utxo.satoshis !== 0 && tempAmount < amount) {
       const value = utxo.satoshis / 1e8;
       tempAmount = tempAmount + value;
       returnValue.push(utxo);

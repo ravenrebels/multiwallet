@@ -9,6 +9,70 @@ export interface ISettings {
   headline: string;
 
 }
+
+
+export interface Asset {
+  name: string;
+  amount: number;
+}
+export interface ITransaction {
+  c_asset?: string;
+  c_amount_satoshis?: number;
+
+  time?: number;
+  txid: string;
+  hash?: string;
+  version: number;
+  size: number;
+  vsize: number;
+  locktime: number;
+  vin: Vin[];
+  vout: IVout[];
+  hex?: string;
+  amount?: number;
+  asset?: Asset;
+}
+
+interface Vin {
+  c_index?: number;
+  address?: string;
+
+  scriptSig: ScriptSig;
+  sequence: number;
+  txid: string;
+  value: number;
+  valueSat: number;
+  vout: number;
+}
+
+interface ScriptSig {
+  asm: string;
+  hex: string;
+}
+export interface IVout_when_creating_transactions {
+  txid: string
+  vout: number
+  address: string
+}
+export interface IVout {
+  c_index?: number;
+  value: number;
+  n: number;
+  scriptPubKey: ScriptPubKey;
+  valueSat: number;
+
+}
+
+interface ScriptPubKey {
+  asm: string;
+  hex: string;
+  reqSigs: number;
+  type: string;
+  addresses: string[];
+  asset?: Asset;
+}
+
+
 export type IBalance = BalanceRoot[] | null;
 
 export interface BalanceRoot {
@@ -56,11 +120,7 @@ export interface IConfig {
   raven_url: string;
   network: string;
 }
-export interface IVOUT {
-  txid: string;
-  vout: number;
-  address: string;
-}
+
 export interface IInput {
   txid: string;
   vout: number;

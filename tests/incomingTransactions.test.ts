@@ -1,4 +1,5 @@
-import { getSumOfAssetOutputs, getSumOfRavencoinOutputs, ITransaction ,isByUser, isToUser} from "../src/UserTransaction";
+import { ITransaction } from "../src/Types";
+import { getSumOfAssetOutputs, getSumOfRavencoinOutputs, isByUser, isToUser} from "../src/UserTransaction";
 
  
 

@@ -20,7 +20,7 @@ const nocache = require("nocache");
 import * as Transactor from "./blockchain/Transactor";
 
 import thumbnail from "./thumbnail";
-import { IUser } from "./Types";
+import { ITransaction, IUser } from "./Types";
 
 
 //Healthcheck
@@ -187,13 +187,13 @@ app.get("/api/pendingtransactions", async (request, response) => {
     return;
   }
 
-  const byUser: Array<UserTransaction.ITransaction> = [];
+  const byUser: Array<ITransaction> = [];
 
   const currentUser = getCurrentUser(request);
   const addresses = await Key.getAddresses(currentUser, config.network);
 
   const toUserAssets: any = [];
-  data.map((item: UserTransaction.ITransaction) => {
+  data.map((item: ITransaction) => {
     //Only handle transactions  that he user has NOT SENT herself
     if (UserTransaction.isByUser(addresses, item)) {
       byUser.push(item);

@@ -1,8 +1,8 @@
 import { methods } from "@ravenrebels/ravencoin-rpc";
-import { ITransaction } from "../UserTransaction";
-
+import { ITransaction } from "../Types";
+import { isByUser } from "../UserTransaction";
 import { rpc } from "./blockchain";
-
+import { IVout } from "../Types";
 export async function getPositionOfLastUsedAddress(addresses: Array<string>) {
 
   let position = 0;
@@ -47,7 +47,7 @@ export async function getHistory(addresses: Array<string>): Promise<any> {
 
   const includeAssets = true;
 
-  const transactions = await rpc(methods.getaddresstxids, [{
+  const transactions:Array<ITransaction> = await rpc(methods.getaddresstxids, [{
     addresses,
   }, includeAssets]);
 
@@ -103,25 +103,57 @@ export async function getHistory(addresses: Array<string>): Promise<any> {
       delete v.spentTxId;
       v.c_index = indexOfAddress(v, addresses);
     });
+
+
+
+
+    delete rawTransaction.hex;
     const json = JSON.stringify(rawTransaction.vin);
 
     //If the VIN json includes any of my address I did send this stuff.
     //Otherwise I received stuff
-    let didSend = false;
-    addresses.map((address) => {
-      if (json.indexOf(address) > -1) {
-        didSend = true;
-      }
-    });
-    delete rawTransaction.hex;
+    let didSend = isByUser(addresses, rawTransaction);
+
 
     if (didSend) {
+
       history.outputs.push(rawTransaction);
     } else {
+
+      //Remove vout and that are not ours
+      rawTransaction.vout = rawTransaction.vout.filter(item => {
+
+        if (item.c_index === undefined) {
+          return false;
+        }
+        if (item.c_index === 0) {
+          return true;
+        }
+        return item.c_index % 2 === 0;
+      });
+
       history.inputs.push(rawTransaction);
     }
     result.push(rawTransaction);
   }
 
   return history;
+}
+
+function removeMyVOUTS(addresses: Array<string>, rawTransaction: ITransaction) {
+
+  function filter(item: IVout, index:number, arr:any): boolean {
+    if (item.c_index === undefined) {
+      return false;
+    }
+    if (item.c_index === 0) {
+      return true;
+    }
+    return item.c_index % 2 === 0;
+  }
+
+  rawTransaction.vout = rawTransaction.vout.filter(filter);
+
+  return rawTransaction;
+
 }

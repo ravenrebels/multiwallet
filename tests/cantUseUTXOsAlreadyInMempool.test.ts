@@ -1,7 +1,7 @@
 import { isUTXOInMempool } from "../src/blockchain/Transactor";
 
 import { IUTXO } from "../src/Types";
-import { ITransaction } from "../src/UserTransaction";
+import { ITransaction } from "../src/Types";
 const mempool: Array<ITransaction> = [
   {
     txid: "8afe4b2ea2e9c097fa4f90034e7886066244a2e7b1bbe74dea4ae0ec8bd4d2ea",

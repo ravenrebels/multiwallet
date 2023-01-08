@@ -2,8 +2,8 @@ import { getConfig } from "../getConfig";
 import { getRPC, methods } from "@ravenrebels/ravencoin-rpc";
 
 
-import { IUTXO, IValidateAddressResponse, IVOUT } from "../Types";
-import { ITransaction } from "../UserTransaction";
+import { IUTXO, IValidateAddressResponse, IVout, IVout_when_creating_transactions } from "../Types";
+import { ITransaction } from "../Types";
 
 const ONE_HUNDRED_MILLION = 1e8;
 
@@ -126,7 +126,7 @@ export async function getMempool(): Promise<Array<ITransaction>> {
   }
   return result;
 }
-export function convertUTXOsToVOUT(UTXOs: Array<IUTXO>): Array<IVOUT> {
+export function convertUTXOsToVOUT(UTXOs: Array<IUTXO>): Array<IVout_when_creating_transactions> {
   const inputs = UTXOs.map(function (bla) {
     //OK we have to convert from "unspent" format to "vout"
 

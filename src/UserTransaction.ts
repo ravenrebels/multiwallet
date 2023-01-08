@@ -1,64 +1,10 @@
+import { ITransaction } from "./Types";
+
 export interface UserTransaction {
   ingoing: boolean;
   outgoing: boolean;
   assetName: string;
   amount: number;
-}
-export interface Asset {
-  name: string;
-  amount: number;
-}
-export interface ITransaction {
-  c_asset?: string;
-  c_amount_satoshis?: number;
-
-  time?: number;
-  txid: string;
-  hash?: string;
-  version: number;
-  size: number;
-  vsize: number;
-  locktime: number;
-  vin: Vin[];
-  vout: Vout[];
-  hex?: string;
-  amount?: number;
-  asset?: Asset;
-}
-
-interface Vin {
-  c_index?: number;
-  address?: string;
-
-  scriptSig: ScriptSig;
-  sequence: number;
-  txid: string;
-  value: number;
-  valueSat: number;
-  vout: number;
-}
-
-interface ScriptSig {
-  asm: string;
-  hex: string;
-}
-
-interface Vout {
-  c_index?: number;
-  value: number;
-  n: number;
-  scriptPubKey: ScriptPubKey;
-  valueSat: number;
-
-}
-
-interface ScriptPubKey {
-  asm: string;
-  hex: string;
-  reqSigs: number;
-  type: string;
-  addresses: string[];
-  asset?: Asset;
 }
 function getCommonObjects(array1: Array<string>, array2: Array<string>) {
   const commonObjects = array1.filter((obj1) => array2.includes(obj1));
