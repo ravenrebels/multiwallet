@@ -12,7 +12,7 @@ export async function getChangeAddress(addresses: Array<string>) {
     }
     const address = addresses[counter];
     const asdf = await getHistory([address]);
-    if (asdf.length > 0) {
+    if (asdf.inputs.length === 0 && asdf.outputs.length) {
       return address;
     }
   }

@@ -1,16 +1,18 @@
 import { ITransaction } from "../src/Types";
-import { getSumOfAssetOutputs, getSumOfRavencoinOutputs, isByUser, isToUser} from "../src/UserTransaction";
+import { getSumOfAssetOutputs, getSumOfRavencoinOutputs, isByUser, isToUser } from "../src/UserTransaction";
 
- 
+
 
 //Import test data
-import data1 from "./incomingTransactions.json";
-import data2 from "./incomingTransactionsAssets.json"
+import * as fs from "fs";
+const data1 = JSON.parse(fs.readFileSync("./tests/incomingTransactions.json", "utf-8"));
+const data2 = JSON.parse(fs.readFileSync("./tests/incomingTransactionsAssets.json", "utf-8"));
+
 
 const transactions: Array<ITransaction> = data1;
 const transactionsAssets: Array<ITransaction> = data2;
 
-const addresses = ["mmXMDSS2T7gAUGgmgVaVRktNzU9An5WJRS"];
+const addresses = ["mrQCe78rtNV1EtCDP49RAEwovbK4rgt93a"];
 
 test('Receiving transaction', () => {
     const by = isByUser(addresses, transactions[0]);
@@ -27,17 +29,17 @@ test('Sending transaction', () => {
 test('Get receiving sum', () => {
     const sum = getSumOfRavencoinOutputs(addresses, transactions[0]);
     const result = sum / 1e8;
-    expect(result).toBe(10);
+    expect(result).toBe(2);
 });
 
 //Test receiving assets
 test('Verify receiving assets', () => {
-    const addresses = ["n2Hdcdb5pLNrrdm5ABZSvwkqagGicLohom"];
-    const assetName = "REBELLIOUS/50_PERCENT_Y2030";
+    const addresses = ["mrQCe78rtNV1EtCDP49RAEwovbK4rgt93a"];
+    const assetName = "BARRY";
 
     const result = getSumOfAssetOutputs(addresses, transactionsAssets[0]);
 
-    expect(result[assetName]).toBe(1);
+    expect(result[assetName]).toBe(2);
 });
 
 

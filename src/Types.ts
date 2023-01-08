@@ -15,22 +15,36 @@ export interface Asset {
   name: string;
   amount: number;
 }
+
+export interface IHistory {
+  inputs: Array<IHistoryTransaction>;
+  outputs: Array<IHistoryTransaction>;
+}
+export interface IHistoryTransaction{
+  blockhash: string;
+  time: number;
+  vout: IVout[];
+  vin: Vin[];
+
+  txid: string;
+}
 export interface ITransaction {
   c_asset?: string;
   c_amount_satoshis?: number;
-
-  time?: number;
-  txid: string;
-  hash?: string;
-  version: number;
-  size: number;
-  vsize: number;
+  asset?: Asset;
+  amount?: number;
+  blockhash?: string;
+  blocktime?:number;
+  hex?: string;
   locktime: number;
   vin: Vin[];
+  hash: string;
+  size: number;
+  vsize: number;
+  time?: number;
+  txid: string;
   vout: IVout[];
-  hex?: string;
-  amount?: number;
-  asset?: Asset;
+  version?: number;
 }
 
 interface Vin {

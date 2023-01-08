@@ -24,7 +24,9 @@ import { ITransaction, IUser } from "./Types";
 
 
 //Healthcheck
-console.info("Initiating health check, running ", getConfig().network, getConfig().raven_url);
+console.info("Initiating health check");
+console.log("NETWORK", getConfig().network);
+console.log("RAVEN NODE", getConfig().raven_url);
 Blockchain.isHealthy().then(data => {
   if (!data) {
     process.exit(0);

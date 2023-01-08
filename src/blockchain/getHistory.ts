@@ -1,5 +1,5 @@
 import { methods } from "@ravenrebels/ravencoin-rpc";
-import { ITransaction } from "../Types";
+import { IHistory, IHistoryTransaction, ITransaction } from "../Types";
 import { isByUser } from "../UserTransaction";
 import { rpc } from "./blockchain";
 import { IVout } from "../Types";
@@ -43,11 +43,11 @@ export async function hasHistory(addresses: Array<string>): Promise<boolean> {
   const asdf = await rpc(methods.getaddresstxids, [obj, includeAssets]);
   return asdf.length > 0;
 }
-export async function getHistory(addresses: Array<string>): Promise<any> {
+export async function getHistory(addresses: Array<string>): Promise<IHistory> {
 
   const includeAssets = true;
 
-  const transactions:Array<ITransaction> = await rpc(methods.getaddresstxids, [{
+  const transactions: Array<ITransaction> = await rpc(methods.getaddresstxids, [{
     addresses,
   }, includeAssets]);
 
@@ -56,19 +56,13 @@ export async function getHistory(addresses: Array<string>): Promise<any> {
     throw Error(transactions.length.toLocaleString() + " exceeds the max limit of transactions " + MAX_LIMIT.toLocaleString());
   }
 
-  interface History {
-    inputs: Array<any>;
-    outputs: Array<any>;
-  }
-  const history: History = {
+
+  const history: IHistory = {
     inputs: [],
     outputs: [],
   };
 
 
-
-
-  const result: any = [];
 
   //Get all the transactions, remove unessential attributes such as hex
   for (const transactionId of transactions) {
@@ -76,8 +70,14 @@ export async function getHistory(addresses: Array<string>): Promise<any> {
     const args = [transactionId, true];
 
     const rawTransaction: ITransaction = await rpc(method, args);
-    delete rawTransaction.hash;
 
+    const historyTransaction: IHistoryTransaction = {
+      blockhash: rawTransaction.blockhash || "",
+      vin: rawTransaction.vin,
+      vout: rawTransaction.vout,
+      time: rawTransaction.time || -1,
+      txid: rawTransaction.txid
+    }
 
 
     //Delete stuff from vin
@@ -92,6 +92,7 @@ export async function getHistory(addresses: Array<string>): Promise<any> {
       delete v.scriptSig.hex;
       //@ts-ignore
       delete v.txid;
+
       v.c_index = indexOfAddress(v, addresses);
     });
     rawTransaction.vout.map((v) => {
@@ -105,44 +106,42 @@ export async function getHistory(addresses: Array<string>): Promise<any> {
     });
 
 
-
-
-    delete rawTransaction.hex;
-    const json = JSON.stringify(rawTransaction.vin);
-
     //If the VIN json includes any of my address I did send this stuff.
     //Otherwise I received stuff
     let didSend = isByUser(addresses, rawTransaction);
 
 
     if (didSend) {
-
-      history.outputs.push(rawTransaction);
+      removeOthersVOUTS(addresses, rawTransaction);
+      history.outputs.push(historyTransaction);
     } else {
 
-      //Remove vout and that are not ours
-      rawTransaction.vout = rawTransaction.vout.filter(item => {
-
-        if (item.c_index === undefined) {
-          return false;
-        }
-        if (item.c_index === 0) {
-          return true;
-        }
-        return item.c_index % 2 === 0;
-      });
-
-      history.inputs.push(rawTransaction);
+      removeMyVOUTS(addresses, rawTransaction);
+      history.inputs.push(historyTransaction);
     }
-    result.push(rawTransaction);
+
   }
 
   return history;
 }
 
+function removeOthersVOUTS(addresses: Array<string>, rawTransaction: ITransaction) {
+  function filter(item: IVout, index: number, arr: any): boolean {
+    if (item.c_index === undefined) {
+      return true;
+    }
+    if (item.c_index === 0) {
+      return false;
+    }
+    return item.c_index % 2 !== 0;
+  }
+
+  rawTransaction.vout = rawTransaction.vout.filter(filter);
+
+}
 function removeMyVOUTS(addresses: Array<string>, rawTransaction: ITransaction) {
 
-  function filter(item: IVout, index:number, arr:any): boolean {
+  function filter(item: IVout, index: number, arr: any): boolean {
     if (item.c_index === undefined) {
       return false;
     }
