@@ -2,8 +2,8 @@
   --color: black;
   --bs-primary: #4169e1;
   --bs-blue: blue;
-  --opacity: 1; 
-  --baseSpace: 24px; 
+  --opacity: 1;
+  --baseSpace: 24px;
 }
 
 html {
@@ -45,7 +45,6 @@ form {
   height: 80px;
   object-fit: cover;
   width: 100%;
-  border: 2px solid silver;
   border-radius: var(--border-radius);
   margin-bottom: calc(0.5 * var(--baseSpace));
 }
@@ -124,7 +123,26 @@ c-user {
   font-size: 20px;
 }
 
-@media screen and (min-width: 600px) {
+@media (prefers-color-scheme: light) {
+  .card-img-top {
+    border: 2px solid silver;
+  }
+}
+
+/* 
+  default background color in dark mode was #141e26;
+  increae brightness (3%) to increase contrast using tool https://mdigi.tools/lighten-color/#141e26
+  */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-background-color:#19252f !important;/* #141e26; */
+  }
+}
+
+
+
+@media (min-width: 600px) {
   #app {
     padding-left: var(--baseSpace);
     padding-right: var(--baseSpace);
@@ -167,6 +185,7 @@ OVERRIDE SOME PICO CSS STUFF
     --block-spacing-vertical: calc(var(--spacing) * 2);
   }
 }
-button{
+
+button {
   margin-bottom: 0px;
 }

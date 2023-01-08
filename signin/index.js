@@ -86,7 +86,7 @@ class User extends HTMLElement {
       <div class="card" style="width: 18rem;">
         <img class="card-img-top" 
           src="${this.data.profileImageURL}" 
-          alt="Card image cap">
+          >
           <div class="card-body">
             <h5 class="card-title">${this.data.displayName}</h5>
             <form>
