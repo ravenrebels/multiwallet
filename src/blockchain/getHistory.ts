@@ -9,7 +9,7 @@ export async function getPositionOfLastUsedAddress(addresses: Array<string>) {
   let index = 0;
   for (const addy of addresses) {
     const a = [addy];
-    const _hasHistory = await hasHistory(a);
+
     if (await hasHistory(a) === true) {
       position = index;
     }
