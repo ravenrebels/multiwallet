@@ -22,20 +22,20 @@ import * as Transactor from "./blockchain/Transactor";
 import thumbnail from "./thumbnail";
 import { ITransaction, IUser } from "./Types";
 
-
 //Healthcheck
 console.info("Initiating health check");
 console.log("NETWORK", getConfig().network);
 console.log("RAVEN NODE", getConfig().raven_url);
-Blockchain.isHealthy().then(data => {
-  if (!data) {
-    process.exit(0);
-  }
-}).catch(e => {
-  console.log(e);
-  process.exit(1);
-})
-
+Blockchain.isHealthy()
+  .then((data) => {
+    if (!data) {
+      process.exit(0);
+    }
+  })
+  .catch((e) => {
+    console.log(e);
+    process.exit(1);
+  });
 
 const app: Express = express();
 const port = process.env.PORT || 80;
@@ -87,19 +87,16 @@ app.get("/settings", (request, response) => {
 app.use((req, res, next) => {
   const path = req.baseUrl + req.path;
   if (path.startsWith("/signin") === true) {
-    next();
-    return;
+    return next();
   }
   if (path.startsWith("/signout") === true) {
-    next();
-    return;
+    return next();
   }
   //@ts-ignore
   const userId = req.session["userId"];
   if (!userId) {
     console.log("No user id will redirect");
-    res.redirect("/signin");
-    return;
+    return res.redirect("/signin");
   }
   const currentUser = userManager.getUserById(userId);
   //@ts-ignore
@@ -113,7 +110,6 @@ app.listen(port, () => {
 });
 
 app.get("/thumbnail", thumbnail);
-
 
 app.get("/publicprofile", function (request, response) {
   const currentUser = getCurrentUser(request);
@@ -147,6 +143,19 @@ app.get("/api/balance", async function (request, response) {
       response.status(500).send({ error: "Technical error" });
     });
 });
+
+app.get("/api/addressdeltas", async function (request, response) {
+  const currentUser = getCurrentUser(request);
+  const addresses = await Key.getAddresses(currentUser, config.network);
+
+  Blockchain.getAddressDeltas(addresses)
+    .then((o) => {
+      response.send(o);
+    })
+    .catch((e) => {
+      response.status(5000).send({ error: "Technical error" });
+    });
+});
 app.get("/api/history", async function (request, response) {
   const currentUser = getCurrentUser(request);
   const addresses = await Key.getAddresses(currentUser, config.network);
@@ -156,7 +165,7 @@ app.get("/api/history", async function (request, response) {
       response.send(d);
     })
     .catch((e) => {
-      response.status(500).send({ "error": e + "" });
+      response.status(500).send({ error: e + "" });
     });
 });
 
@@ -211,7 +220,6 @@ app.get("/api/pendingtransactions", async (request, response) => {
     toUserAssets,
     byUser,
   });
-
 });
 
 app.get("/api/myUTXOs", async function (request, response) {
@@ -280,7 +288,6 @@ app.get("/signin/publicprofiles", (request, response) => {
   response.send(users);
   return;
 });
-
 
 app.post("/send", (request, response) => {
   //Validation, prevent RVN from being sent if not in RAVENCOIN_AND_ASSETS mode

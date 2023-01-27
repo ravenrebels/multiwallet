@@ -6,6 +6,7 @@
     "build": "parcel build ./gui/index.html --no-content-hash --no-cache && npx tsc ./src/server.ts",
     "dev": "parcel ./gui/index.html --no-cache ",
     "test": "npx tsc ./tests/index.ts && jest tests",
+    "start": "npm run serve",
     "serve": "node ./src/server",
     "watch": "tsc --watch"
   },
@@ -29,6 +30,7 @@
   },
   "homepage": "https://github.com/ravenrebels/multiwallet#readme",
   "dependencies": {
+    "@ravenrebels/ravencoin-history-list": "github:ravenrebels/ravencoin-history-list",
     "@ravenrebels/ravencoin-key": "^2.0.0",
     "@ravenrebels/ravencoin-rpc": "0.1.4",
     "@types/express": "4.17.14",
@@ -42,8 +44,6 @@
     "nocache": "3.0.4",
     "number-to-words": "1.2.4",
     "parcel": "2.8.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
     "session-file-store": "^1.5.0",
     "typescript": "4.9.3",
     "uuid": "^9.0.0"
@@ -53,6 +53,8 @@
     "@types/react-dom": "^18.0.9",
     "buffer": "^5.7.1",
     "jest": "^29.3.1",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }

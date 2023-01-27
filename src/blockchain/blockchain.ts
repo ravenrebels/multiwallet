@@ -1,8 +1,12 @@
 import { getConfig } from "../getConfig";
 import { getRPC, methods } from "@ravenrebels/ravencoin-rpc";
 
-
-import { IUTXO, IValidateAddressResponse, IVout, IVout_when_creating_transactions } from "../Types";
+import {
+  IUTXO,
+  IValidateAddressResponse,
+  IVout,
+  IVout_when_creating_transactions,
+} from "../Types";
 import { ITransaction } from "../Types";
 
 const ONE_HUNDRED_MILLION = 1e8;
@@ -13,11 +17,20 @@ export const rpc = getRPC(
   config.raven_password,
   config.raven_url
 );
-export function isHealthy(){
+export function isHealthy() {
   return rpc(methods.getblockcount, []);
 }
 export function getAssetData(assetName: string) {
   return rpc(methods.getassetdata, [assetName]);
+}
+
+export function getAddressDeltas(addresses: string[]) {
+  return rpc(methods.getaddressdeltas, [
+    {
+      addresses: addresses,
+      assetName: "",
+    },
+  ]);
 }
 export function sendRawTransaction(signedTransaction: any) {
   const p = rpc(methods.sendrawtransaction, [signedTransaction.hex]);
@@ -31,8 +44,6 @@ export function signRawTransaction(
   rawTransactionHex: any,
   privateKeys: Array<string>
 ) {
-
-
   const s = rpc(methods.signrawtransaction, [
     rawTransactionHex,
     null,
@@ -48,7 +59,10 @@ export function decodeRawTransaction(raw: string) {
 export function getRawTransaction(id: string): any {
   return rpc(methods.getrawtransaction, [id, true]);
 }
-export function createRawTransaction(inputs: any, outputs: any): Promise<string> {
+export function createRawTransaction(
+  inputs: any,
+  outputs: any
+): Promise<string> {
   return rpc(methods.createrawtransaction, [inputs, outputs]);
 }
 
@@ -67,11 +81,9 @@ export function getBalance(addresses: Array<string>): Promise<any> {
 }
 
 export function _sortUTXOs(list: Array<IUTXO>) {
-
   //Remember, sort mutates the underlaying array
   //Sort by satoshis, lowest first to prevent dust.
   return list.sort(function (a, b) {
-
     if (a.satoshis > b.satoshis) {
       return 1;
     }
@@ -80,19 +92,15 @@ export function _sortUTXOs(list: Array<IUTXO>) {
     }
     return 0;
   });
-
-
 }
 export async function getRavenUnspentTransactionOutputs(
   addresses: Array<string>
 ): Promise<Array<IUTXO>> {
-
-
-  const list: Array<IUTXO> = await rpc(methods.getaddressutxos, [{ addresses }]);
+  const list: Array<IUTXO> = await rpc(methods.getaddressutxos, [
+    { addresses },
+  ]);
   _sortUTXOs(list);
   return list;
-
-
 }
 export function getAssetUnspentTransactionOutputs(
   addresses: Array<string>,
@@ -126,7 +134,9 @@ export async function getMempool(): Promise<Array<ITransaction>> {
   }
   return result;
 }
-export function convertUTXOsToVOUT(UTXOs: Array<IUTXO>): Array<IVout_when_creating_transactions> {
+export function convertUTXOsToVOUT(
+  UTXOs: Array<IUTXO>
+): Array<IVout_when_creating_transactions> {
   const inputs = UTXOs.map(function (bla) {
     //OK we have to convert from "unspent" format to "vout"
 
