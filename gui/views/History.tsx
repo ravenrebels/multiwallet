@@ -2,7 +2,8 @@ import * as React from "react";
 import axios from "axios";
 import { Loading } from "../components/Loading";
 
-import getHistory, {
+import {
+  getHistory,
   IHistoryItem,
   IDelta,
 } from "@ravenrebels/ravencoin-history-list";

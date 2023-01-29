@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/ravenrebels/multiwallet#readme",
   "dependencies": {
-    "@ravenrebels/ravencoin-history-list": "github:ravenrebels/ravencoin-history-list",
+    "@ravenrebels/ravencoin-history-list": "^0.0.3",
     "@ravenrebels/ravencoin-key": "^2.0.0",
     "@ravenrebels/ravencoin-rpc": "0.1.4",
     "@types/express": "4.17.14",

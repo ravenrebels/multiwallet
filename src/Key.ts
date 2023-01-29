@@ -11,7 +11,6 @@ export async function getAddresses(user: IUser, network: string) {
   const objects = await getAddressObjects(user.mnemonic, network);
   const result = objects.map((obj) => obj.address);
 
-
   return result;
 }
 async function _getAddressObjects(mnemonic: string, network: string) {
@@ -20,9 +19,35 @@ async function _getAddressObjects(mnemonic: string, network: string) {
     throw new Error("Network *" + network + "* not valid");
   }
 
-
   const addresses: Array<IAddressMetaData> = [];
 
+  let isLast20ExternalAddressesUnused = false;
+  const ACCOUNT = 0;
+
+  let addressPosition = 0;
+  while (isLast20ExternalAddressesUnused === false) {
+    const tempAddresses = [] as string[];
+
+    for (let i = 0; i < 20; i++) {
+      const o = RavencoinKey.getAddressPair(
+        network,
+        mnemonic,
+        ACCOUNT,
+        addressPosition
+      );
+      addresses.push(o.external);
+      addresses.push(o.internal);
+      addressPosition++;
+
+      tempAddresses.push(o.external.address + "");
+    }
+    //If no history, break
+    isLast20ExternalAddressesUnused =
+      false === (await hasHistory(tempAddresses));
+  }
+  return addresses;
+
+  /*
   //Never generate more than 1000 addresses.
   //Stop when found 20 unused external addresses
   let lastUsedAddressPosition = 0;
@@ -43,14 +68,12 @@ async function _getAddressObjects(mnemonic: string, network: string) {
     }
 
     //Break when we have 20 unused addresses
-    if (position > (lastUsedAddressPosition + 20)) {
+    if (position > lastUsedAddressPosition + 20) {
       break;
     }
-
-
   }
   console.log("lastUsedAddressPosition", lastUsedAddressPosition);
-  return addresses;
+  return addresses;*/
 }
 
 //A simple naive cache that is cleared every 60 minutes
