@@ -12,6 +12,7 @@ import * as Key from "./Key";
 import { getConfig } from "./getConfig";
 import * as userManager from "./userManager";
 import * as UserTransaction from "./UserTransaction";
+
 //Due to express >= 4 changes, we need to pass express-session to the function session-file-store exports in order to extend session.Store:
 
 const session = require("express-session");
@@ -21,6 +22,11 @@ import * as Transactor from "./blockchain/Transactor";
 
 import thumbnail from "./thumbnail";
 import { ITransaction, IUser } from "./Types";
+
+//Tell nod.js not to die on exception
+process.on("uncaughtException", function (err) {
+  console.log("Caught exception: ", err);
+});
 
 //Healthcheck
 console.info("Initiating health check");
@@ -201,7 +207,7 @@ app.get("/api/blocktime/:height", async (request, response) => {
   const block = await Blockchain.getBlockByHeight(height);
 
   const time = new Date(block.time * 1000);
-  response.set('Cache-control', 'public, max-age=300')
+  response.set("Cache-control", "public, max-age=300");
   return response.send({ date: time });
 });
 app.get("/api/pendingtransactions", async (request, response) => {
