@@ -189,7 +189,21 @@ app.get("/showasset", (request, response) => {
     });
   }
 });
+app.get("/api/blocktime/:height", async (request, response) => {
+  const _height = request.params.height;
+  const height = parseInt(_height);
+  if (isNaN(height) === true) {
+    return response.status(400).send({
+      error: "height is mandatory /api/blocktime/123",
+    });
+  }
 
+  const block = await Blockchain.getBlockByHeight(height);
+
+  const time = new Date(block.time * 1000);
+  response.set('Cache-control', 'public, max-age=300')
+  return response.send({ date: time });
+});
 app.get("/api/pendingtransactions", async (request, response) => {
   const data = await Blockchain.getMempool();
 

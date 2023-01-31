@@ -7,6 +7,8 @@ import {
   IHistoryItem,
   IDelta,
 } from "@ravenrebels/ravencoin-history-list";
+import session from "express-session";
+import { setEnvironmentData } from "worker_threads";
 
 const defaultValue = [] as IHistoryItem[];
 export function History() {
@@ -51,7 +53,7 @@ export function History() {
         <thead>
           <tr>
             <th>Asset</th>
-            <th>Height</th>
+            <th>Date</th>
             <th>Value</th>
             <th>Sent/Received</th>
           </tr>
@@ -71,7 +73,9 @@ export function History() {
               return (
                 <tr key={asset.assetName + height}>
                   <td>{asset.assetName}</td>
-                  <td>{height}</td>
+                  <td>
+                    <BlockDate height={height} />
+                  </td>
                   <td>{asset.value.toLocaleString()}</td>
                   <td>{item.isSent ? "Sent" : "Received"}</td>
                 </tr>
@@ -83,4 +87,56 @@ export function History() {
     </div>
   );
   return <div>bla</div>;
+}
+
+function BlockDate({ height }: { height: number }) {
+  const [date, setDate] = React.useState<null | Date>(null);
+
+  const empty = [];
+  React.useEffect(() => {
+    const cacheKey = "blocktime_" + height;
+    const fetchData = async () => {
+      const r = await fetch("/api/blocktime/" + height);
+      return await r.json();
+    };
+    getCachedValue(cacheKey, fetchData).then((data) =>
+      setDate(new Date(data.date))
+    );
+  }, empty);
+
+  if (!date) {
+    return null;
+  }
+
+  const d = date.toLocaleDateString();
+  const t = date.toLocaleTimeString();
+
+  return (
+    <div>
+      <div>
+        <small>{d}</small>
+      </div>
+        <small>{t}</small>
+    </div>
+  );
+}
+
+async function getCachedValue(cacheKey, fetchData) {
+  //If data is cached, return cached
+  if (sessionStorage) {
+    const c = sessionStorage.getItem(cacheKey);
+
+    if (c) {
+      console.log("Found", cacheKey);
+      return JSON.parse(c);
+    }
+  }
+
+  //OK nothing cached
+  const content = await fetchData();
+  const json = JSON.stringify(content);
+  //Cache it if client support session storage
+  sessionStorage && sessionStorage.setItem(cacheKey, json);
+
+  return content;
 }

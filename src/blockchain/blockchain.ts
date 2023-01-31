@@ -17,6 +17,11 @@ export const rpc = getRPC(
   config.raven_password,
   config.raven_url
 );
+export async function getBlockByHeight(height:number){
+  const hash = await rpc(methods.getblockhash, [height]);
+  const block = await rpc(methods.getblock, [hash]);
+  return block;
+}
 export function isHealthy() {
   return rpc(methods.getblockcount, []);
 }
