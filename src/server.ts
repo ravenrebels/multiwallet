@@ -23,7 +23,7 @@ import * as Transactor from "./blockchain/Transactor";
 import thumbnail from "./thumbnail";
 import { ITransaction, IUser } from "./Types";
 
-//Tell nod.js not to die on exception
+//Tell node.js not to die on exception
 process.on("uncaughtException", function (err) {
   console.log("Caught exception: ", err);
 });
@@ -204,11 +204,16 @@ app.get("/api/blocktime/:height", async (request, response) => {
     });
   }
 
-  const block = await Blockchain.getBlockByHeight(height);
+  try {
+    const block = await Blockchain.getBlockByHeight(height);
 
-  const time = new Date(block.time * 1000);
-  response.set("Cache-control", "public, max-age=300");
-  return response.send({ date: time });
+    const time = new Date(block.time * 1000);
+    response.set("Cache-control", "public, max-age=300");
+    return response.send({ date: time });
+  } catch (e) {
+    console.log("blocktime error", e);
+    return response.status(500).send({ error: "" + e });
+  }
 });
 app.get("/api/pendingtransactions", async (request, response) => {
   const data = await Blockchain.getMempool();
