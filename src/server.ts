@@ -212,7 +212,7 @@ app.get("/api/blocktime/:height", async (request, response) => {
     return response.send({ date: time });
   } catch (e) {
     console.log("blocktime error", e);
-    return response.status(500).send({ error: "" + e });
+    return response.status(500).send({ error: e });
   }
 });
 app.get("/api/pendingtransactions", async (request, response) => {
