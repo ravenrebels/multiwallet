@@ -67,6 +67,8 @@ app.use(
 const config = getConfig();
 
 //Publicly avaiable routes declared BEFORE authentication/security middleware
+app.get("/thumbnail", thumbnail);
+
 app.get("/api/mempool", async function (_, response) {
   const promise = Blockchain.getMempool();
   promise
@@ -114,8 +116,6 @@ app.use(express.static("dist"));
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
-app.get("/thumbnail", thumbnail);
 
 app.get("/publicprofile", function (request, response) {
   const currentUser = getCurrentUser(request);
