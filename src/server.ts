@@ -339,11 +339,10 @@ app.post("/send", (request, response) => {
   promise
     .then((txid) => response.send({ txid }))
     .catch((e) => {
-      if (e.error && e.error.message) {
-        console.dir(e);
-        response.status(500).send({ error: e.error.message });
+      if (e.error && e.error.error && e.error.error.message) {
+        response.status(500).send({ error: e.error.error.message });
         return;
-      } else response.status(500).send({ error: e + "" });
+      } else response.status(500).send({ error: e.error });
     });
 });
 

@@ -32,7 +32,7 @@
   "dependencies": {
     "@ravenrebels/ravencoin-history-list": "^1.2.0",
     "@ravenrebels/ravencoin-key": "^2.0.0",
-    "@ravenrebels/ravencoin-rpc": "0.1.4",
+    "@ravenrebels/ravencoin-rpc": "^0.2.5",
     "@types/express": "4.17.14",
     "@types/express-session": "^1.17.5",
     "@types/node": "18.11.9",

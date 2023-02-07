@@ -83,6 +83,7 @@ async function _send(options: IInternalSendIProp) {
   //Remove UTXOs that are currently in mempool
   const mempool = await blockchain.getMempool();
 
+  //If we use Address Deltas this can be simplified
   UTXOs = UTXOs.filter(UTXO => isUTXOInMempool(mempool, UTXO) === false);
 
   const enoughRavencoinUTXOs = getEnoughUTXOs(
@@ -182,11 +183,13 @@ async function addAssetInputsAndOutputs(
     assetName
   );
 
-  console.log("Asset UTXOs", assetUTXOs);
+console.error("Want to send", amount, assetName);
+  console.error("Asset UTXOs", assetUTXOs);
+  const sum = sumOfUTXOs(assetUTXOs)
+  console.error("Sum of ", assetName, sum);
   const mempool = await blockchain.getMempool();
   assetUTXOs = assetUTXOs.filter(UTXO => isUTXOInMempool(mempool, UTXO) === false);
-
-
+ 
   const _UTXOs = getEnoughUTXOs(assetUTXOs, amount);
   const tempInputs = blockchain.convertUTXOsToVOUT(_UTXOs);
   tempInputs.map((item) => inputs.push(item));
