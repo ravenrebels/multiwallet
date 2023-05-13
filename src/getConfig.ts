@@ -4,8 +4,8 @@ import * as fs from "fs";
 //No need to read from disk for every request
 
 interface IConfig {
-  assets?: Array<string>,
-  baseCurrency: "RVN", //TODO is this really needed? do we not get that info from the network attribute?
+  assets?: Array<string>;
+  baseCurrency: string; //TODO is this really needed? do we not get that info from the network attribute?
   cacheKeys: boolean;
   fundingWallet?: string;
   mode: "RAVENCOIN_AND_ASSETS" | "ASSETS" | "SOME_ASSETS";
@@ -21,7 +21,6 @@ interface IConfig {
 }
 let config: IConfig | null = null;
 export function getConfig(): IConfig {
-
   //If config is already cached, return it
   if (config) {
     return config;
@@ -40,41 +39,42 @@ export function getConfig(): IConfig {
     validateConfig(obj);
     return obj;
   } else {
-    const template = `{
-      "gui": {
-        "headline": "Playground",
-        "tagline": "Send RVN and Assets/Tokens",
-        "subTagline": "Ravencoin testnet"
+    const template = {
+      gui: {
+        headline: "Playground",
+        tagline: "Send RVN and Assets/Tokens",
+        subTagline: "Ravencoin testnet",
       },
-    
-      "assets": ["QKN"],
-      "baseCurrency": "RVN",
-      "cacheKeys": false,
-    
-      "mode": "RAVENCOIN_AND_ASSETS",
-      "network": "rvn-test",
-    
-      "pay_fees_with_this_mnemonic": "not used yet satisfy arctic left moon text",
-      "raven_username": "SECRET",
-      "raven_password": "SECRET",
-      "raven_url": "http://localhost:18766"
-    }
-          `;
 
-    const message = `config.json not found. Please create a ${filePath} file and fill in your information.
-          This is an example ${template}
-          *mode* can be either RAVENCOIN_AND_ASSETS, ASSETS or SOME_ASSETS`;
-    throw new Error(message);
+      assets: [],
+      baseCurrency: "RVN",
+      cacheKeys: false,
+
+      mode: "RAVENCOIN_AND_ASSETS",
+      network: "rvn-test",
+
+      raven_username: "anon",
+      raven_password: "anon",
+      raven_url: "https://rvn-rpc-testnet.ting.finance/rpc",
+    };
+    console.log("Created  ./config.json file with default settings");
+
+    //Had to read the object back from file or typescript complained about IConfig.mode not being a string
+    fs.writeFileSync("./config.json", JSON.stringify(template, null, 4));
+    config = JSON.parse(fs.readFileSync("./config.json", "utf-8"));
+    if (config) {
+      return config;
+    }
+    else{
+      throw new Error("Please check the ./config.json file");
+    }
   }
 }
 
-
 function validateConfig(config: IConfig) {
-
   if (config.mode === "SOME_ASSETS") {
     if (!config.assets || config.assets.length === 0) {
-      throw Error("config.json, please configure *assets*")
+      throw Error("config.json, please configure *assets*");
     }
   }
-
 }
