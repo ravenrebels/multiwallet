@@ -6,7 +6,6 @@ import axios from "axios";
 import * as path from "path";
 import { Request, Response } from "express";
 
-
 console.log("Image Thumbnail function", imageThumbnail);
 
 type StringStringMapper = {
@@ -59,17 +58,12 @@ interface IAssetData {
   ipfs_hash: string;
 }
 
-
-
-
-
 const dir = path.resolve("./images");
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
 
 export default async function thumbnail(request: Request, response: Response) {
-
   //VALIDATE THAT WE HAVE ASSET NAME
   const assetName = request.query.assetName;
   if (!assetName) {
@@ -101,7 +95,6 @@ export default async function thumbnail(request: Request, response: Response) {
     response.status(204).send({ error: `${assetName} cant find IPFS` });
     return;
   }
-
 
   //RETURN IF WE HAVE BLOCKED THE IPFS,FOR EXAMPLE IF WE COULD NOT FIND THE CONTENT
   if (blockedIPFS[ipfs]) {
@@ -137,7 +130,6 @@ export default async function thumbnail(request: Request, response: Response) {
 
     //NOT AN IMAGE, NOTHING WE CAN DO, RETURN
     if (isImage(contentType) === false) {
-      console.log("Return before talking to Ravencoin IPFS");
       response.status(204).send({
         error: "Wrong content type ",
         contentType,
@@ -165,11 +157,17 @@ export default async function thumbnail(request: Request, response: Response) {
     return;
   }
 
-  console.log("Do NOT have info for", ipfs, assetName, "asking Ravencoin IPFS");
+  const IPFS_GATEWAY = "https://gateway.pinata.cloud/ipfs/";
+  console.log(
+    "Do NOT have info for",
+    ipfs,
+    assetName,
+    "asking " + IPFS_GATEWAY
+  );
   response.set("fetch-ipfs", "fetching asset from IPFS");
 
-  //Ask ravencoinipfs for size
-  const url = "https://ravencoinipfs-gateway.com/ipfs/" + ipfs;
+  //Ask for size
+  const url = IPFS_GATEWAY + ipfs;
 
   try {
     const config = {
@@ -181,7 +179,6 @@ export default async function thumbnail(request: Request, response: Response) {
     const contentType: string = asdf.headers["content-type"] + "";
 
     fs.writeFileSync(contentTypeFilePath, contentType || "EMPTY");
-
 
     //Cache content type
     if (isImage(contentType) === false) {
