@@ -1,6 +1,6 @@
 {
   "name": "multiwallet",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A hot custodial Ravencoin wallet",
   "scripts": {
     "build": "parcel build ./gui/index.html --no-content-hash --no-cache && npx tsc ./src/server.ts",
